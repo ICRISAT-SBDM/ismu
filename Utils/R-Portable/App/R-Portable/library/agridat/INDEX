@@ -1,0 +1,199 @@
+RedGrayBlue             Function to create a Red-Gray-Blue palette
+aastveit.barley         Barley heights and environmental covariates in
+                        Norway
+adugna.sorghum          Sorghum yields at 3 locations across 5 years
+agridat                 Datasets from agricultural experiments
+allcroft.lodging        Lodging data from a multi-environment trial
+                        cereal crop
+archbold.apple          Split-split plot experiment on apple trees
+ars.earlywhitecorn96    Early White Food Corn Performance Tests
+australia.soybean       Australia soybeans
+batchelor.apple.uniformity
+                        Uniformity trials of fruit tree yields.
+besag.bayesian          Spring barley in United Kingdom
+besag.elbatan           RCB experiment of 50 varieties of wheat in 3
+                        blocks with strong spatial trend.
+besag.met               Multi-environment trial of corn laid out in
+                        incomplete-blocks
+blackman.wheat          Yield for conventional and semi-dwarf wheat
+                        varieties
+bond.diallel            Diallel cross of winter beans
+box.cork                Weight of cork samples on four sides of trees
+bridges.cucumber        Cucumber yields in Latin Square design.
+broadbalk.wheat         Long term wheat yields on Broadbalk fields at
+                        Rothamsted.
+byers.apple             Diameters of apples
+caribbean.maize         Maize fertilization trial on Antigua and St.
+                        Vincent
+carmer.density          Maize yield-density model
+cate.potassium          Relative cotton yield for different soil
+                        potassium concentrations
+cleveland.soil          Soil resistivity in a field
+cochran.bib             Balanced incomplete block design in corn
+cochran.crd             Potato scab infection with sulfur treatments
+cochran.eelworms        Counts of eelworms before and after fumigant
+                        treatments
+cochran.latin           Latin square design
+cochran.wireworms       Wireworms controlled by fumigants in a latin
+                        square
+corsten.interaction     Corn yield in multi-environment trial
+cox.stripsplit          Strip-split plot of barley with fertilizer,
+                        calcium, and soil factors.
+crossa.wheat            Wheat yields for 18 genotypes at 25 locations
+crowder.seeds           Germination of Orobanche seeds from Crowder
+                        (1978)
+darwin.maize            Darwin's maize data of crossed/inbred plant
+                        heights
+denis.missing           Multi-environment trial with structured missing
+                        values
+denis.ryegrass          Plant strength of perennial ryegrass in France
+desplot                 Plot the layout/data of a field experiment
+digby.jointregression   Multi-environment trial illustrating joint
+                        regression
+diggle.cow              Bodyweight of cows in a 2-by-2 factorial
+                        experiment
+durban.competition      Sugar beet yields with competition effects
+durban.rowcol           Row column design of a spring barley trial with
+                        many varieties
+durban.splitplot        Split-plot barley variety trial with fungicide
+                        treatments
+eden.potato             Potato yields in response to potash and
+                        nitrogen fertilizer
+engelstad.nitro         Corn yield response to nitrogen fertilizer
+fan.stability           Maize hybrids grown in China
+federer.diagcheck       Wheat experiment with diagonal checks
+federer.tobacco         Height of Tobacco plants exposed to radiation
+garber.multi.uniformity
+                        Uniformity trials of oat hay and wheat
+gathmann.bt             Impact of Bt Corn on non-target species
+gauch.soy               New York soybean yields, 1977 to 1988
+gilmour.serpentine      Wheat yield in South Australia with serpentine
+                        row/col effects
+gilmour.slatehall       Slate Hall Farm 1978
+gomez.fractionalfactorial
+                        Rice fractional factorial experiment
+gomez.groupsplit        Rice group balanced split-plot design
+gomez.multilocsplitplot
+                        Rice multilocation Split-Plot
+gomez.nitrogen          Soil nitrogen at three times for eight
+                        fertilizer treatments
+gomez.rice.uniformity   Rice uniformity yield test
+gomez.seedrate          Rice yield at six different densities
+gomez.splitsplit        Rice split-split plot experiment
+gomez.stripplot         Rice strip-plot experiment
+gomez.stripsplitplot    Rice strip-split-plot experiment
+gotway.hessianfly       Hessian fly damage to wheat varities
+goulden.barley.uniformity
+                        Barley uniformity trial
+graybill.heteroskedastic
+                        Wheat varieties with heteroskedastic yields
+hanks.sprinkler         Wheat yields in a line-source sprinkler
+                        experiment
+harris.multi.uniformity
+                        Multi-year uniformity trials with different
+                        crops at Huntley
+henderson.milkfat       Milk fat yields for a single cow
+hernandez.nitrogen      Corn response to nitrogen fertilizer at 5
+                        sites.
+hessling.argentina      Relation between wheat yield and weather in
+                        Argentina
+hildebrand.systems      Maize yields for four cropping systems
+hughes.grapes           Disease incidence on grape leaves in RCB
+                        experiment
+ilri.sheep              Birth weight and weaning weight of Dorper x Red
+                        Maasi lambs
+immer.sugarbeet.uniformity
+                        Uniformity study of sugarbeets with
+                        measurements of yield, sugar, purity
+ivins.herbs             Percent ground cover of herbage species and
+                        nettles.
+jenkyn.mildew           Yields from treatment for mildew control
+john.alpha              Alpha lattice design of spring oats
+johnson.blight          Potato blight due to weather in Prosser,
+                        Washington
+kempton.barley.uniformity
+                        Uniformity trial of Spring Barley in 1978
+kempton.competition     Sugar beet trial with competition effects
+kempton.rowcol          Wheat row-column experiment
+kempton.slatehall       Slate Hall Farm 1976 spring wheat
+lambert.soiltemp        Average monthly soil temperature near Zurich
+lavoranti.eucalyptus    Height of Eucalyptus trees in southern Brazil
+li.millet.uniformity    Uniformity trial of 600 millet plots.
+lyon.potato.uniformity
+                        Uniformity trial of potatoes
+lyons.wheat             Yield of winter wheat at 12 sites in 4 years.
+mcconway.turnip         Yields of turnips grown for winter fodder
+mead.cowpeamaize        Maize/Cowpea Intercropping experiment
+mead.germination        Seed germination with different
+                        temperatures/concentrations
+mead.strawberry         Strawberry yields in RCB experiment
+mercer.wheat.uniformity
+                        Mercer and Hall's uniformity trial of wheat in
+                        1910
+minnesota.barley.weather
+                        Monthly weather at 6 sites in Minnesota
+                        1927-1936.
+minnesota.barley.yield
+                        Yields of barley at 6 sites in Minnesota
+                        1927-1936.
+nass.corn               U.S. historical crop yields by state
+nebraska.farmincome     Nebraska farm income in 2007 by county
+odland.soybean.uniformity
+                        Uniformity trials of soy hay and soybeans.
+ortiz.tomato            Tomato weight/yield and environmental
+                        covariates in Latin America
+pacheco.soybean         Soybean yields in Brazil.
+panel.outlinelevelplot
+                        Panel Function for desplot
+pearl.kernels           Counts of yellow/white and sweet/starchy maize
+                        kernels by 15 observers
+ratkowsky.onions        Onion yields for different densities at two
+                        locations
+rothamsted.brussels     Yield of brussels sprouts, RCB with 9
+                        fertilizer treatments
+ryder.groundnut         Wet and dry groundnut yields
+senshu.rice             Response of rice to solar radiation and
+                        temperature
+shafii.rapeseed         Rapeseed yield multi-environment trial, 3 years
+smith.corn.uniformity   Uniformity trial of corn in three consecutive
+                        years
+snedecor.asparagus      Asparagus yields for different cutting
+                        treatments
+steel.soybeanmet        Soybean yields in North Carolina
+stephens.sorghum.uniformity
+                        Uniformity trial of sorghum silage
+streibig.competition    Competition experiment between barley and
+                        sinapis.
+stroup.nin              Nebraska Intrastate Nursery field experiment
+stroup.splitplot        Simulated split-plot experiment
+student.barley          Barley yield of two varieties in a
+                        multi-environment trial
+talbot.potato           Potato yields and trait scores at 12 UK
+                        locations
+theobald.covariate      Silage yields for Year * Loc * Variety with
+                        covariate
+thompson.cornsoy        Corn & Soybean Yields, 1930-1962, with
+                        temperature and preciptiation
+vargas.wheat1           Durum wheat yields in 7 years with genetic and
+                        environment covariates
+vargas.wheat2           Wheat yields for a multi-environment trial and
+                        environmental covariates
+verbyla.lupin           Lupin yields for different varieties and
+                        locations, at many densities
+vsn.lupin3              Early generation lupin trial with 3 sites
+wedderburn.barley       Percent of barley leaves affected by leaf
+                        blotch
+wiebe.wheat.uniformity
+                        Uniformity trial of wheat
+williams.barley.uniformity
+                        Yield from a barley uniformity trial
+williams.cotton.uniformity
+                        Lint yield from a cotton uniformity trial
+williams.trees          Height / Survival of 37 tree species at six
+                        sites in Thailand
+yan.winterwheat         Multi-environment trial of Winter Wheat in
+                        Ontario
+yates.missing           Factorial experiment with missing values
+yates.oats              Yield of oats in a split-block experiment
+zuidhof.broiler         Daily weight, feed, egg measurements for a
+                        broiler

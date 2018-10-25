@@ -1,0 +1,9 @@
+                  Changes in hwde version 0.63
+
+CHANGES
+
+    o The vignette hwde.Rnw has been modified to add missing text and to
+      conform to current Sweave markup conventions
+    o Code for the functions hwde() and make.contrasts() has been modified
+      so that R CMD check no longer reports "No visible binding for global
+      variable 'oset'."

@@ -1,0 +1,1 @@
+export(hwde, make.contrasts, decode.genotypes, hwexact)

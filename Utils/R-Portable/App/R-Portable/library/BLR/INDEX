@@ -1,0 +1,6 @@
+A                       Pedigree info for the wheat dataset
+BLR                     Bayesian Linear Regression
+X                       Molecular markers
+Y                       Grain yield
+sets                    Sets for cross validation (CV)
+wheat                   wheat dataset

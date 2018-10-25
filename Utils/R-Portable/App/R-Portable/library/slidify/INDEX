@@ -1,0 +1,10 @@
+author                  Author a slide deck
+parse_deck              Parse deck into metdata and slide elements
+publish                 Publish slide deck
+publish_dropbox         Publish slide deck to Dropbox
+publish_github          Publish slide deck to Github
+publish_rpubs           Publish slide deck to rPubs
+slidify                 Convert an Rmd document into HTML5 using a
+                        framework
+slidify-package         Create stunning presentations from R Markdown
+slidifyDefaults         Set default options for slidify

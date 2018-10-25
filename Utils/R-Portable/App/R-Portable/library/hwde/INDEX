@@ -1,0 +1,12 @@
+IndianIrish             Observed genotype frequencies at MN and S loci,
+                        for 2 populations
+decode.genotypes        Creates contrasts that relate to a single locus
+hwde                    Fit relevant models, and test for various types
+                        of departure from Hardy-Weinberg equilibrium.
+                        Allows only 2 alleles per locus.  The number of
+                        loci is arbitrary.
+hwexact                 Exact test of HWE
+make.contrasts          Calculate contrasts required by the function
+mendelABC               Mendel's F2 trifactorial data for seed shape
+                        (A), cotyledon color (B) and seed coat color
+                        (C)

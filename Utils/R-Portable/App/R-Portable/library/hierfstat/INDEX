@@ -1,0 +1,74 @@
+allele.count            Allelic counts
+allelic.richness        Estimates allelic richness
+basic.stats             Basic statistics
+betai                   Estimation of beta per population
+boot.ppfis              Performs bootstrapping over loci of
+                        population's Fis
+boot.ppfst              Performs bootstrapping over loci of pairwise
+                        Fst
+boot.vc                 Bootstrap confidence intervals for variance
+                        components
+cfe.dist                Estimates Cavalli-Sforza & Edwards Chord
+                        distance
+da.dist                 Estimates Nei's DA distance
+eucl.dist               Estimates euclidian distances
+eucl.dist.trait         calculates euclidian distance among populations
+                        for a trait
+exhier                  Example data set with 4 levels, one diploid and
+                        one haploid locus
+g.stats                 Calculates likelihood-ratio G-statistic on
+                        contingency table
+g.stats.glob            Likelihood ratio G-statistic over loci
+genot2al                Separates diploid genotypes in its constituant
+                        alleles
+getal                   Converts diploid genotypic data into allelic
+                        data
+getal.b                 Converts diploid genotypic data into allelic
+                        data
+gtrunchier              Genotypes at 6 microsatellite loci of Galba
+                        truncatula from different patches in Western
+                        Switzerland
+hierfstat               General information on the hierfstat package
+ind.count               individual counts
+indpca                  PCA on a matrix of individuals genotypes
+                        frequencies
+mat2vec                 Rewrite a matrix as a vecor
+nb.alleles              Number of different alleles
+nei.dist                Estimates Nei's genetic distance
+pcoa                    Principal coordinate analysis
+pop.freq                Allelic frequencies
+pp.fst                  fst per pair
+pp.sigma.loc            wrapper to return per locus variance components
+prepdata                Sort and renumber and recode levels for the
+                        hierarchical analysis if necessary
+print.pp.fst            print function for pp.fst
+read.fstat              Reads data from a FSTAT file
+read.fstat.data         Reads data from a FSTAT file
+samp.between            Shuffles a sequence among groups defined by the
+                        input vector
+samp.between.within     Shuffles a sequence
+samp.within             Shuffles a sequence within groups defined by
+                        the input vector
+sim.freq                Simulates frequencies, for internal use only
+sim.genot               Simulates genotypes in an island model at
+                        equilibrium
+subsampind              Subsample a FSTAT data frame
+test.between            Tests the significance of the effect of
+                        test.lev on genetic differentiation
+test.between.within     Tests the significance of the effect of
+                        test.lev on genetic differentiation
+test.g                  Tests the significance of the effect of level
+                        on genetic differentiation
+test.within             Tests the significance of the effect of
+                        inner.level on genetic differentiation within
+                        blocks defined by outer.level
+varcomp                 Estimates variance components for each allele
+                        of a locus
+varcomp.glob            Estimate variance components and hierarchical
+                        F-statistics over all loci
+vec2mat                 Reads a vector into a matrix
+wc                      Computes Weir and Cockrham estimates of
+                        Fstatistics
+write.fstat             Write an Fstat data file
+write.struct            Write structure file
+yangex                  Example data set from Yang (1998) appendix

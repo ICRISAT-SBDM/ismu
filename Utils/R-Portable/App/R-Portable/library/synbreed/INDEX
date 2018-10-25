@@ -1,0 +1,44 @@
+LDDist                  LD versus distance Plot
+LDMap                   LD Heatmap
+MME                     Mixed Model Equations
+[.GenMap                Extract or replace part of map data.frame
+[.relationshipMatrix    Extract or replace part of relationship matrix
+add.individuals         Add new individuals to objects of class gpData
+add.markers             Add new markers to an object of class gpData
+codeGeno                Recode genotypic data, imputation of missing
+                        values and preselection of markers
+create.gpData           Create genomic prediction data object
+create.pedigree         Create pedigree object
+crossVal                Cross validation of different prediction models
+discard.markers         Subsets for objects of class gpData
+gpData2cross            Conversion between objects of class 'cross' and
+                        'gpData'
+gpData2data.frame       Merge of phenotypic and genotypic data
+gpMod                   Genomic predictions models for objects of class
+                        gpData
+kin                     Relatedness based on pedigree or marker data
+manhattanPlot           Manhattan plot for SNP effects
+pairwiseLD              Pairwise LD between markers
+plot.LDdf               Plot function for class 'LDdf'
+plot.LDmat              Plot function for class 'LDmat'
+plot.pedigree           Visualization of pedigree
+plot.relationshipMatrix
+                        Heatmap for relationship Matrix
+plotGenMap              Plot marker map
+plotNeighbourLD         Plot neighbour linkage disequilibrium
+predict.gpMod           Prediction for genomic prediction models.
+simul.pedigree          Simulation of pedigree structure
+simul.phenotype         Simulation of a field trial with single trait
+summary.LDdf            Summary for LD objects
+summary.cvData          Summary of options and results of the cross
+                        validation procedure
+summary.gpData          Summary for class gpData
+summary.gpMod           Summary for class gpMod
+summary.pedigree        Summary of pedigree information
+summary.relationshipMatrix
+                        Summary of relationship matrices
+summaryGenMap           Summary of marker map information
+write.beagle            Prepare genotypic data for Beagle
+write.plink             Prepare data for PLINK
+write.relationshipMatrix
+                        Writing relationshipMatrix in table format

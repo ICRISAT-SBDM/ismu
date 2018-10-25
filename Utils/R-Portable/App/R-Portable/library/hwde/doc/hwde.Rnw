@@ -1,0 +1,304 @@
+\documentclass[10pt,a4paper]{article}
+
+\title{Testing and Modeling Genotypic Disequilibria}
+
+\SweaveOpts{engine=R,echo=FALSE}
+%% \VignetteIndexEntry{hwde: An R Package for Tests and Models for Genotypic Disequilibria}
+\usepackage{a4wide}
+\newcommand{\keywords}[1]{\addvspace{\baselineskip}\noindent{{\bf Keywords.} #1}}
+
+\begin{document}
+\author{John Maindonald\\
+{\small Centre for Mathematics and Its Applications, Australian National
+University, Canberra, Australia}}
+\date{}
+\maketitle
+
+\keywords{population genetics, Hardy-Weinberg, genotype, allele,
+genotypic disequilibrium}
+
+\section{Introduction}
+
+In a diploid, sexually reproducing species, at a locus where there are
+two alleles $A$ and $a$, the possible genotypes are $AA$, $Aa$ and
+$aa$.  In a population of size $N$, with $p$ the frequency of the A
+allele and $q$ the frequency of the a allele, the expected numbers
+under Hardy-Weinberg equilibrium are $NP_{AA} = Np^2$ for the $AA$
+genotype, $NP_{Aa} = 2Npq$ for the $Aa$ genotype, and $NP_{aa} = Nq^2$
+for the $aa$ genotype.  Writing $m$ = $\log(Np^2)$ and $\log(q/p) =
+m_a$, the logarithms of the frequencies may be written:
+\begin{eqnarray}
+\log(Np^{2})  &=&  m \\
+\log(2Npq) &=&  m + \log(2) + m_a\\
+\log(Nq^{2})  &=&  m + 2 m_a
+\end{eqnarray}
+Thus the model is loglinear, and can be fitted as a generalized linear
+model with poisson error and offset $\log(2)$ for the heterozygote.
+For example:
+<<setup, echo=FALSE,results=hide>>=
+options(show.signif.stars=FALSE)
+@
+<<chunk2, echo=TRUE>>=
+obs <- c(AA=147, Aa=78, aa=17)
+oset <- c(0, log(2), 0)
+ma <- c(0,1,2)
+hw.glm <- glm(obs ~ ma, family=poisson, offset=oset)
+summary(hw.glm)
+@
+
+The function \texttt{hwde()} may also be used to fit this model, at the
+same time introducing a further ``disequilibrium'' term. The default
+output is the analysis of deviance table.
+<<chunk3, echo=TRUE>>=
+hwdat <- data.frame(Observed=c(147,78,17), locus1=c("AA","Aa","aa"))
+@
+Now call the function.
+<<chunk4, echo=TRUE>>=
+library(hwde)
+hwde(data=hwdat)
+@ %
+The disequilibrium term has the form
+\[ m_{aa} = \log \frac{4 P_{AA} P_{aa}}{P_{Aa}^2}
+\]
+Notice that the parameters $m_a$ and $m_{aa}$ have been abbreviated,
+in the computer output, to $a$ and $aa$ respectively. The parameter
+$m$ models the reference or baseline level, and is estimated by the
+intercept term.
+
+To obtain estimates of parameters, including the disequilibrium
+parameter $m_{aa}$, do the following:
+<<chunk5-maa, echo=TRUE>>=
+data.df <- hwde(data = hwdat)$data.df
+names(data.df)
+summary(glm(obs ~ a + aa, offset=oset, family=poisson, data=data.df))$coef
+@ %
+Note again that the intercept estimates $m$, and that $aa$ is the additive
+version of the disequilibrium parameter.
+
+We leave till later detailed information on the use of \texttt{hwde()},
+including details on how to obtain fitted values and residuals.
+
+\subsection{Several different populations}
+
+If there several different populations, there must be a parameter
+(by default assumed to have the name \texttt{Population}),
+that accounts for different population sizes.  In the code, this
+translates to a main effect \texttt{gp} in the log-linear model.
+Additionally, there may be different values for $m_a$ and $m_{aa}$ in
+the different populations.
+
+A second locus requires the parameters $m_b$ and $m_{bb}$ for that
+locus.  Additionally, parameters may be required that model quantities
+that, in the loglinear model, have the role of interactions between
+the two loci.  Huttley and Wilson (2000) introduce the multiplicative
+versions of the following parameters:
+\begin{itemize}
+\item[] $s_{ab}$, the ``sum of digenic disequilibria for the
+total sample''
+\item[] $q_{ab}$, the ``product of digenic disequilibria for the
+total sample''
+\item[] $m_{aab}$ and $m_{abb}$, which are ``trigenic disequilibria terms
+for the total sample''
+\end{itemize}
+In the usual case where phase for double heterozygotes is unknown and
+only nine genotypic classes can be distinguished, no degrees of
+freedom remain that might be used to estimate a quadrigenic
+disequilibrium term.
+
+As noted above, the formulae in Huttley and Wilson (2000) give the
+multiplicative equivalents of these terms, using upper case letters.
+The additive versions used here (e.g., they have $M_A$ where I have
+$m_a = \log(M_A)$) use the corresponding lower case letters.  Note
+however that in the second column on p.2131 of Huttley and Wilson, in
+the equations for $\ln P_{Ab}^{AB}$ and $\ln P_{aB}^{AB}$, $\ln
+Q_{AB}^2$ should be, in each case, $\ln Q_{AB}$.  The equations are
+given correctly in Weir and Wilson (1986), though with slight changes
+of notation. See also Weir (1996).
+
+The function allows an arbitrary number of loci.  Terms $s_{ab}$,
+$q_{ab}$, $m_{abb}$ and $m_{aab}$ are fitted for every pair of loci.
+Terms that correspond to second (or, with $>$ 3 loci, higher order)
+interactions contribute, in the present version of the code, to the
+residual.  Try
+<<chunk6, echo=TRUE,eval=FALSE>>=
+hwde(data=mendelABC, loci=c("seedshape","cotylcolor","coatcolor"))
+@
+
+\section{Details of Use of \texttt{hwde()}}
+
+First recall the simple example that was described above.  The data
+were entered, from the keyboard, into a data frame \texttt{hwdat} that
+had the form:
+\begin{verbatim}
+Observed locus1
+147      AA
+78       Aa
+17       aa
+\end{verbatim}
+The coding used in the column headed \texttt{locus1} can be varied;
+any two characters may be used for the alleles.  With the column
+names that are shown, the corresponding parameter settings for the function
+\texttt{hwde()} can be left at their defaults.
+
+An alternative is to enter the data, exactly as displayed above
+(though the spacing is immaterial), into a file.  If the file is
+called \textbf{hw.txt} and is placed in the working directory, then it
+can be read in with:
+<<chunk7, echo=TRUE, eval=FALSE>>=
+hwdat <- read.table("hw.txt", header=TRUE)
+@
+
+If there is a second locus, the default name is \texttt{locus2}.  The
+default name for any third locus is \texttt{locus3}, etc.  Where there
+is a column that has codes for different populations, the default name
+is \texttt{Population}.
+
+\subsubsection*{Example -- two populations and two loci}
+With this introduction, we move directly to data, with two populations
+and two loci, that are suited to fitting all the parameters that the
+function currently allows, i.e., $m_{aa}$, $m_{bb}$, $m_{cc}$,
+$s_{ab}$, $s_{ac}$, $s_{bc}$, $q_{ab}$, $q_{ac}$, $q_{bc}$,
+$m_{abb}$, $m_{acc}$, $m_{bcc}$,
+$m_{aab}$, $m_{aac}$, $m_{bbc}$.
+
+Data (Mourant et al, 1976) are:
+\begin{verbatim}
+   Population locus1 locus2 Observed
+     Indian     MM     SS       91
+     Indian     MM     Ss      147
+     Indian     MM     ss       85
+     Indian     MN     SS       32
+     Indian     MN     Ss       78
+     Indian     MN     ss       75
+     Indian     NN     SS        5
+     Indian     NN     Ss       17
+     Indian     NN     ss        7
+      Irish     MM     SS      121
+      Irish     MM     Ss      248
+      Irish     MM     ss      164
+      Irish     MN     SS       53
+      Irish     MN     Ss      422
+      Irish     MN     ss      375
+      Irish     NN     SS        9
+      Irish     NN     Ss       65
+      Irish     NN     ss      241
+\end{verbatim}
+
+Assuming that this is stored in a file \textbf{IndianIrish.txt},
+we can read in the data and do the analysis thus:
+<<chunk8, echo=TRUE, eval=FALSE>>=
+IndianIrish <- read.table("IndianIrish.txt", header=TRUE)
+@
+<<chunk9, echo=TRUE>>=
+hwde(data=IndianIrish)
+@
+
+The above is the compact default output, in which terms that are at
+the same level of a hierarchy are grouped.  For a first pass through
+the data, this may be the preferred output.  A form of output in
+which each term correspods to a single degree of freedom is available
+by using the parameter setting \texttt{group.terms=FALSE}, i.e.,
+<<chunk10, echo=TRUE, eval=FALSE>>=
+hwde(data=IndianIrish, group.terms=FALSE)
+@ In this highly detailed output table, each deviance term is a
+difference from the last previous Residual Deviance term that is
+marked with an \texttt{r} (= reference) as the first character in the
+row in which it appears.
+
+The estimates of parameters in the maximal (or, with appropriate modification, any
+other) model can be extracted thus:
+<<chunk11-all9, echo=TRUE>>=
+II.hwde <- hwde(data = mendelABC, loci = c("seedshape", "cotylcolor",
+              "coatcolor"), keep.models=T)
+models <- II.hwde$models
+maxmodel <- models[[length(models)]]
+summary(maxmodel)$coef
+@ %
+
+\section{Obtaining Additional Output}
+By default, the function returns (invisibly) a list with two elements.
+The first holds the analysis of variance table.  The second holds the
+data and contrast terms that are required for fitting tbe various
+models.  For example:
+<<chunk12, echo=TRUE>>=
+hwdat.hw <- hwde(data=hwdat)
+names(hwdat)
+hwdat.hw$data.df
+@
+The following illustrates the direct use of the information in
+\verb!hwdat.hw$data.df!, giving the user complete control over the
+models that are fitted.
+<<chunk13, echo=TRUE>>=
+data.df <- hwdat.hw$data.df
+model1 <- glm(obs ~ a, family=poisson, data=data.df, offset=log(oset))
+model2 <- glm(obs ~ a+aa, family=poisson, data=data.df, offset=log(oset))
+model1
+@
+
+Here is the output data frame for the \texttt{IndianIrish} data.
+<<chunk14, echo=TRUE>>=
+II.hw <- hwde(data=IndianIrish, aovtable.print=FALSE)
+dataII.df <- II.hw$data.df
+dataII.df
+@
+The user can now fit any sequence of models that may be required.
+For example, the user may wish to a sequence of models that is
+different from the sequence fitted by \texttt{hwde()}.
+
+Further control is available by supplying values for the parameters
+\texttt{termlist} and \texttt{refmodel}.  For example, the default
+action with the data frame \texttt{hwdat} is equivalent to:
+<<chunk15, echo=TRUE>>=
+hwde(termlist=c("+a","+aa"), refmodel=c(1,2), data=hwdat)
+@
+In \texttt{refmodel}, 1 refers to the model that has constant term only.
+
+The first six models can be fitted to the data frame \texttt{IndianIrish}
+by setting:
+<<chunk16, echo=TRUE>>=
+hwde(termlist=c("+gp","+a","+b","+a+b","+aa"), refmodel=c(1,2,2,2,5),
+     data=IndianIrish)
+@
+
+\subsection*{Extraction of the sequence of fitted models}
+A further possibility, with the parameter setting \texttt{keep.models=TRUE},
+is to include the full sequence of models that have been fitted in the
+list that is returned by the function.  For example:
+<<chunk17, echo=TRUE>>=
+hwdat.hw <- hwde(data=hwdat, keep.models=TRUE)
+hwdat.hw$models[[2]]          # The Hardy-Weinberg model
+fitted(hwdat.hw$models[[2]])
+@
+The function \texttt{fitted()} can be replaced by any of the
+functions (\texttt{coef()}, \texttt{resid()}, \texttt{predict()},
+etc.) that are available for use with a \texttt{glm} model object.
+Note that there are several different choices of residuals, with
+deviance residuals as the default.  For the \texttt{IndianIrish}
+data there are, with the parameter setting \texttt{group.terms=FALSE},
+24 models from which to choose.  Choose carefully!
+
+\section{Exact Hardy-Weinberg Test}
+The function \texttt{hwexact()}, supplied by Randall Johnson, does an
+exact test for Hardy-Weinberg equilibrium, conditional on the observed
+relative numbers of the two alleles.  The only case implemented is for
+a single population and single locus.  The algorithm is described in
+Wigginton et al (2005).
+
+\section{References}
+\begin{itemize}
+\item[] Huttley, G.A. and Wilson, S.R. 2000. Testing for concordant
+equilibria between population samples.  Genetics 156: 2127-2135.
+\item[] Mourant, A.E., Kopec, A.C. and Domaniewska-Sobczak, K. 1976.
+\textit{The Distribution of the Human Blood Groups and Other Polymorphisms.}
+Oxford University Press.
+\item[] Weir, B.S. 1996.  \textit{Genetic Data Analysis II.} Sinauer.
+\item[] Weir, B.S. and Wilson, S.R. 1986.  Log-linear models for
+linked loci. Biometrics 42:665-670.
+\item[] Wigginton, J.E., Cutler, D.J. and Abecasis, G.R. 2000. A note on
+  exact tests of Hardy-Weinberg equilibrium. \textit{American Journal of Human
+  Genetics} 76: 887-893.
+\end{itemize}
+
+\end{document}
+
+

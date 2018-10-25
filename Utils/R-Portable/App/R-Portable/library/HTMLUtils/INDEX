@@ -1,0 +1,13 @@
+BasicHTML               creates a basic HTML page displaying plots and
+                        annota
+FramedHTML              creates a framed HTML page displaying plots and
+                        annotations
+HTMLUtils-package       Facilitates automated HTML report creation
+HTMLhref                adds an href item to the current HTML page
+HTMLsortedTable         create sortable table
+InstallJSC              installs the JS components
+MyReportBegin           gracefully initializes the HTML page
+MyReportEnd             gracefully finalizes the HTML page
+makePathName            create appropriate directory structure if
+                        needed
+myHTMLInitFile          Begins / Ends a new HTML report output

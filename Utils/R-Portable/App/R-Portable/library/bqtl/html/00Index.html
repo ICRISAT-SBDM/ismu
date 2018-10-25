@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Bayesian QTL mapping toolkit</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+<h1> Bayesian QTL mapping toolkit
+<img class="toplogo" src="../../../doc/html/logo.jpg" alt="[R logo]">
+</h1>
+<hr>
+<div align="center">
+<a href="../../../doc/html/packages.html"><img src="../../../doc/html/left.jpg" alt="[Up]" width="30" height="30" border="0"></a>
+<a href="../../../doc/html/index.html"><img src="../../../doc/html/up.jpg" alt="[Top]" width="30" height="30" border="0"></a>
+</div><h2>Documentation for package &lsquo;bqtl&rsquo; version 1.0-29</h2>
+
+<ul><li><a href="../DESCRIPTION">DESCRIPTION file</a>.</li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<table width="100%">
+<tr><td width="25%"><a href="a.starting.point.for.bqtl.html">bqtl-package</a></td>
+<td>Some Introductory Comments</td></tr>
+<tr><td width="25%"><a href="bqtl-internal.html">%equiv%</a></td>
+<td>Internal BQTL functions</td></tr>
+<tr><td width="25%"><a href="locus.html">add</a></td>
+<td>Lookup loci or effects for genetic model formulas</td></tr>
+<tr><td width="25%"><a href="adjust.linear.bayes.html">adjust.linear.bayes</a></td>
+<td>Use Laplace Approximations to improve linear approximations to the posterior</td></tr>
+<tr><td width="25%"><a href="marker.levels.html">bc1.levels</a></td>
+<td>Define marker level codes</td></tr>
+<tr><td width="25%"><a href="bqtl.html">bqtl</a></td>
+<td>Bayesian QTL Model Fitting</td></tr>
+<tr><td width="25%"><a href="update.bqtl.html">bqtl.fitter</a></td>
+<td>Get loglikelihoods for many models of a common form</td></tr>
+<tr><td width="25%"><a href="coef.bqtl.html">coef.bqtl</a></td>
+<td>Extract Coefficients from fitted objects</td></tr>
+<tr><td width="25%"><a href="coef.bqtl.html">coef.bqtl.list</a></td>
+<td>Extract Coefficients from fitted objects</td></tr>
+<tr><td width="25%"><a href="configs.html">configs</a></td>
+<td>Lookup loci or effects for genetic model formulas</td></tr>
+<tr><td width="25%"><a href="covar.html">covar</a></td>
+<td>Treat locus as covariate</td></tr>
+<tr><td width="25%"><a href="locus.html">dom</a></td>
+<td>Lookup loci or effects for genetic model formulas</td></tr>
+<tr><td width="25%"><a href="marker.levels.html">f2.levels</a></td>
+<td>Define marker level codes</td></tr>
+<tr><td width="25%"><a href="predict.bqtl.html">fitted.bqtl</a></td>
+<td>fitted values from QTL models</td></tr>
+<tr><td width="25%"><a href="predict.linear.bayes.html">fitted.linear.bayes</a></td>
+<td>Residuals or Predicted Values for linear.bayes objects</td></tr>
+<tr><td width="25%"><a href="formula.bqtl.html">formula.bqtl</a></td>
+<td>Extract formula from bqtl object</td></tr>
+<tr><td width="25%"><a href="lapadj.html">lapadj</a></td>
+<td>Approximate marginal posterior for chosen model</td></tr>
+<tr><td width="25%"><a href="linear.bayes.html">linear.bayes</a></td>
+<td>Bayesian QTL mapping via Linearized Likelihood</td></tr>
+<tr><td width="25%"><a href="little.ana.bc.html">little.ana.bc</a></td>
+<td>A simulated dataset</td></tr>
+<tr><td width="25%"><a href="little.ana.f2.html">little.ana.f2</a></td>
+<td>A simulated dataset</td></tr>
+<tr><td width="25%"><a href="little.bc.markers.html">little.bc.markers</a></td>
+<td>Simulated Marker Data</td></tr>
+<tr><td width="25%"><a href="little.bc.pheno.html">little.bc.pheno</a></td>
+<td>Simulated Phenotype Data</td></tr>
+<tr><td width="25%"><a href="little.f2.markers.html">little.f2.markers</a></td>
+<td>Simulated Marker Data</td></tr>
+<tr><td width="25%"><a href="little.f2.pheno.html">little.f2.pheno</a></td>
+<td>Simulated Phenotype Data</td></tr>
+<tr><td width="25%"><a href="little.dx.html">little.map.dx</a></td>
+<td>Marker Map Description for Simulated Data</td></tr>
+<tr><td width="25%"><a href="little.map.frame.html">little.map.frame</a></td>
+<td>Package of Simulated Marker Map Information</td></tr>
+<tr><td width="25%"><a href="little.mf.5.html">little.mf.5</a></td>
+<td>Package of Simulated Marker Map Information</td></tr>
+<tr><td width="25%"><a href="locus.html">locus</a></td>
+<td>Lookup loci or effects for genetic model formulas</td></tr>
+<tr><td width="25%"><a href="loglik.html">loglik</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="loglik.html">loglik.bqtl</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="loglik.html">loglik.bqtl.list</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="loglik.html">loglik.default</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="loglik.html">logpost</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="loglik.html">logpost.bqtl</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="loglik.html">logpost.bqtl.list</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="loglik.html">logpost.default</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="make.analysis.obj.html">make.analysis.obj</a></td>
+<td>Set up data for QTL mapping</td></tr>
+<tr><td width="25%"><a href="make.loc.right.html">make.loc.right</a></td>
+<td>Keep track of fully informative markers or states</td></tr>
+<tr><td width="25%"><a href="make.location.prior.html">make.location.prior</a></td>
+<td>Provide a default prior</td></tr>
+<tr><td width="25%"><a href="make.map.frame.html">make.map.frame</a></td>
+<td>Create marker map specifications</td></tr>
+<tr><td width="25%"><a href="make.marker.numeric.html">make.marker.numeric</a></td>
+<td>Translate a marker.frame.object to numeric matrix</td></tr>
+<tr><td width="25%"><a href="make.regressor.matrix.html">make.regressor.matrix</a></td>
+<td>Create regressors using expected marker values</td></tr>
+<tr><td width="25%"><a href="make.state.matrix.html">make.state.matrix</a></td>
+<td>Create state.matrix.object</td></tr>
+<tr><td width="25%"><a href="make.varcov.html">make.varcov</a></td>
+<td>Create moment matrices</td></tr>
+<tr><td width="25%"><a href="bqtl-internal.html">map.dx</a></td>
+<td>Internal BQTL functions</td></tr>
+<tr><td width="25%"><a href="map.index.html">map.index</a></td>
+<td>Look up numerical index(es) of map locations</td></tr>
+<tr><td width="25%"><a href="map.index.html">map.index.analysis.object</a></td>
+<td>Look up numerical index(es) of map locations</td></tr>
+<tr><td width="25%"><a href="map.index.html">map.index.default</a></td>
+<td>Look up numerical index(es) of map locations</td></tr>
+<tr><td width="25%"><a href="map.location.html">map.loc</a></td>
+<td>Report map location</td></tr>
+<tr><td width="25%"><a href="map.location.html">map.location</a></td>
+<td>Report map location</td></tr>
+<tr><td width="25%"><a href="map.location.html">map.location.analysis.object</a></td>
+<td>Report map location</td></tr>
+<tr><td width="25%"><a href="map.location.html">map.location.bqtl</a></td>
+<td>Report map location</td></tr>
+<tr><td width="25%"><a href="map.location.html">map.location.bqtl.list</a></td>
+<td>Report map location</td></tr>
+<tr><td width="25%"><a href="map.location.html">map.location.default</a></td>
+<td>Report map location</td></tr>
+<tr><td width="25%"><a href="map.names.html">map.names</a></td>
+<td>Look up names of markers or loci</td></tr>
+<tr><td width="25%"><a href="map.names.html">map.names.analysis.object</a></td>
+<td>Look up names of markers or loci</td></tr>
+<tr><td width="25%"><a href="map.names.html">map.names.bqtl</a></td>
+<td>Look up names of markers or loci</td></tr>
+<tr><td width="25%"><a href="map.names.html">map.names.bqtl.list</a></td>
+<td>Look up names of markers or loci</td></tr>
+<tr><td width="25%"><a href="map.names.html">map.names.default</a></td>
+<td>Look up names of markers or loci</td></tr>
+<tr><td width="25%"><a href="map.names.html">map.names.map.frame</a></td>
+<td>Look up names of markers or loci</td></tr>
+<tr><td width="25%"><a href="marker.fill.html">marker.fill</a></td>
+<td>Map Positions Between Markers</td></tr>
+<tr><td width="25%"><a href="marker.levels.html">marker.levels</a></td>
+<td>Define marker level codes</td></tr>
+<tr><td width="25%"><a href="plot.map.frame.html">plot.analysis.object</a></td>
+<td>plots by chromosome location</td></tr>
+<tr><td width="25%"><a href="plot.map.frame.html">plot.map.frame</a></td>
+<td>plots by chromosome location</td></tr>
+<tr><td width="25%"><a href="loglik.html">posterior</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="loglik.html">posterior.bqtl</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="loglik.html">posterior.bqtl.list</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="loglik.html">posterior.default</a></td>
+<td>Extract loglikelihood, log posterior, or posterior from fitted models</td></tr>
+<tr><td width="25%"><a href="predict.bqtl.html">predict.bqtl</a></td>
+<td>fitted values from QTL models</td></tr>
+<tr><td width="25%"><a href="predict.linear.bayes.html">predict.linear.bayes</a></td>
+<td>Residuals or Predicted Values for linear.bayes objects</td></tr>
+<tr><td width="25%"><a href="residuals.bqtl.html">residuals.bqtl</a></td>
+<td>Residuals from QTL models</td></tr>
+<tr><td width="25%"><a href="predict.linear.bayes.html">residuals.linear.bayes</a></td>
+<td>Residuals or Predicted Values for linear.bayes objects</td></tr>
+<tr><td width="25%"><a href="bqtl-internal.html">rhs.bqtl</a></td>
+<td>Internal BQTL functions</td></tr>
+<tr><td width="25%"><a href="marker.levels.html">ri.levels</a></td>
+<td>Define marker level codes</td></tr>
+<tr><td width="25%"><a href="summary.adj.html">summary.adj</a></td>
+<td>Summarize Laplace approximations</td></tr>
+<tr><td width="25%"><a href="summary.map.frame.html">summary.analysis.object</a></td>
+<td>Summary methods for basic data objects</td></tr>
+<tr><td width="25%"><a href="summary.bqtl.html">summary.bqtl</a></td>
+<td>Summarize bqtl object</td></tr>
+<tr><td width="25%"><a href="summary.map.frame.html">summary.map.frame</a></td>
+<td>Summary methods for basic data objects</td></tr>
+<tr><td width="25%"><a href="summary.swap.html">summary.swap</a></td>
+<td>Summarize Gibbs samples for a k-gene model</td></tr>
+<tr><td width="25%"><a href="swap.html">swap</a></td>
+<td>MCMC sampling of multigene models</td></tr>
+<tr><td width="25%"><a href="swapbc1.html">swapbc1</a></td>
+<td>Sample BC1 or Recombinant Inbred loci via approximate posterior.</td></tr>
+<tr><td width="25%"><a href="swapf2.html">swapf2</a></td>
+<td>Sample F2 loci via approximate posterior</td></tr>
+<tr><td width="25%"><a href="twohk.html">twohk</a></td>
+<td>One and Two Gene Models Using Linearized Posterior</td></tr>
+<tr><td width="25%"><a href="twohkbc1.html">twohkbc1</a></td>
+<td>One and Two Gene Models Using Linearized Posterior</td></tr>
+<tr><td width="25%"><a href="twohkbc1.html">twohkf2</a></td>
+<td>One and Two Gene Models Using Linearized Posterior</td></tr>
+<tr><td width="25%"><a href="bqtl-internal.html">uniq.config</a></td>
+<td>Internal BQTL functions</td></tr>
+<tr><td width="25%"><a href="varcov.html">varcov</a></td>
+<td>Create moment matrices</td></tr>
+<tr><td width="25%"><a href="bqtl-internal.html">version.bqtl</a></td>
+<td>Internal BQTL functions</td></tr>
+<tr><td width="25%"><a href="bqtl-internal.html">zero.dup</a></td>
+<td>Internal BQTL functions</td></tr>
+</table>
+</body></html>

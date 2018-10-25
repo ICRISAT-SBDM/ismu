@@ -1,0 +1,5 @@
+EasyHTMLReport-package
+                        Easy HTML-Mail Report
+easyHtmlReport          Easy to send HTML reports.
+sendmailEx              Extended version sendmailR::sendmail
+simpleHtmlReport        simple html report

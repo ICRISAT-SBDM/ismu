@@ -1,0 +1,12 @@
+FastRWeb                FastRWeb - infratructure to serve web pages
+                        with R scripts efficiently
+WebPlot                 Graphics device for inclusion of plots in
+                        FastRWeb results.
+WebResult               Result object of a FastRWeb script
+add.header              Add HTML headers to FastRWeb response.
+arequest                FastRWeb asynchronous (AJAX) requests
+done                    FastRWeb interface functions
+oinput                  Functions aiding in creating HTML form
+                        elements.
+out                     FastRWeb HTML output functions
+parse.multipart         Parsing of POST request multi-part body.

@@ -1,0 +1,36 @@
+DiabRecess              Data on diabetes patients antigen classes
+DirichNormHWE           Evaluates the normalizing constant under the
+                        HWE model, with a conjugate prior
+DirichNormSat           Evaluates the normalizing constant (as used in
+                        the denominator of a Bayes factor) for a
+                        conjugate prior
+DirichSampHWE           Simulate samples from a Dirichlet prior or
+                        posterior under HWE
+DirichSampSat           Simulate samples from a Dirichlet prior or
+                        posterior under the saturated model
+HWEDirichBF2            Evaluates the Bayes factor in the k=2 allele
+                        case under conjugate priors
+HWEImportSamp           Importance sampling to calculate the
+                        normalizing constant under the single f model
+HWETriangBF2            Evaluates the Bayes factor in the k=2 allele
+                        case with a "triangular" prior under the null
+HWEmodelsMLE            Evaluates the maximum likelihood estimates of
+                        the parameters of various models in the k
+                        allele case
+HWEsimdat               Simulate data under the single f model with k
+                        alleles.
+LambdaOptim             Obtains values for the prior specification for
+                        lambda
+LambdaPriorChoice       Called by LambaOptim
+MultLogLik              Evaluates the Multinomial likelihood under the
+                        single f model
+SinglefPrior            Samples from the single f prior.
+SinglefReject           Samples from the posterior for the single f
+                        model
+TriangNormHWE           Evaluates the normalizing constant under the
+                        HWE model, for the "triangular" prior
+                        distribution
+baselogit               Calculates a set of baseline logits from a set
+                        of probabilities
+invbaselogit            Converts a set of k-1 baseline logits into a
+                        set of probabilities

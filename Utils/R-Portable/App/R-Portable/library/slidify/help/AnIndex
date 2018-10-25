@@ -1,0 +1,9 @@
+slidify-package	slidify-package
+author	author
+parse_deck	parse_deck
+publish	publish
+publish_dropbox	publish_dropbox
+publish_github	publish_github
+publish_rpubs	publish_rpubs
+slidify	slidify
+slidifyDefaults	slidifyDefaults

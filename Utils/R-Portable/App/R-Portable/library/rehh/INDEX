@@ -1,0 +1,21 @@
+bifurcation.diagram     plot of an haplotype bifurcation diagram
+calc_ehh                EHH and iHH computations at a given core SNP
+calc_ehhs               EHHS and iES computations at a given core SNP
+data2haplohh            Converting data into an object of class haplohh
+distribplot             Distribution of standardized iHS or Rsb values
+haplohh-class           Class '"haplohh"'
+haplohh_cgu_bta12       Example of an 'haplohh' object
+ies2rsb                 Compute Rsb (standardized ratio of iES from two
+                        populations)
+ihh2ihs                 Compute iHS (standardized iHH)
+ihsplot                 Plot iHS over a genome
+make.example.files      Creating example input files
+rehh-package            Searching for footprints of selection using
+                        Haplotype Homozygosity based tests
+rsbplot                 Plot Rsb over a genome
+scan_hh                 Computing EHH based statistics over a whole
+                        chromosome
+wgscan.cgu              Whole genome scan results for the CGU (Creole
+                        from Guadeloupe island)
+wgscan.eut              Whole genome scan results for a pooled of
+                        European taurine cattle

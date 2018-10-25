@@ -1,0 +1,17 @@
+FastRWeb-package	FastRWeb
+add.header	add.header
+arequest	requests
+as.WebResult	WebResult
+done	done
+FastRWeb	FastRWeb
+oclear	out
+ohead	out
+oinput	oinput
+oprint	out
+oselection	oinput
+osubmit	oinput
+otable	out
+out	out
+parse.multipart	parse.multipart
+WebPlot	WebPlot
+WebResult	WebResult

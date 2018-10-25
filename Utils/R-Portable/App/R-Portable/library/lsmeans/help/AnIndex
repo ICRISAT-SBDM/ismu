@@ -1,0 +1,17 @@
+lsmeans-package	lsmeans-package
+del.eff.lsmc	pairwise.lsmc
+eff.lsmc	pairwise.lsmc
+fiber	fiber
+glht.lsmlf	lsmeans
+lsm	lsmeans
+lsmeans	lsmeans
+lsmip	lsmip
+nutrition	nutrition
+pairwise.lsmc	pairwise.lsmc
+poly.lsmc	pairwise.lsmc
+print.data.frame.lsm	lsmeans
+print.lsm	lsmeans
+revpairwise.lsmc	pairwise.lsmc
+trt.vs.ctrl.lsmc	pairwise.lsmc
+trt.vs.ctrl1.lsmc	pairwise.lsmc
+trt.vs.ctrlk.lsmc	pairwise.lsmc

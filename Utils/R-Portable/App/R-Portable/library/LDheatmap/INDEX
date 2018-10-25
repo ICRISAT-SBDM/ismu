@@ -1,0 +1,18 @@
+CEUData                 Example data set for LDheatmap
+CHBJPTData              Example data set for LDheatmap
+GIMAP5                  Example data set for LDheatmap
+GIMAP5.CEU              Example data set for LDheatmap
+LDheatmap               This function produces a pairwise LD plot.
+LDheatmap.addGenes      Add gene plot to an LDheatmap object.
+LDheatmap.addGrob       Add a graphical object to an LDheatmap plot
+LDheatmap.addRecombRate
+                        Add recombination rate plot to an LD heat map.
+LDheatmap.addScatterplot
+                        Add a scatter plot to an LDheatmap object
+LDheatmap.highlight     Highlight a genetic region in the linkage
+                        disequilibrium heat map
+LDheatmap.marks         Plots a symbol in the centers of cells of the
+                        heat map image
+plotGenes               Plot genes from a specified region of the human
+                        genome.
+recombRate              Produce recombination rate plot.
