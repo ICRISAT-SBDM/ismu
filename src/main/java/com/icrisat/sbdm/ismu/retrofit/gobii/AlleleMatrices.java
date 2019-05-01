@@ -16,6 +16,8 @@ public class AlleleMatrices {
         private String description;
         private String lastUpdated;
         private String studyDbId;
+        private String markerCount;
+        private String sampleCount;
 
         public String getName() {
             return name;
@@ -35,6 +37,14 @@ public class AlleleMatrices {
 
         public String getStudyDbId() {
             return studyDbId;
+        }
+
+        public String getMarkerCount() {
+            return markerCount;
+        }
+
+        public String getSampleCount() {
+            return sampleCount;
         }
     }
 

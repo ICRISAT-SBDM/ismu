@@ -3,7 +3,6 @@ package com.icrisat.sbdm.ismu.retrofit.gobii;
 import com.google.gson.Gson;
 import com.icrisat.sbdm.ismu.retrofit.*;
 import com.icrisat.sbdm.ismu.util.Constants;
-import com.icrisat.sbdm.ismu.util.Util;
 import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -26,10 +25,10 @@ public class GOBIIRetrofitClient {
 
     private GOBIIClient client;
     private Logger logger;
+    private Token token;
 
     /**
      * Authenticate to GOBII.
-     * //TODO: currently this just creates client. Auth part will be added when required
      *
      * @param URL      URL for GOBII service
      * @param userName UserName
@@ -46,6 +45,19 @@ public class GOBIIRetrofitClient {
         } catch (Exception e) {
             status = e.getMessage();
         }
+        Call<Token> authUser = client.authUser("", userName, password);
+        try {
+            Response<Token> response = authUser.execute();
+            if (response.isSuccessful()) {
+                token = response.body();
+            } else {
+                RetrofitError errorMessage = new Gson().fromJson(response.errorBody().charStream(), RetrofitError.class);
+                status = returnExitStatus(response.code(), errorMessage.toString());
+            }
+        } catch (Exception e) {
+            status = "Check URL and internet connection." + e.getMessage();
+            logger.error(status + "\t" + e.getMessage());
+        }
         return status;
     }
 
@@ -55,7 +67,7 @@ public class GOBIIRetrofitClient {
      */
     public String getDataSets(List<String[]> dataSetsList) {
         String status = Constants.SUCCESS;
-        Call<AlleleMatrices> getDataSets = client.getDataSets();
+        Call<AlleleMatrices> getDataSets = client.getDataSets(token.getToken());
         try {
             Response<AlleleMatrices> dataSetsResponse = getDataSets.execute();
             if (dataSetsResponse.isSuccessful()) {
@@ -90,7 +102,7 @@ public class GOBIIRetrofitClient {
         String status = Constants.SUCCESS;
         logger.info("Submitting data extract request for: " + selectedData.get(0) + " with id: " + selectedData.get(1));
         String matrixDBId = (String) selectedData.get(1);
-        Call<ExtractResponse> extractDataSetCall = client.extractDataSet(matrixDBId);
+        Call<ExtractResponse> extractDataSetCall = client.extractDataSet(token.getToken(), matrixDBId);
         try {
             Response<ExtractResponse> extractDataSetResponse = extractDataSetCall.execute();
             if (extractDataSetResponse.isSuccessful()) {
@@ -116,6 +128,42 @@ public class GOBIIRetrofitClient {
     }
 
     /**
+     * Issue an extract request to the selected matrixDbId
+     *
+     * @param markerProfileId markerprofile ID
+     * @return extract jobId with status message
+     */
+    public List<String> extractByExternalCodes(String markerProfileId) {
+        List<String> response = new ArrayList<>();
+        String status = Constants.SUCCESS;
+        logger.info("Submitting data extract request for: " + markerProfileId);
+        Call<ExtractResponse> extractByExternalCodes = client.extractByExternalCodes(token.getToken(), markerProfileId);
+        try {
+            Response<ExtractResponse> extractDataSetResponse = extractByExternalCodes.execute();
+            if (extractDataSetResponse.isSuccessful()) {
+                ExtractResponse extractResponse = extractDataSetResponse.body();
+                if (extractResponse != null && extractResponse.getMetadata() != null) {
+                    Status[] statusArray = extractResponse.getMetadata().getStatus();
+                    for (Status extractStatus : statusArray) {
+                        response.add(extractStatus.getMessage());
+                    }
+                } else {
+                    status = "Got null response.";
+                }
+            } else {
+                RetrofitError errorMessage = new Gson().fromJson(extractDataSetResponse.errorBody().charStream(), RetrofitError.class);
+                status = returnExitStatus(extractDataSetResponse.code(), errorMessage.toString());
+            }
+        } catch (IOException e) {
+            status = Constants.NO_INTERNET;
+            logger.error(status + "\t" + e.getMessage());
+        }
+        response.add(status);
+        return response;
+    }
+
+
+    /**
      * Gets the job status if status is completed will get the genotype file.
      *
      * @param jobId job id
@@ -124,14 +172,14 @@ public class GOBIIRetrofitClient {
     public List<String> getExtractStatus(String jobId) {
         List<String> response = new ArrayList<>();
         logger.info("Requesting the status of the job: " + jobId);
-        Call<ExtractResponse> getExtractStatus = client.getExtractStatus(jobId);
+        Call<ExtractResponse> getExtractStatus = client.getExtractStatus(token.getToken(), jobId);
         response.add(RetrofitUtil.extractDataset(response, getExtractStatus));
         return response;
     }
 
     public String downloadData(String url, String fileName) {
         logger.info("Downloading file from GOBII server: " + url);
-        Call<ResponseBody> call = client.downloadFileWithURL(url);
+        Call<ResponseBody> call = client.downloadFileWithURL(token.getToken(), url);
         return RetrofitUtil.downloadData(fileName, call, Constants.GOBII);
     }
 }

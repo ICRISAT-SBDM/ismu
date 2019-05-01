@@ -1,6 +1,6 @@
 package com.icrisat.sbdm.ismu.retrofit.gobii;
 
-import com.opencsv.CSVWriter;
+import com.icrisat.sbdm.ismu.util.GenoFileFirstTImeProcessing;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -46,23 +46,23 @@ public class GOBIIRetrofitUtil {
 
     public static boolean writeResponseBodyToDisk(ResponseBody body, String outputFileName) {
         List<List<String>> matrix = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(body.byteStream()));
-             CSVWriter csvWriter = new CSVWriter(new FileWriter(outputFileName))) {
+        List<List<String>> transposeMatrix = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(body.byteStream()))) {
             String line;
             while ((line = br.readLine()) != null) {
                 matrix.add(Arrays.asList(line.split("\t")));
             }
             //Remove first line
             matrix.remove(0);
-            performTranspose(matrix, csvWriter);
-            csvWriter.flush();
+            performTranspose(matrix, transposeMatrix);
+            GenoFileFirstTImeProcessing.genofileComputation(outputFileName, transposeMatrix);
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    static void performTranspose(List<List<String>> matrix, CSVWriter csvWriter) {
+    static void performTranspose(List<List<String>> matrix, List<List<String>> transposeMatrix) {
         //TODO: Time assuming file size is small and reading everything into memory. Will do chunks and transpose later.
         int sizeOfCols = matrix.get(0).size();
         for (int i = 0; i < sizeOfCols; i++) {
@@ -70,7 +70,7 @@ public class GOBIIRetrofitUtil {
             for (List<String> lines : matrix) {
                 outputLine.add(lines.get(i));
             }
-            csvWriter.writeNext(outputLine.toArray(new String[outputLine.size()]));
+            transposeMatrix.add(outputLine);
         }
     }
 }

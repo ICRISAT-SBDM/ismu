@@ -1,13 +1,13 @@
 package com.icrisat.sbdm.ismu.retrofit;
 
 public class Pagination {
-    private int pageNumber;
+    private int currentPage;
     private int pageSize;
     private int totalCount;
     private int totalPages;
 
-    public int getPageNumber() {
-        return pageNumber;
+    public int getCurrentPage() {
+        return currentPage;
     }
 
     public int getPageSize() {

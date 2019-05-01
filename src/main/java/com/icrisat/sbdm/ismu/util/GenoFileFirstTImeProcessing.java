@@ -24,7 +24,7 @@ public class GenoFileFirstTImeProcessing {
 
     private static boolean shouldConvert = false;
 
-    static void genofileComputation(String destination, List<List<String>> matrix) throws IOException {
+    public static void genofileComputation(String destination, List<List<String>> matrix) throws IOException {
         shouldConvert = false;
         File dest_file = new File(destination);
         CSVWriter writer = new CSVWriter(new FileWriter(destination));
