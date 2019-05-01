@@ -9,12 +9,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -130,14 +124,12 @@ public class DataSummaryDataObject {
      * @param phenoFile Phenotype file name.(Relative to result directory.)
      */
 
-    String setInputFile(String genoFile, String phenoFile) {
+    void setInputFile(String genoFile, String phenoFile) {
         this.genoFile = genoFile;
         this.phenoFile = phenoFile;
-        String status = Constants.SUCCESS;
         this.genoHtmlName = Util.stripFileExtension(genoFile) + "_sum_" + new SimpleDateFormat("hhmmss").format(new Date()) + ".htm";
         this.genoSummaryCsvName = sharedInformation.getPathConstants().summaryFilesMap.get(genoFile);
         this.phenoHtmlName = Util.stripFileExtension(phenoFile) + "_sum_" + new SimpleDateFormat("hhmmss").format(new Date()) + ".htm";
-        return status;
     }
 }
 

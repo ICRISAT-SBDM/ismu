@@ -54,23 +54,20 @@ public class GOBIIRetrofitUtil {
             }
             //Remove first line
             matrix.remove(0);
-            performTranspose(matrix, transposeMatrix);
+
+            //Perform the transpose
+            int sizeOfCols = matrix.get(0).size();
+            for (int i = 0; i < sizeOfCols; i++) {
+                List<String> outputLine = new ArrayList<>();
+                for (List<String> lines : matrix) {
+                    outputLine.add(lines.get(i));
+                }
+                transposeMatrix.add(outputLine);
+            }
             GenoFileFirstTImeProcessing.genofileComputation(outputFileName, transposeMatrix);
             return true;
         } catch (IOException e) {
             return false;
-        }
-    }
-
-    static void performTranspose(List<List<String>> matrix, List<List<String>> transposeMatrix) {
-        //TODO: Time assuming file size is small and reading everything into memory. Will do chunks and transpose later.
-        int sizeOfCols = matrix.get(0).size();
-        for (int i = 0; i < sizeOfCols; i++) {
-            List<String> outputLine = new ArrayList<>();
-            for (List<String> lines : matrix) {
-                outputLine.add(lines.get(i));
-            }
-            transposeMatrix.add(outputLine);
         }
     }
 }
