@@ -17,7 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -264,7 +263,7 @@ public class OpenDialog {
      */
     private void actionPhenoDB(ActionEvent e) {
         phenotypeDB.setVisible(true);
-        pathConstants.isBrapiCallPheno = true;
+       // pathConstants.isBrapiCallPheno = true;
     }
 
     /**

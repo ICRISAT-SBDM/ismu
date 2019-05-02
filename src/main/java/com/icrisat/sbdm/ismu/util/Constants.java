@@ -10,6 +10,7 @@ public class Constants {
     public static final String URL_ISSUE = "Please check the URL.";
     public static final String NO_INTERNET = "NO INTERNET. Please check your internet/network connection";
     public static final String MISSING_DATA = "Incorrect format or missing triat information.";
+    public static final String SAMPLE_ID = "sampleId";
     public static final String GERMPLASM_DB_ID = "germplasmDbId";
     public static final String GERMPLASM_NAME = "germplasmName";
     public static final String PLOT_NUMBER = "plotNumber";

@@ -1,5 +1,7 @@
 package com.icrisat.sbdm.ismu.retrofit.bms;
 
+import com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Observations;
+import com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.TriatData;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.opencsv.CSVWriter;
@@ -68,12 +70,53 @@ class BMSRetrofitUtil {
 
     /**
      * Writes the data from rest call into a csv file.
+     * <p>
+     * TODO: Currently we are assuming there is one to one relation between observationId and sampleId
+     */
+    static String writeTrialDataToFile(List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> triatJSONList, Map<String, String> sampleMap, SharedInformation sharedInformation) {
+        String status = Constants.SUCCESS;
+        String outputFileName = sharedInformation.getPathConstants().tempResultDirectory + "BMS_data" + new SimpleDateFormat("hhmmss").format(new Date()) + ".csv";
+        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(outputFileName))) {
+            //Write Headers
+            List<String> headers = new ArrayList<>();
+            headers.add(Constants.SAMPLE_ID);
+            List<Observations> observations = triatJSONList.get(0).getObservations();
+            for (Observations observation : observations) {
+                headers.add(observation.getObservationVariableName());
+            }
+            csvWriter.writeNext(headers.toArray(new String[headers.size()]));
+            // Write Data
+            for (Map.Entry<String, String> sample : sampleMap.entrySet()) {
+                List<String> dataRow = new ArrayList<>();
+                dataRow.add(sample.getKey());
+                for (com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data triatJSON : triatJSONList) {
+                    if (sample.getValue().equalsIgnoreCase(triatJSON.getObservationUnitDbId())) {
+                        List<Observations> observationList = triatJSON.getObservations();
+                        for (Observations observation : observationList)
+                            dataRow.add(observation.getValue());
+                        break;
+                    }
+                }
+                csvWriter.writeNext(dataRow.toArray(new String[dataRow.size()]));
+            }
+            csvWriter.flush();
+            sharedInformation.getOpenDialog().getTxtPhenotype().setText(outputFileName);
+        } catch (Exception e) {
+            status = e.getMessage();
+            sharedInformation.getLogger().error(e.getMessage() + e.getStackTrace());
+        }
+        return status;
+    }
+
+
+    /**
+     * Writes the data from rest call into a csv file.
      * We need "germplasmName", "germplasmDbId", "plotNumber", "plotId", "blockNumber", "replicate", and triat no's
      *
      * @param trialJSON         Trail JSON
      * @param sharedInformation shared information.
      */
-    static String writeTrialDataToFile(Trial_Study_DBData trialJSON, SharedInformation sharedInformation) {
+    static String writeTrialDataToFile(TriatData trialJSON, SharedInformation sharedInformation) {
         String status = Constants.SUCCESS;
         String originalOutputFileName = sharedInformation.getPathConstants().tempResultDirectory + "BMS_data_original" + new SimpleDateFormat("hhmmss").format(new Date()) + ".csv";
         String outputFileName = sharedInformation.getPathConstants().tempResultDirectory + "BMS_data" + new SimpleDateFormat("hhmmss").format(new Date()) + ".csv";
@@ -89,7 +132,7 @@ class BMSRetrofitUtil {
             bmsFileHeaderLineObject.setPlotNumber(Constants.PLOT_NUMBER);
             bmsFileHeaderLineObject.setReplicate(Constants.REPLICATE);
             sharedInformation.getPathConstants().noOfHeadersPheno = bmsFileHeaderLineObject.getHeaderSize();
-            bmsFileHeaderLineObject.setData(trialJSON.getResult().getObservationVariableNames());
+        /*    bmsFileHeaderLineObject.setData(trialJSON.getResult().getObservationVariableNames());
             List<String> headersAndData = bmsFileHeaderLineObject.getHeadersAndData();
             // Write Data
             Map<String, Integer> headerIndex = getHeaderIndex(trialJSON.getResult().getHeaderRow());
@@ -124,6 +167,7 @@ class BMSRetrofitUtil {
             } catch (Exception e) {
                 status = Constants.MISSING_DATA + "\n Please check " + originalOutputFileName;
             }
+  */
         } catch (Exception e) {
             status = e.getMessage();
             sharedInformation.getLogger().error(e.getMessage() + e.getStackTrace());

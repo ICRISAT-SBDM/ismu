@@ -209,7 +209,7 @@ public class MainFrameActionListeners {
 
     private void phenoConnectAction(ActionEvent ae, JDialog dialogBox) {
         phenotypeDB.setVisible(true);
-        pathConstants.isBrapiCallPheno = true;
+//        pathConstants.isBrapiCallPheno = true;
         OpenDialog openDialog = sharedInformation.getOpenDialog();
         String phenofile = openDialog.getTxtPhenotype().getText();
         if (phenofile.equals("")) return;
