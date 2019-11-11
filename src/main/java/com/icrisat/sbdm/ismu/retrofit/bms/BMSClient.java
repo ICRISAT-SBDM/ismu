@@ -17,10 +17,9 @@ public interface BMSClient {
     @GET("/bmsapi/{crop}/brapi/v1/trials ")
     Call<Trials> getTrials(@Header("Authorization") String value,
                            @Path("crop") String crop,
-                           @Query("programDbId") String programDbId,
                            @Query("pageNumber") int pageNumber);
 
-    @GET("/bmsapi/{crop}/brapi/v1/phenotypes-search")
+    @POST("/bmsapi/{crop}/brapi/v1/phenotypes-search")
     Call<TriatData> getTrialData(@Header("Authorization") String value,
                                  @Path("crop") String crop,
                                  @Body PhenotypesSearchTrialDbId phenotypesSearchTrialDbId);

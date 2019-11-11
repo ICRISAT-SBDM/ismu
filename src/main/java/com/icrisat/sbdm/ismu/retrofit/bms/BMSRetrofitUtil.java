@@ -73,7 +73,7 @@ class BMSRetrofitUtil {
      * <p>
      * TODO: Currently we are assuming there is one to one relation between observationId and sampleId
      */
-    static String writeTrialDataToFile(List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> triatJSONList, Map<String, String> sampleMap, SharedInformation sharedInformation) {
+    static String writeTrialDataToFile(List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> triatJSONList,  SharedInformation sharedInformation) {
         String status = Constants.SUCCESS;
         String outputFileName = sharedInformation.getPathConstants().tempResultDirectory + "BMS_data" + new SimpleDateFormat("hhmmss").format(new Date()) + ".csv";
         try (CSVWriter csvWriter = new CSVWriter(new FileWriter(outputFileName))) {
@@ -86,19 +86,15 @@ class BMSRetrofitUtil {
             }
             csvWriter.writeNext(headers.toArray(new String[headers.size()]));
             // Write Data
-            for (Map.Entry<String, String> sample : sampleMap.entrySet()) {
+            for (com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data triatJSON : triatJSONList) {
                 List<String> dataRow = new ArrayList<>();
-                dataRow.add(sample.getKey());
-                for (com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data triatJSON : triatJSONList) {
-                    if (sample.getValue().equalsIgnoreCase(triatJSON.getObservationUnitDbId())) {
-                        List<Observations> observationList = triatJSON.getObservations();
-                        for (Observations observation : observationList)
-                            dataRow.add(observation.getValue());
-                        break;
-                    }
-                }
+                dataRow.add(triatJSON.getObservationUnitDbId());
+                List<Observations> observationList = triatJSON.getObservations();
+                for (Observations observation : observationList)
+                    dataRow.add(observation.getValue());
                 csvWriter.writeNext(dataRow.toArray(new String[dataRow.size()]));
             }
+
             csvWriter.flush();
             sharedInformation.getOpenDialog().getTxtPhenotype().setText(outputFileName);
         } catch (Exception e) {

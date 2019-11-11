@@ -114,7 +114,7 @@ public class BMSRetrofitClient {
 
     private Status getTrialForPage(String selectedCrop, List<String[]> trialList, String authToken, int pageNo) {
         Status status = new Status();
-        Call<Trials> getTrials = client.getTrials(authToken, selectedCrop, "d65029bd-ba05-4ae4-9156-e0973229314c", pageNo);
+        Call<Trials> getTrials = client.getTrials(authToken, selectedCrop, pageNo);
         try {
             logger.info("Getting trials for " + selectedCrop + " for pageNo " + pageNo);
             Response<Trials> trialResponse = getTrials.execute();
@@ -147,9 +147,8 @@ public class BMSRetrofitClient {
         String status;
         String authToken = BEARER + token.getAccess_token();
         String crop = (String) selectedData.get(0);
-        boolean isTrial = selectedData.get(3) == "";
+        boolean isTrial = selectedData.get(6) == "";
         List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> traitData = new ArrayList<>();
-        Map<String, String> sampleData = new HashMap<>();
         if (isTrial) {
             String trialDbId = (String) selectedData.get(5);
             PhenotypesSearchTrialDbId phenotypesSearchTrialDbId = new PhenotypesSearchTrialDbId();
@@ -157,15 +156,6 @@ public class BMSRetrofitClient {
             Call<TriatData> getData = client.getTrialData(authToken, crop, phenotypesSearchTrialDbId);
             status = downloadTraitData(getData, traitData);
             if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
-
-            //TODO: Currently there is no call to get samples for trialId. This is just a dummy.
-            String studyDbId = "2404";
-            SampleSearchStudyDbId sampleSearchStudyDbId = new SampleSearchStudyDbId();
-            sampleSearchStudyDbId.setStudyDbIds(studyDbId);
-            Call<SampleData> sampleIdsForStudy = client.getSampleIdsForStudy(authToken, crop, sampleSearchStudyDbId);
-            status = downloadSampleData(sampleIdsForStudy, sampleData);
-            if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
-
         } else {
             String studyDbId = (String) selectedData.get(6);
             PhenotypesSearchStudyDbId phenotypesSearchStudyDbId = new PhenotypesSearchStudyDbId();
@@ -173,15 +163,8 @@ public class BMSRetrofitClient {
             Call<TriatData> getData = client.getStudyData(authToken, crop, phenotypesSearchStudyDbId);
             status = downloadTraitData(getData, traitData);
             if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
-
-            SampleSearchStudyDbId sampleSearchStudyDbId = new SampleSearchStudyDbId();
-            sampleSearchStudyDbId.setStudyDbIds(studyDbId);
-            Call<SampleData> sampleIdsForStudy = client.getSampleIdsForStudy(authToken, crop, sampleSearchStudyDbId);
-            status = downloadSampleData(sampleIdsForStudy, sampleData);
-            if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
-
         }
-        status = writeTrialDataToFile(traitData, sampleData, sharedInformation);
+        status = writeTrialDataToFile(traitData, sharedInformation);
         System.out.println();
         return status;
     }
