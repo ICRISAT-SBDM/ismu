@@ -5,7 +5,9 @@ import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,21 +28,18 @@ public class GOBIIRetrofitUtil {
     }
 
     /**
-     * Process the allelematrices Json into a list.
-     *
-     * @param alleleMatricesJSON Allele matrices
-     * @param dataSetsList       data set list
+     * @param variantsetsJSON input JSON
+     * @param variantSetsList varaiant set
      */
-    static void processDataSets(AlleleMatrices alleleMatricesJSON, List<String[]> dataSetsList) {
-        List<AlleleMatrices.Data> dataSets = alleleMatricesJSON.getResult().getData();
-        for (AlleleMatrices.Data dataSet : dataSets) {
-            String[] data = new String[5];
-            data[0] = dataSet.getName();
-            data[1] = dataSet.getMatrixDbId();
-            data[2] = dataSet.getDescription();
-            data[3] = dataSet.getLastUpdated();
-            data[4] = dataSet.getStudyDbId();
-            dataSetsList.add(data);
+    static void processVariantSets(Variantsets variantsetsJSON, List<String[]> variantSetsList) {
+        Variantsets.Data[] variantSets = variantsetsJSON.getResult().getData();
+        for (Variantsets.Data variantSet : variantSets) {
+            String[] data = new String[4];
+            data[0] = variantSet.getVariantSetName();
+            data[1] = variantSet.getStudyName();
+            data[2] = variantSet.getVariantSetDbId();
+            data[3] = variantSet.getStudyDbId();
+            variantSetsList.add(data);
         }
     }
 

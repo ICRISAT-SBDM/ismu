@@ -12,6 +12,14 @@ public interface GOBIIClient {
                          @Header("X-Username") String userName,
                          @Header("X-Password") String password);
 
+    @GET("brapi/v1/variantsets")
+    Call<Variantsets> getVariantSets(@Header("X-Auth-Token") String token);
+
+    @GET("brapi/v1/variantsets/{variantSetId}/calls")
+    Call<Variantsets> downloadVariantSet(@Header("X-Auth-Token") String token,
+                                         @Path("jobId") String variantSetId,
+                                         @Query("matrixDbId") String matrixDbId);
+
     @GET("brapi/v1/allelematrices")
     Call<AlleleMatrices> getDataSets(@Header("X-Auth-Token") String token);
 
@@ -21,7 +29,7 @@ public interface GOBIIClient {
 
     @GET("brapi/v1/allelematrix-search")
     Call<ExtractResponse> extractByExternalCodes(@Header("X-Auth-Token") String token,
-                                         @Query("markerprofileDbId") String markerprofileDbId);
+                                                 @Query("markerprofileDbId") String markerprofileDbId);
 
 
     @GET("brapi/v1/allelematrix-search/status/{jobId}")

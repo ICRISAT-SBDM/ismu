@@ -62,25 +62,24 @@ public class GOBIIRetrofitClient {
     }
 
     /**
-     * @param dataSetsList List of datasets.
+     * @param variantSetList List of variantSets.
      * @return Success status.
      */
-    public String getDataSets(List<String[]> dataSetsList) {
+    public String getVariantSets(List<String[]> variantSetList) {
         String status = Constants.SUCCESS;
-        Call<AlleleMatrices> getDataSets = client.getDataSets(token.getToken());
+        Call<Variantsets> getVariantSets = client.getVariantSets(token.getToken());
         try {
-            Response<AlleleMatrices> dataSetsResponse = getDataSets.execute();
+            Response<Variantsets> dataSetsResponse = getVariantSets.execute();
             if (dataSetsResponse.isSuccessful()) {
-                AlleleMatrices alleleMatricesJSON = dataSetsResponse.body();
-                if (alleleMatricesJSON != null)
-                    processDataSets(alleleMatricesJSON, dataSetsList);
+                Variantsets variantsetsJSON = dataSetsResponse.body();
+                if (variantsetsJSON != null)
+                    processVariantSets(variantsetsJSON, variantSetList);
                 else
                     status = "Could not receive any datasets.";
             } else {
                 String serverStatus = checkForServerError(dataSetsResponse.errorBody().byteStream());
                 if (!serverStatus.equalsIgnoreCase(Constants.SUCCESS))
                     return serverStatus;
-
                 RetrofitError errorMessage = new Gson().fromJson(dataSetsResponse.errorBody().charStream(), RetrofitError.class);
                 status = returnExitStatus(dataSetsResponse.code(), errorMessage.toString());
             }
@@ -100,7 +99,7 @@ public class GOBIIRetrofitClient {
     public List<String> extractData(List selectedData) {
         List<String> response = new ArrayList<>();
         String status = Constants.SUCCESS;
-        logger.info("Submitting data extract request for: " + selectedData.get(0) + " with id: " + selectedData.get(1));
+        logger.info("Submitting data download request for: " + selectedData.get(0) + " with id: " + selectedData.get(2));
         String matrixDBId = (String) selectedData.get(1);
         Call<ExtractResponse> extractDataSetCall = client.extractDataSet(token.getToken(), matrixDBId);
         try {

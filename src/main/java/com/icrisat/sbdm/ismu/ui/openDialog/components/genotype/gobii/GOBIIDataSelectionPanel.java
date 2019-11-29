@@ -26,9 +26,10 @@ public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
         model.setRowCount(0);
         GOBIIRetrofitClient client = sharedInformation.getGobiiRetrofitClient();
         List<String[]> dataSetList = new ArrayList<>();
-        String status = client.getDataSets(dataSetList);
+        String status = client.getVariantSets(dataSetList);
         if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
-            status = client.getDataSets(dataSetList);
+            // status = client.getDataSets(dataSetList);
+            status = client.getVariantSets(dataSetList);
         }
         if (status.equalsIgnoreCase(Constants.SUCCESS)) {
             for (String[] dataSet : dataSetList) {
