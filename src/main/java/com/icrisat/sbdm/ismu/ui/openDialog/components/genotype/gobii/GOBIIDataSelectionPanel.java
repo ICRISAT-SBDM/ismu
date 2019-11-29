@@ -51,7 +51,8 @@ public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
             protected Object doInBackground() {
                 if (finalSelectedData != null) {
                     GOBIIRetrofitClient gobiiRetrofitClient = sharedInformation.getGobiiRetrofitClient();
-                    List<String> response = gobiiRetrofitClient.extractData(finalSelectedData);
+                    String outputFileName = getBrapiOutputFileName("GOBII");
+                    List<String> response = gobiiRetrofitClient.downloadData(finalSelectedData,outputFileName);
                     // Last item is status
                     if (response.get(response.size() - 1).equalsIgnoreCase(Constants.SUCCESS)) {
                         // Remove last item as it is status.

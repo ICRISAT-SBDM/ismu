@@ -1,5 +1,8 @@
 package com.icrisat.sbdm.ismu.retrofit.gobii;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.icrisat.sbdm.ismu.util.GenoFileFirstTImeProcessing;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
@@ -20,6 +23,9 @@ public class GOBIIRetrofitUtil {
      * @return retrofit client.
      */
     static GOBIIClient createClient(String URL) {
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(URL)
                 .addConverterFactory(GsonConverterFactory.create());
@@ -41,6 +47,39 @@ public class GOBIIRetrofitUtil {
             data[3] = variantSet.getStudyDbId();
             variantSetsList.add(data);
         }
+    }
+
+    static void processCallSets(Calls callsJSON, String fileName) {
+        Calls.Data[] calls = callsJSON.getResult().getData();
+        String variantName = null;
+        List<String> callNames = new ArrayList<>();
+        List<List<String>> variantSet = new ArrayList<>();
+        List<String> row = new ArrayList<>();
+        boolean isFirstRow = true;
+        for (Calls.Data call : calls) {
+            if (variantName == null) {
+                variantName = call.getVariantName();
+                callNames.add("");
+            }
+            if (variantName.equalsIgnoreCase(call.getVariantName())) {
+                // It is the same row
+                callNames.add(call.getCallSetName());
+                row.add(call.getGenotype().getStringValue());
+            } else {
+                if (isFirstRow) {
+                    variantSet.add(callNames);
+                    isFirstRow = false;
+                }
+                row.add(0, variantName);
+                variantSet.add(row);
+                row = new ArrayList<>();
+                callNames = new ArrayList<>();
+                variantName = call.getVariantName();
+                callNames.add(call.getCallSetName());
+                row.add(call.getGenotype().getStringValue());
+            }
+        }
+        System.out.println("Check US");
     }
 
     public static boolean writeResponseBodyToDisk(ResponseBody body, String outputFileName) {

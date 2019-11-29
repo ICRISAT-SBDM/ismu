@@ -83,7 +83,7 @@ public class GOBIIRetrofitClient {
                 RetrofitError errorMessage = new Gson().fromJson(dataSetsResponse.errorBody().charStream(), RetrofitError.class);
                 status = returnExitStatus(dataSetsResponse.code(), errorMessage.toString());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
             status = e.getMessage();
         }
@@ -96,31 +96,28 @@ public class GOBIIRetrofitClient {
      * @param selectedData Data selected. Second element is matrixDbId
      * @return extract jobId with status message
      */
-    public List<String> extractData(List selectedData) {
+    public List<String> downloadData(List selectedData, String fileName) {
         List<String> response = new ArrayList<>();
         String status = Constants.SUCCESS;
         logger.info("Submitting data download request for: " + selectedData.get(0) + " with id: " + selectedData.get(2));
-        String matrixDBId = (String) selectedData.get(1);
-        Call<ExtractResponse> extractDataSetCall = client.extractDataSet(token.getToken(), matrixDBId);
+        int variantSetId = Integer.parseInt((String) selectedData.get(2));
+        Call<Calls> downloadVariantSetCall = client.downloadVariantSet(token.getToken(), variantSetId, 1000);
         try {
-            Response<ExtractResponse> extractDataSetResponse = extractDataSetCall.execute();
-            if (extractDataSetResponse.isSuccessful()) {
-                ExtractResponse extractResponse = extractDataSetResponse.body();
-                if (extractResponse != null && extractResponse.getMetadata() != null) {
-                    Status[] statusArray = extractResponse.getMetadata().getStatus();
-                    for (Status extractStatus : statusArray) {
-                        response.add(extractStatus.getMessage());
-                    }
+            Response<Calls> downloadVariantSetResponse = downloadVariantSetCall.execute();
+            if (downloadVariantSetResponse.isSuccessful()) {
+                Calls callResponseJSON = downloadVariantSetResponse.body();
+                if (callResponseJSON != null) {
+                    processCallSets(callResponseJSON,fileName);
                 } else {
                     status = "Got null response.";
                 }
             } else {
-                RetrofitError errorMessage = new Gson().fromJson(extractDataSetResponse.errorBody().charStream(), RetrofitError.class);
-                status = returnExitStatus(extractDataSetResponse.code(), errorMessage.toString());
+                RetrofitError errorMessage = new Gson().fromJson(downloadVariantSetResponse.errorBody().charStream(), RetrofitError.class);
+                status = returnExitStatus(downloadVariantSetResponse.code(), errorMessage.toString());
             }
-        } catch (IOException e) {
-            status = Constants.NO_INTERNET;
-            logger.error(status + "\t" + e.getMessage());
+        } catch (Exception e) {
+            status = e.getMessage();
+            logger.error(status);
         }
         response.add(status);
         return response;

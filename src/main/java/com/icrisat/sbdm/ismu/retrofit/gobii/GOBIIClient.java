@@ -16,21 +16,13 @@ public interface GOBIIClient {
     Call<Variantsets> getVariantSets(@Header("X-Auth-Token") String token);
 
     @GET("brapi/v1/variantsets/{variantSetId}/calls")
-    Call<Variantsets> downloadVariantSet(@Header("X-Auth-Token") String token,
-                                         @Path("jobId") String variantSetId,
-                                         @Query("matrixDbId") String matrixDbId);
-
-    @GET("brapi/v1/allelematrices")
-    Call<AlleleMatrices> getDataSets(@Header("X-Auth-Token") String token);
-
-    @GET("brapi/v1/allelematrix-search")
-    Call<ExtractResponse> extractDataSet(@Header("X-Auth-Token") String token,
-                                         @Query("matrixDbId") String matrixDbId);
+    Call<Calls> downloadVariantSet(@Header("X-Auth-Token") String token,
+                                   @Path("variantSetId") int variantSetId,
+                                   @Query("pageSize") int pageSize);
 
     @GET("brapi/v1/allelematrix-search")
     Call<ExtractResponse> extractByExternalCodes(@Header("X-Auth-Token") String token,
                                                  @Query("markerprofileDbId") String markerprofileDbId);
-
 
     @GET("brapi/v1/allelematrix-search/status/{jobId}")
     Call<ExtractResponse> getExtractStatus(@Header("X-Auth-Token") String token,
