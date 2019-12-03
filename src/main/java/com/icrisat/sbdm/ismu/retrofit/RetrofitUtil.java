@@ -2,12 +2,12 @@ package com.icrisat.sbdm.ismu.retrofit;
 
 import com.google.gson.Gson;
 import com.icrisat.sbdm.ismu.retrofit.germinate.GerminateRetrofitUtil;
-import com.icrisat.sbdm.ismu.retrofit.gobii.GOBIIRetrofitUtil;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,11 +88,6 @@ public class RetrofitUtil {
                 switch (type) {
                     case Constants.GERMINATE:
                         if (!GerminateRetrofitUtil.writeResponseBodyToDisk(downloadDataSetResponse.body(), fileName)) {
-                            status = "Error in writing file to disk. Please check log file for details.";
-                        }
-                        break;
-                    case Constants.GOBII:
-                        if (!GOBIIRetrofitUtil.writeResponseBodyToDisk(downloadDataSetResponse.body(), fileName)) {
                             status = "Error in writing file to disk. Please check log file for details.";
                         }
                         break;

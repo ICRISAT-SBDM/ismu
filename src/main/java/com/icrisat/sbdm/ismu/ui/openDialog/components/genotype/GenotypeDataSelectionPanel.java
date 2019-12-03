@@ -69,7 +69,7 @@ public abstract class GenotypeDataSelectionPanel {
     /**
      * Takes jobId and queries until completion or failure
      *
-     * @param clientType GOBII, Germinate etc.
+     * @param clientType Germinate, GIGWA.
      * @param jobId      jobId
      */
     protected void checkJobStatusNDownload(int clientType, String jobId) {
@@ -78,9 +78,7 @@ public abstract class GenotypeDataSelectionPanel {
             while (proceed) {
                 Thread.sleep(5000);
                 List<String> extractStatus = null;
-                if (clientType == Constants.GOBII_TYPE)
-                    extractStatus = sharedInformation.getGobiiRetrofitClient().getExtractStatus(jobId);
-                else if (clientType == Constants.GERMINATE_TYPE)
+                if (clientType == Constants.GERMINATE_TYPE)
                     extractStatus = sharedInformation.getGerminateRetrofitClient().getExtractStatus(jobId);
                 else if (clientType == Constants.GIGWA_TYPE) {/*extractStatus = germinateRetrofitClient.getExtractStatus(jobId);*/}
 

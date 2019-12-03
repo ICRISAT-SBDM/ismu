@@ -1,21 +1,14 @@
 package com.icrisat.sbdm.ismu.retrofit.gobii;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.GenoFileFirstTImeProcessing;
-import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class GOBIIRetrofitUtil {
+class GOBIIRetrofitUtil {
     /**
      * Creates a retrofit client.
      *
@@ -23,9 +16,6 @@ public class GOBIIRetrofitUtil {
      * @return retrofit client.
      */
     static GOBIIClient createClient(String URL) {
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create();
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(URL)
                 .addConverterFactory(GsonConverterFactory.create());
@@ -49,7 +39,7 @@ public class GOBIIRetrofitUtil {
         }
     }
 
-    static void processCallSets(Calls callsJSON, String fileName) {
+    static String processCallSets(Calls callsJSON, String fileName) {
         Calls.Data[] calls = callsJSON.getResult().getData();
         String variantName = null;
         List<String> callNames = new ArrayList<>();
@@ -79,33 +69,11 @@ public class GOBIIRetrofitUtil {
                 row.add(call.getGenotype().getStringValue());
             }
         }
-        System.out.println("Check US");
-    }
-
-    public static boolean writeResponseBodyToDisk(ResponseBody body, String outputFileName) {
-        List<List<String>> matrix = new ArrayList<>();
-        List<List<String>> transposeMatrix = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(body.byteStream()))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                matrix.add(Arrays.asList(line.split("\t")));
-            }
-            //Remove first line
-            matrix.remove(0);
-
-            //Perform the transpose
-            int sizeOfCols = matrix.get(0).size();
-            for (int i = 0; i < sizeOfCols; i++) {
-                List<String> outputLine = new ArrayList<>();
-                for (List<String> lines : matrix) {
-                    outputLine.add(lines.get(i));
-                }
-                transposeMatrix.add(outputLine);
-            }
-            GenoFileFirstTImeProcessing.genofileComputation(outputFileName, transposeMatrix);
-            return true;
-        } catch (IOException e) {
-            return false;
+        try {
+            GenoFileFirstTImeProcessing.genofileComputation(fileName, variantSet);
+            return Constants.SUCCESS;
+        } catch (Exception e) {
+            return "Error in writing file to disk. Please check log file for details.";
         }
     }
 }

@@ -50,19 +50,13 @@ public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
             @Override
             protected Object doInBackground() {
                 if (finalSelectedData != null) {
-                    GOBIIRetrofitClient gobiiRetrofitClient = sharedInformation.getGobiiRetrofitClient();
                     String outputFileName = getBrapiOutputFileName("GOBII");
-                    List<String> response = gobiiRetrofitClient.downloadData(finalSelectedData,outputFileName);
-                    // Last item is status
-                    if (response.get(response.size() - 1).equalsIgnoreCase(Constants.SUCCESS)) {
-                        // Remove last item as it is status.
-                        response.remove(response.size() - 1);
-                        //There will be only one jobId at this state as we can only select one dataset at a time.
-                        String jobId = response.get(0);
-                        // Wait for the extraction to complete. Then periodically query
-                        checkJobStatusNDownload(Constants.GOBII_TYPE, jobId);
+                    String status = sharedInformation.getGobiiRetrofitClient().downloadData(finalSelectedData, outputFileName);
+                    if (status.equals(Constants.SUCCESS)) {
+                        sharedInformation.getOpenDialog().getTxtGenotype().setText(outputFileName);
+                        dialogBox.setVisible(false);
                     } else {
-                        Util.showMessageDialog("Error: " + response.get(response.size()));
+                        Util.showMessageDialog(status);
                     }
                 }
                 layerUI.stop();
@@ -76,14 +70,6 @@ public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
 
     @Override
     protected void downloadData(String genotypeFile) {
-        GOBIIRetrofitClient gobiiRetrofitClient = sharedInformation.getGobiiRetrofitClient();
-        String outputFileName = getBrapiOutputFileName("GOBII");
-        String status = gobiiRetrofitClient.downloadData(genotypeFile, outputFileName);
-        if (status.equals(Constants.SUCCESS)) {
-            sharedInformation.getOpenDialog().getTxtGenotype().setText(outputFileName);
-            dialogBox.setVisible(false);
-        } else {
-            Util.showMessageDialog(status);
-        }
+        //Never used
     }
 }

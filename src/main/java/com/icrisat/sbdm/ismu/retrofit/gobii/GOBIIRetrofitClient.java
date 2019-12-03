@@ -1,9 +1,10 @@
 package com.icrisat.sbdm.ismu.retrofit.gobii;
 
 import com.google.gson.Gson;
-import com.icrisat.sbdm.ismu.retrofit.*;
+import com.icrisat.sbdm.ismu.retrofit.ExtractResponse;
+import com.icrisat.sbdm.ismu.retrofit.RetrofitError;
+import com.icrisat.sbdm.ismu.retrofit.Status;
 import com.icrisat.sbdm.ismu.util.Constants;
-import okhttp3.ResponseBody;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 import retrofit2.Call;
 import retrofit2.Response;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,8 +97,7 @@ public class GOBIIRetrofitClient {
      * @param selectedData Data selected. Second element is matrixDbId
      * @return extract jobId with status message
      */
-    public List<String> downloadData(List selectedData, String fileName) {
-        List<String> response = new ArrayList<>();
+    public String downloadData(List selectedData, String fileName) {
         String status = Constants.SUCCESS;
         logger.info("Submitting data download request for: " + selectedData.get(0) + " with id: " + selectedData.get(2));
         int variantSetId = Integer.parseInt((String) selectedData.get(2));
@@ -107,7 +107,7 @@ public class GOBIIRetrofitClient {
             if (downloadVariantSetResponse.isSuccessful()) {
                 Calls callResponseJSON = downloadVariantSetResponse.body();
                 if (callResponseJSON != null) {
-                    processCallSets(callResponseJSON,fileName);
+                    status = processCallSets(callResponseJSON, fileName);
                 } else {
                     status = "Got null response.";
                 }
@@ -119,8 +119,7 @@ public class GOBIIRetrofitClient {
             status = e.getMessage();
             logger.error(status);
         }
-        response.add(status);
-        return response;
+        return status;
     }
 
     /**
@@ -156,26 +155,5 @@ public class GOBIIRetrofitClient {
         }
         response.add(status);
         return response;
-    }
-
-
-    /**
-     * Gets the job status if status is completed will get the genotype file.
-     *
-     * @param jobId job id
-     * @return genotype file and status
-     */
-    public List<String> getExtractStatus(String jobId) {
-        List<String> response = new ArrayList<>();
-        logger.info("Requesting the status of the job: " + jobId);
-        Call<ExtractResponse> getExtractStatus = client.getExtractStatus(token.getToken(), jobId);
-        response.add(RetrofitUtil.extractDataset(response, getExtractStatus));
-        return response;
-    }
-
-    public String downloadData(String url, String fileName) {
-        logger.info("Downloading file from GOBII server: " + url);
-        Call<ResponseBody> call = client.downloadFileWithURL(token.getToken(), url);
-        return RetrofitUtil.downloadData(fileName, call, Constants.GOBII);
     }
 }

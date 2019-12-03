@@ -36,8 +36,17 @@ public class GenoFileFirstTImeProcessing {
         String genoSummary = dest_file.getParent() + "/" + summaryName;
         CSVWriter summaryWriter = new CSVWriter(new FileWriter(genoSummary));
         List<MarkerSummaryInfo> markerInfos = new LinkedList<>();
+
         for (List<String> row : matrix) {
-            List<String> processedList = fixMissingValues(row, markerInfos);
+            //Convert T/T to TT
+            List<String> newRow = new ArrayList<>();
+            for (String value : row) {
+                String newValue = value;
+                if (value.length() == 3 && value.charAt(1) == '/')
+                    newValue = String.format("%s%s", value.charAt(0), value.charAt(2));
+                newRow.add(newValue);
+            }
+            List<String> processedList = fixMissingValues(newRow, markerInfos);
             writer.writeNext(processedList.toArray(new String[0]));
         }
         writer.close();
