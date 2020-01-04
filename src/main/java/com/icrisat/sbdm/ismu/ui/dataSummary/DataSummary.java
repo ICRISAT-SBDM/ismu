@@ -241,14 +241,17 @@ public class DataSummary {
                     e.printStackTrace();
                 }
                 if (lastLine[0].equalsIgnoreCase("Execution halted")) {
-                    Util.showMessageDialog("Issue with Phenotype summary.\n Please check logfile for details");
+                    Util.showMessageDialog("Issue with Genotype summary.\n Please check logfile for details");
+                    actionCancel();
                     processPheno.destroyForcibly();
                 } else
-                saveGenoSummaryFiles(Util.resultComputedOn(startTime));
+                    saveGenoSummaryFiles(Util.resultComputedOn(startTime));
             } else {
                 Util.showMessageDialog("Issue with Genotype summary.\n Please check logfile for details");
+                actionCancel();
                 processGeno.destroyForcibly();
             }
+            actionCancel();
         }
     }
 

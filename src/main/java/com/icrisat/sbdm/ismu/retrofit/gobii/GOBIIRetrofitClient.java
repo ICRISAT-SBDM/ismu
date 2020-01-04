@@ -99,22 +99,32 @@ public class GOBIIRetrofitClient {
      */
     public String downloadData(List selectedData, String fileName) {
         String status = Constants.SUCCESS;
+        List<Calls> callResponseList = new ArrayList<>();
         logger.info("Submitting data download request for: " + selectedData.get(0) + " with id: " + selectedData.get(2));
         int variantSetId = Integer.parseInt((String) selectedData.get(2));
-        Call<Calls> downloadVariantSetCall = client.downloadVariantSet(token.getToken(), variantSetId, 1000);
+        String pageToken = "";
         try {
-            Response<Calls> downloadVariantSetResponse = downloadVariantSetCall.execute();
-            if (downloadVariantSetResponse.isSuccessful()) {
-                Calls callResponseJSON = downloadVariantSetResponse.body();
-                if (callResponseJSON != null) {
-                    status = processCallSets(callResponseJSON, fileName);
+            do {
+                Call<Calls> downloadVariantSetCall = client.downloadVariantSet(token.getToken(), variantSetId, 1000, pageToken);
+                Response<Calls> downloadVariantSetResponse = downloadVariantSetCall.execute();
+                if (downloadVariantSetResponse.isSuccessful()) {
+                    Calls callResponseJSON = downloadVariantSetResponse.body();
+                    if (callResponseJSON != null) {
+                        if (callResponseJSON.getMetadata() != null & callResponseJSON.getMetadata().getPagination() != null) {
+                            callResponseList.add(callResponseJSON);
+                            pageToken = callResponseJSON.getMetadata().getPagination().getNextPageToken();
+                        } else {
+                            status = "Got null pagination information.\n could not get all the data.";
+                        }
+                    } else {
+                        status = "Got null response.";
+                    }
                 } else {
-                    status = "Got null response.";
+                    RetrofitError errorMessage = new Gson().fromJson(downloadVariantSetResponse.errorBody().charStream(), RetrofitError.class);
+                    status = returnExitStatus(downloadVariantSetResponse.code(), errorMessage.toString());
                 }
-            } else {
-                RetrofitError errorMessage = new Gson().fromJson(downloadVariantSetResponse.errorBody().charStream(), RetrofitError.class);
-                status = returnExitStatus(downloadVariantSetResponse.code(), errorMessage.toString());
-            }
+            } while (pageToken != null & status.equalsIgnoreCase(Constants.SUCCESS));
+            status = processCallSets(callResponseList, fileName);
         } catch (Exception e) {
             status = e.getMessage();
             logger.error(status);

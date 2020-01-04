@@ -95,7 +95,7 @@ for ( i in 1:(ncol(BLUP)-1))
   PNGNamePlotHIST <- paste(getwd(), "/", GetRFileName(), ".png", sep="");
   THRes<-png(PNGNamePlotHIST, width=IR*10*ppi, height=IR*10*ppi, res=ppi)
   TRes<-hist(x, xlab=TraitName,main="Histogram",col="lightblue", prob=T)
-  lines(density(x), lty=1,col="red",lwd=2)   
+  lines(density(x,na.rm=T), lty=1,col="red",lwd=2)   
   TRes<-rug(x)
   TRes<-box()
   THRes<-dev.off()

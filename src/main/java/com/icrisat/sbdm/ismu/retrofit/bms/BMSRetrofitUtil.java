@@ -73,7 +73,7 @@ class BMSRetrofitUtil {
      * <p>
      * TODO: Currently we are assuming there is one to one relation between observationId and sampleId
      */
-    static String writeTrialDataToFile(List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> triatJSONList,  SharedInformation sharedInformation) {
+    static String writeTrialDataToFile(List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> triatJSONList, SharedInformation sharedInformation) {
         String status = Constants.SUCCESS;
         String outputFileName = sharedInformation.getPathConstants().tempResultDirectory + "BMS_data" + new SimpleDateFormat("hhmmss").format(new Date()) + ".csv";
         try (CSVWriter csvWriter = new CSVWriter(new FileWriter(outputFileName))) {
@@ -81,17 +81,27 @@ class BMSRetrofitUtil {
             List<String> headers = new ArrayList<>();
             headers.add(Constants.SAMPLE_ID);
             List<Observations> observations = triatJSONList.get(0).getObservations();
+            Map<String, String> rowMap = new HashMap<>();
             for (Observations observation : observations) {
                 headers.add(observation.getObservationVariableName());
+                rowMap.put(observation.getObservationVariableName(), "NA");
             }
             csvWriter.writeNext(headers.toArray(new String[headers.size()]));
+            headers.remove(0);
             // Write Data
             for (com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data triatJSON : triatJSONList) {
+                for (Map.Entry<String, String> myEntry : rowMap.entrySet()) {
+                    myEntry.setValue("NA");
+                }
                 List<String> dataRow = new ArrayList<>();
                 dataRow.add(triatJSON.getObservationUnitDbId());
                 List<Observations> observationList = triatJSON.getObservations();
-                for (Observations observation : observationList)
-                    dataRow.add(observation.getValue());
+                for (Observations observation : observationList) {
+                    rowMap.replace(observation.getObservationVariableName(),observation.getValue());
+                }
+                for(String header:headers){
+                    dataRow.add(rowMap.get(header));
+                }
                 csvWriter.writeNext(dataRow.toArray(new String[dataRow.size()]));
             }
 

@@ -39,34 +39,36 @@ class GOBIIRetrofitUtil {
         }
     }
 
-    static String processCallSets(Calls callsJSON, String fileName) {
-        Calls.Data[] calls = callsJSON.getResult().getData();
+    static String processCallSets(List<Calls> callsJSON, String fileName) {
         String variantName = null;
         List<String> callNames = new ArrayList<>();
         List<List<String>> variantSet = new ArrayList<>();
         List<String> row = new ArrayList<>();
         boolean isFirstRow = true;
-        for (Calls.Data call : calls) {
-            if (variantName == null) {
-                variantName = call.getVariantName();
-                callNames.add("");
-            }
-            if (variantName.equalsIgnoreCase(call.getVariantName())) {
-                // It is the same row
-                callNames.add(call.getCallSetName());
-                row.add(call.getGenotype().getStringValue());
-            } else {
-                if (isFirstRow) {
-                    variantSet.add(callNames);
-                    isFirstRow = false;
+        for (Calls callJSON : callsJSON) {
+            Calls.Data[] calls = callJSON.getResult().getData();
+            for (Calls.Data call : calls) {
+                if (variantName == null) {
+                    variantName = call.getVariantName();
+                    callNames.add("");
                 }
-                row.add(0, variantName);
-                variantSet.add(row);
-                row = new ArrayList<>();
-                callNames = new ArrayList<>();
-                variantName = call.getVariantName();
-                callNames.add(call.getCallSetName());
-                row.add(call.getGenotype().getStringValue());
+                if (variantName.equalsIgnoreCase(call.getVariantName())) {
+                    // It is the same row
+                    callNames.add(call.getCallSetName());
+                    row.add(call.getGenotype().getValues()[0]);
+                } else {
+                    if (isFirstRow) {
+                        variantSet.add(callNames);
+                        isFirstRow = false;
+                    }
+                    row.add(0, variantName);
+                    variantSet.add(row);
+                    row = new ArrayList<>();
+                    callNames = new ArrayList<>();
+                    variantName = call.getVariantName();
+                    callNames.add(call.getCallSetName());
+                    row.add(call.getGenotype().getValues()[0]);
+                }
             }
         }
         try {

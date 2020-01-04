@@ -1,6 +1,5 @@
 package com.icrisat.sbdm.ismu.retrofit.gobii;
 
-import com.google.gson.annotations.SerializedName;
 import com.icrisat.sbdm.ismu.retrofit.gobii.metadata.Metadata;
 
 public class Calls {
@@ -58,11 +57,10 @@ public class Calls {
     }
 
     public class Genotype {
-        @SerializedName("string_value")
-        private String stringValue;
+        private String[] values;
 
-        public String getStringValue() {
-            return stringValue;
+        public String[] getValues() {
+            return values;
         }
     }
 }

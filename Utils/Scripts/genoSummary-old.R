@@ -31,7 +31,7 @@ require(R2HTML)
 # 21 =
 # 22 =
 
-# rscript  C:\Users\HI\Documents\2\ 1 1 1 -1 2 ? 1 Genotype043214.csv Ge_summary_Genotype043214.htm Ge_summary_Genotype043214.csv Phenotype043214.csv Ph_summary_Phenotype043214.htm
+#rscript  C:\Users\HI\Documents\2\ 1 1 1 -1 2 ? 1 Genotype043214.csv Ge_summary_Genotype043214.htm Ge_summary_Genotype043214.csv Phenotype043214.csv Ph_summary_Phenotype043214.htm
 
 AWD         <- args[1]
 AMISP	    <- as.numeric(args[2])
@@ -104,100 +104,99 @@ if(len == 1 )
   stop(paste("\nIncorrect Marker Data found.", MarkerPoint,".\n Please check Row No.", Row,  " Col No.", Col, sep=""))
 }
 
-# if(Engine==1) # 1= R
-# {# Using R as Engine for Data Summary
-# ### Calculating Table for Genotype Data Summary
-# MisRatio<-sapply (TDART, function(X) sum(is.na(X)) / length(X))
-# 
-# if (AMTYPE==1) GenSum<- lapply(TDART, function (X) summary(genotype(X,sep=ASEP)))
-# if (AMTYPE==2) GenSum<- lapply(TDART, function (X) summary(genotype(X,X)))
-# 
-# AlleleC<-NULL
-# MAF<-NULL
-# PIC<-NULL
-# 
-# for(i in 1:length(GenSum))
-# {
-#   M<-GenSum[i]
-#   AlleleC[i]<-length(M[[1]][[1]])
-#   AlleleFreq<- M[[1]][[2]][,"Proportion"]
-#   MAF[i]<-min(AlleleFreq,na.rm=T)
-#   if(MAF[i] ==1 ) MAF[i]=0
-#   
-#   PIC[i]<-M[[1]]$pic
-# }
-# names(PIC)<-names(GenSum)
-# names(MAF)<-names(GenSum)
-# 
-# MisP<-MisRatio*100
-# 
-# GenSummary<-data.frame(PIC=PIC,MisPercent=MisP,MAF=MAF,row.names=NULL)
-# GenSummary<-data.frame(Marker=rownames(DArT1),GenSummary)
-# GenSummary[,2] <- round(GenSummary[,2], SG)
-# GenSummary[,3] <- round(GenSummary[,3], SG)
-# GenSummary[,4] <- round(GenSummary[,4], SG)
-# 
-# }
+if(Engine==1) # 1= R
+{# Using R as Engine for Data Summary
+### Calculating Table for Genotype Data Summary
+MisRatio<-sapply (TDART, function(X) sum(is.na(X)) / length(X))
 
-# if(Engine==2)  # 2= Fortran
-# {
-# #  DArT1<-read.csv(AGDATA, na.strings=c(AMISSCH,"NA","NN", "9"), stringsAsFactors=F,row.names=1)
-#   if(AMTYPE==1)  # SNP data
-#   {
-#       source(paste(oldwd, "/", "CodedSNP.R", sep="") ) # Function for converting allelic data to 1 0 -1 data 
-#       n<-nrow(TDART)
-#       c<-ncol(TDART)
-#       DCodedSNP<-matrix(rep(0,n*c),nrow=n)
-#       
-#       for(i in 1:c)
-#       {
-#         DCodedSNP[,i]<-CodedSNP(TDART[i])
-#       }  
-#       rownames(DCodedSNP)<-rownames(TDART)
-#       colnames(DCodedSNP)<-colnames(TDART)
-#       FinalG<-DCodedSNP
-#       FinalG <- FinalG+1
-#   }
-#   
-#   if(AMTYPE==2)  # DArt/Dominant  data
-#   { # Replace 1 as 2.
-#     TDART [TDART==1] <- 2
-#     FinalG <- TDART
-#   }
-#   FinalG <- t(FinalG)
-#   write.csv(cbind(Marker=row.names(FinalG), FinalG), "TempG.csv", na="9", row.names=F, quote=F)
-#   Individuals <- dim(FinalG)[2]
-# 
-#   source(paste(oldwd, "/", "summaryAGH.R", sep="") ) # Function for Runing AlphaAGH
-#   FortranSumName <- "PicMissingGenotypesMafRecDomNum.txt" # not used any where
-#   
-#   Res<-AlphaAGHSummary(FilePATH=AWD, GenoFileName="TempG.csv", Individuals=Individuals,  MISS_T=10, MAF_T=.1, PIC_T=.1, FortranSumName=FortranSumName )
-#   GenSummary<-read.table("PicMissingGenotypesMafRecDomNum.txt", header=T)
-#   GenSummary <-GenSummary[,-c(5,6)]
-#   PIC  <-  round(GenSummary[,2], SG)
-#   MisP <-  round(GenSummary[,3], SG)
-#   MAF  <-  round(GenSummary[,4], SG)
-# }
-# 
-# names(GenSummary)<-c("Marker","PIC", "Missing(%)", "MAF")
-# ######################################################################################################################
-# 
-# SelectedS <- c(1,APIC, AMISP, AMAF) + 1
-# SelectedS <- as.logical(SelectedS)
-# GSum<-GenSummary[SelectedS]
-GSum <- read.csv(SumFileName, check.names = F, stringsAsFactors = F,row.names=1)
+if (AMTYPE==1) GenSum<- lapply(TDART, function (X) summary(genotype(X,sep=ASEP)))
+if (AMTYPE==2) GenSum<- lapply(TDART, function (X) summary(genotype(X,X)))
+
+AlleleC<-NULL
+MAF<-NULL
+PIC<-NULL
+
+for(i in 1:length(GenSum))
+{
+  M<-GenSum[i]
+  AlleleC[i]<-length(M[[1]][[1]])
+  AlleleFreq<- M[[1]][[2]][,"Proportion"]
+  MAF[i]<-min(AlleleFreq,na.rm=T)
+  if(MAF[i] ==1 ) MAF[i]=0
+  
+  PIC[i]<-M[[1]]$pic
+}
+names(PIC)<-names(GenSum)
+names(MAF)<-names(GenSum)
+
+MisP<-MisRatio*100
+
+GenSummary<-data.frame(PIC=PIC,MisPercent=MisP,MAF=MAF,row.names=NULL)
+GenSummary<-data.frame(Marker=rownames(DArT1),GenSummary)
+GenSummary[,2] <- round(GenSummary[,2], SG)
+GenSummary[,3] <- round(GenSummary[,3], SG)
+GenSummary[,4] <- round(GenSummary[,4], SG)
+
+}
+
+if(Engine==2)  # 2= Fortran
+{
+#  DArT1<-read.csv(AGDATA, na.strings=c(AMISSCH,"NA","NN", "9"), stringsAsFactors=F,row.names=1)
+  if(AMTYPE==1)  # SNP data
+  {
+      source(paste(oldwd, "/", "CodedSNP.R", sep="") ) # Function for converting allelic data to 1 0 -1 data 
+      n<-nrow(TDART)
+      c<-ncol(TDART)
+      DCodedSNP<-matrix(rep(0,n*c),nrow=n)
+      
+      for(i in 1:c)
+      {
+        DCodedSNP[,i]<-CodedSNP(TDART[i])
+      }  
+      rownames(DCodedSNP)<-rownames(TDART)
+      colnames(DCodedSNP)<-colnames(TDART)
+      FinalG<-DCodedSNP
+      FinalG <- FinalG+1
+  }
+  
+  if(AMTYPE==2)  # DArt/Dominant  data
+  { # Replace 1 as 2.
+    TDART [TDART==1] <- 2
+    FinalG <- TDART
+  }
+  FinalG <- t(FinalG)
+  write.csv(cbind(Marker=row.names(FinalG), FinalG), "TempG.csv", na="9", row.names=F, quote=F)
+  Individuals <- dim(FinalG)[2]
+
+  source(paste(oldwd, "/", "summaryAGH.R", sep="") ) # Function for Runing AlphaAGH
+  FortranSumName <- "PicMissingGenotypesMafRecDomNum.txt" # not used any where
+  
+  Res<-AlphaAGHSummary(FilePATH=AWD, GenoFileName="TempG.csv", Individuals=Individuals,  MISS_T=10, MAF_T=.1, PIC_T=.1, FortranSumName=FortranSumName )
+  GenSummary<-read.table("PicMissingGenotypesMafRecDomNum.txt", header=T)
+  GenSummary <-GenSummary[,-c(5,6)]
+  PIC  <-  round(GenSummary[,2], SG)
+  MisP <-  round(GenSummary[,3], SG)
+  MAF  <-  round(GenSummary[,4], SG)
+}
+
+names(GenSummary)<-c("Marker","PIC", "Missing(%)", "MAF")
+######################################################################################################################
+
+SelectedS <- c(1,APIC, AMISP, AMAF) + 1
+SelectedS <- as.logical(SelectedS)
+GSum<-GenSummary[SelectedS]
 
 ### Histogram for Polymorphic Information Content
 PNGNamePIC <- paste(getwd(), "/", GetRFileName(), ".png", sep="");
 THRes<-png(PNGNamePIC , width=IR*10*ppi, height=IR*10*ppi, res=ppi)
 
 nbreaks<-seq(0,0.5,by=0.05)
-b<-hist(GSum$PIC,breaks=nbreaks,plot=F)
-per_PIC<-round((b$count/length(GSum$PIC)*100),2)
+b<-hist(PIC,breaks=nbreaks,plot=F)
+per_PIC<-round((b$count/length(PIC)*100),2)
 lab<-paste(b$count,"\n(", per_PIC, "%)", sep="")
 par(cex=0.5,xpd=T)
-hist(GSum$PIC,breaks=nbreaks,col="lightblue",axes=F,labels=lab,main="Polymorphics Information Content", xlab="PIC", ylab="Number of Markers")
-rug(GSum$PIC)
+hist(PIC,breaks=nbreaks,col="lightblue",axes=F,labels=lab,main="Polymorphics Information Content", xlab="PIC", ylab="Number of Markers")
+rug(PIC)
 axis(2)
 axis(1, at=nbreaks,las=2)
 dev.off()
@@ -205,13 +204,13 @@ dev.off()
 ### Histogram for % missing markers
 PNGNameMISP <- paste(getwd(), "/", GetRFileName(), ".png", sep="");
 THRes<-png(PNGNameMISP , width=IR*10*ppi, height=IR*10*ppi, res=ppi)
-nbreaks<-seq(0,1,by=0.1)
-b<-hist(GSum$MissingPercent,breaks=nbreaks,plot=F)
-per_miss<-round((b$count/length(GSum$MissingPercent)*100),2)
+nbreaks<-seq(0,100,by=10)
+b<-hist(MisP,breaks=nbreaks,plot=F)
+per_miss<-round((b$count/length(MisP)*100),2)
 lab<-paste(b$count,"\n(", per_miss, "%)", sep="")
 par(cex=0.5,xpd=T)
-hist(GSum$MissingPercent,breaks=nbreaks,col="lightblue",axes=F,labels=lab,main="Histogram of %Missing Markers", xlab="%Missing", ylab="Number of Markers")
-rug(GSum$MissingPercent)
+hist(MisP,breaks=nbreaks,col="lightblue",axes=F,labels=lab,main="Histogram of %Missing Markers", xlab="%Missing", ylab="Number of Markers")
+rug(MisP)
 axis(2)
 axis(1, at=nbreaks,las=2)
 dev.off()
@@ -222,20 +221,20 @@ PNGNameMAF <- paste(getwd(), "/", GetRFileName(), ".png", sep="");
 THRes<-png(PNGNameMAF , width=IR*10*ppi, height=IR*10*ppi, res=ppi)
 
 nbreaks<-seq(0,1,by=0.1)
-c<-hist(GSum$MAF,breaks=nbreaks,plot=F)
-per_MAF<-round((c$count/length(GSum$MAF)*100),2)
+c<-hist(MAF,breaks=nbreaks,plot=F)
+per_MAF<-round((c$count/length(MAF)*100),2)
 lab<-paste(c$count,"\n(", per_MAF, "%)", sep="")
 par(cex=0.5,xpd=T)
-hist(GSum$MAF,breaks=nbreaks,col="lightblue",axes=F,labels=lab,main="Minor Allele Frequency", xlab="MAF", ylab="Number of Markers",)
-rug(GSum$MAF)
+hist(MAF,breaks=nbreaks,col="lightblue",axes=F,labels=lab,main="Minor Allele Frequency", xlab="MAF", ylab="Number of Markers",)
+rug(MAF)
 axis(2)
 axis(1, at=nbreaks,las=2)
 dev.off()
 
 ######################################################################################################################
 
-# write.csv(GSum,SumFileName, quote=F)
-# cat("\n Genotype Data Summary File Saved!\n")
+write.csv(GSum,SumFileName, quote=F)
+cat("\n Genotype Data Summary File Saved!\n")
 
 # Create HTML File
 # As there are Problems with HTMLStart() in UNIX , we willl write our own code to create a HTML file
@@ -277,16 +276,10 @@ if(!AMAF == -1)
   TRes<-HTML("<div align=\"center\">", file=ARFILE, Append=T)
   TRes<-HTML(paste("<b align=\"center\">MAF</b><br>"), HR=4, file=ARFILE, Append=T, Align="center")
 }
-if (nrow(GSum)<= 1000)
-{
+
 TRes<-HTML(paste("<b align=\"center\">Marker Statistics</b><br>"), HR=4, file=ARFILE, Append=T, Align="center")
 TRes<-HTML(GSum, file=ARFILE, Append=T)
 TRes<-HTML("</div>", file=ARFILE, Append=T)
-} else {
-  TRes<-HTML(paste("<b align=\"center\">Refer to summary file for more details</b><br>"), HR=4, file=ARFILE, Append=T, Align="center")
-  # TRes<-HTML(GSum, file=ARFILE, Append=T)
-  # TRes<-HTML("</div>", file=ARFILE, Append=T)
-}
 
 # Write Time and Logo
 TRes<-HTML("<hr/>", file=ARFILE, Append=T)

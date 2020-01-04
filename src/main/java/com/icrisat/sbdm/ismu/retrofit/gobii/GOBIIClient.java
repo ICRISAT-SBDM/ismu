@@ -18,7 +18,8 @@ public interface GOBIIClient {
     @GET("brapi/v1/variantsets/{variantSetId}/calls")
     Call<Calls> downloadVariantSet(@Header("X-Auth-Token") String token,
                                    @Path("variantSetId") int variantSetId,
-                                   @Query("pageSize") int pageSize);
+                                   @Query("pageSize") int pageSize,
+                                   @Query("pageToken") String pageToken);
 
     @GET("brapi/v1/allelematrix-search")
     Call<ExtractResponse> extractByExternalCodes(@Header("X-Auth-Token") String token,
