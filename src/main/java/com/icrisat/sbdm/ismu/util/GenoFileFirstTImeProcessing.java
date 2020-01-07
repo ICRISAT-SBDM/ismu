@@ -51,7 +51,7 @@ public class GenoFileFirstTImeProcessing {
         }
         writer.close();
         int count = 1;
-        summaryWriter.writeNext(new String[]{"", "Marker", "PIC", "Missing(%)", "MAF"});
+        summaryWriter.writeNext(new String[]{"", "Marker", "PIC", "MissingPercent", "MAF"});
         for (MarkerSummaryInfo markerInfo : markerInfos) {
             calculateMAF(markerInfo);
             float missingPercent = markerInfo.getMissingPercent() / headerSize;
