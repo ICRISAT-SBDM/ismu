@@ -7,36 +7,32 @@ import java.awt.*;
 
 public class SearchPanel extends JPanel {
 
-    private JLabel programLabel, trialLabel, locationLabel;
     public JTextField programInputField, trialInputField, locationInputField;
-    public JButton program, trial, location;
+    public JButton searchButton;
 
-    public SearchPanel(SharedInformation sharedInformation, String labelName) {
+    public SearchPanel(SharedInformation sharedInformation) {
+        JPanel dataPanel = new JPanel();
+        dataPanel.setSize(500, 300);
+        dataPanel.setLayout(null);
         setLayout(new FlowLayout(FlowLayout.CENTER));
         setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
-        programLabel = new JLabel("Program");
+        JLabel programLabel = new JLabel("Program");
         programLabel.setFont(sharedInformation.getBoldFont());
-        trialLabel = new JLabel("Trial Name");
+        JLabel trialLabel = new JLabel("Trial Name");
         trialLabel.setFont(sharedInformation.getBoldFont());
-        locationLabel = new JLabel("Location");
+        JLabel locationLabel = new JLabel("Location");
         locationLabel.setFont(sharedInformation.getBoldFont());
-        programInputField = new CustomTextField(10);
-        trialInputField = new CustomTextField(10);
-        locationInputField = new CustomTextField(10);
-        program = new JButton("  Search  ");
-        program.setFont(sharedInformation.getOkButtonFont());
-        trial = new JButton("  Search  ");
-        trial.setFont(sharedInformation.getOkButtonFont());
-        location = new JButton("  Search  ");
-        location.setFont(sharedInformation.getOkButtonFont());
+        programInputField = new CustomTextField(15);
+        trialInputField = new CustomTextField(15);
+        locationInputField = new CustomTextField(15);
+        searchButton = new JButton("  Search  ");
+        searchButton.setFont(sharedInformation.getOkButtonFont());
         add(programLabel);
         add(programInputField);
-        add(program);
         add(trialLabel);
         add(trialInputField);
-        add(trial);
         add(locationLabel);
         add(locationInputField);
-        add(location);
+        add(searchButton);
     }
 }

@@ -17,6 +17,7 @@ public class Constants {
     public static final String PLOT_ID = "plotId";
     public static final String BLOCK_NUMBER = "blockNumber";
     public static final String REPLICATE = "replicate";
+    public static final String[] bmsHeaders = {"  S.No  ", "  Crop  ", "  Program  ", "  Trial  ", "  Study  ", "  Location  ", "Trial DB Id", "Study DB Id"};
     public static String WINDOWS = "w";
     public static String OTHEROS = "o";
     public static final int GENO = 0;

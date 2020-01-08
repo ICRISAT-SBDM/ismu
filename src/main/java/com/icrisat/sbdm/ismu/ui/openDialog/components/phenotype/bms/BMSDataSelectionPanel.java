@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Trial data display panel.
@@ -44,7 +45,8 @@ public class BMSDataSelectionPanel {
         addCrops(cropsCombo);
 
         cropsCombo.addActionListener(this::getTrialInformation);
-        searchPanel = new SearchPanel(sharedInformation, "Trial Name");
+        searchPanel = new SearchPanel(sharedInformation);
+        searchPanel.searchButton.addActionListener(this::filterData);
         JPanel cropPanel = new JPanel();
         cropPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         addCropsList(cropsCombo, searchPanel, cropPanel);
@@ -66,14 +68,14 @@ public class BMSDataSelectionPanel {
 
     private void addCropsList(JComboBox<String> cropsCombo, SearchPanel searchPanel, JPanel cropPanel) {
         cropPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 20, 5));
-        Util.addDummyLabels(cropPanel, 2);
+        Util.addDummyLabels(cropPanel, 4);
         JLabel selectACrop = new JLabel("Select a crop");
         selectACrop.setFont(sharedInformation.getBoldFont());
         cropPanel.add(selectACrop);
         cropPanel.add(cropsCombo);
-        Util.addDummyLabels(cropPanel, 2);
+        Util.addDummyLabels(cropPanel, 4);
         cropPanel.add(searchPanel);
-        Util.addDummyLabels(cropPanel, 2);
+        Util.addDummyLabels(cropPanel, 4);
     }
 
     /**
@@ -112,6 +114,43 @@ public class BMSDataSelectionPanel {
             Util.showMessageDialog("Please select  a row.");
     }
 
+    private void filterData(ActionEvent e) {
+        setEnableForComponents(false);
+        String programText = searchPanel.programInputField.getText();
+        String trialText = searchPanel.trialInputField.getText();
+        String locationText = searchPanel.locationInputField.getText();
+        if (Objects.equals(programText, "") && Objects.equals(trialText, "") && Objects.equals(locationText, ""))
+            bmsTrialTable.table.setModel(bmsTrialTable.defaultTableModel);
+        DefaultTableModel newTableModel = new DefaultTableModel(Constants.bmsHeaders, 0);
+        for (Object obj : bmsTrialTable.defaultTableModel.getDataVector()) {
+            List<String> row = (List<String>) obj;
+            boolean programMatch = false, trialMatch = false, locationMatch = false;
+            if (Objects.equals(programText, "")) {
+                programMatch = true;
+            } else if (containsIgnoreCase(row.get(2), programText)) {
+                programMatch = true;
+            }
+            if (Objects.equals(trialText, "")) {
+                trialMatch = true;
+            } else if (containsIgnoreCase(row.get(3), trialText)) {
+                trialMatch = true;
+            }
+            if (Objects.equals(locationText, "")) {
+                locationMatch = true;
+            } else if (containsIgnoreCase(row.get(5), locationText)) {
+                locationMatch = true;
+            }
+            if (programMatch && trialMatch && locationMatch)
+                newTableModel.addRow(row.toArray());
+        }
+        bmsTrialTable.table.setModel(newTableModel);
+        setEnableForComponents(true);
+    }
+
+    public static boolean containsIgnoreCase(String str, String subString) {
+        return str.toLowerCase().contains(subString.toLowerCase());
+    }
+
     /**
      * Gets the trial information using REST call.
      *
@@ -121,7 +160,7 @@ public class BMSDataSelectionPanel {
         JComboBox cb = (JComboBox) e.getSource();
         String selectedCrop = (String) cb.getSelectedItem();
         setEnableForComponents(false);
-        DefaultTableModel model = (DefaultTableModel) bmsTrialTable.table.getModel();
+        DefaultTableModel model = (DefaultTableModel) bmsTrialTable.defaultTableModel;
         model.setRowCount(0);
         BMSRetrofitClient client = sharedInformation.getBmsRetrofitClient();
         List<String[]> trialList = new ArrayList<>();
@@ -138,6 +177,7 @@ public class BMSDataSelectionPanel {
                         System.arraycopy(trial, 0, newTrial, 1, trial.length);
                         model.addRow(newTrial);
                     }
+                    bmsTrialTable.table.setModel(model);
                 } else {
                     Util.showMessageDialog("Error: " + triatstatus);
                 }
@@ -155,9 +195,7 @@ public class BMSDataSelectionPanel {
         searchPanel.programInputField.setEnabled(b);
         searchPanel.trialInputField.setEnabled(b);
         searchPanel.locationInputField.setEnabled(b);
-        searchPanel.program.setEnabled(b);
-        searchPanel.trial.setEnabled(b);
-        searchPanel.location.setEnabled(b);
+        searchPanel.searchButton.setEnabled(b);
         submitPanel.submit.setEnabled(b);
     }
 
