@@ -17,7 +17,7 @@ public class CustomTextField extends JTextField {
     /**
      * Grey by default*
      */
-    private Color placeholderForeground = new Color(160, 160, 160);
+    private Color placeholderForeground = new Color(0, 0, 0);
     private boolean textWrittenIn;
 
     /**

@@ -2,6 +2,7 @@ package com.icrisat.sbdm.ismu.ui.openDialog.components.phenotype.bms;
 
 import com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitClient;
 import com.icrisat.sbdm.ismu.ui.WaitLayerUI;
+import com.icrisat.sbdm.ismu.ui.openDialog.components.SearchPanel;
 import com.icrisat.sbdm.ismu.ui.openDialog.components.SubmitPanel;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
@@ -22,6 +23,7 @@ public class BMSDataSelectionPanel {
     private JDialog dialogBox;
     private SharedInformation sharedInformation;
     private JComboBox<String> cropsCombo;
+    private SearchPanel searchPanel;
     private BMSTrialTable bmsTrialTable;
     private SubmitPanel submitPanel;
     private WaitLayerUI layerUI = new WaitLayerUI();
@@ -40,10 +42,12 @@ public class BMSDataSelectionPanel {
         cropsCombo = new JComboBox<>();
         cropsCombo.setFont(sharedInformation.getFont());
         addCrops(cropsCombo);
+
         cropsCombo.addActionListener(this::getTrialInformation);
+        searchPanel = new SearchPanel(sharedInformation, "Trial Name");
         JPanel cropPanel = new JPanel();
         cropPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        addCropsList(cropsCombo, cropPanel);
+        addCropsList(cropsCombo, searchPanel, cropPanel);
         mainPanel.add(cropPanel, BorderLayout.NORTH);
 
         bmsTrialTable = new BMSTrialTable();
@@ -60,12 +64,15 @@ public class BMSDataSelectionPanel {
         dialogBox.add(new JLayer<>(mainPanel, layerUI));
     }
 
-    private void addCropsList(JComboBox<String> cropsCombo, JPanel cropPanel) {
+    private void addCropsList(JComboBox<String> cropsCombo, SearchPanel searchPanel, JPanel cropPanel) {
+        cropPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 20, 5));
         Util.addDummyLabels(cropPanel, 2);
         JLabel selectACrop = new JLabel("Select a crop");
         selectACrop.setFont(sharedInformation.getBoldFont());
         cropPanel.add(selectACrop);
         cropPanel.add(cropsCombo);
+        Util.addDummyLabels(cropPanel, 2);
+        cropPanel.add(searchPanel);
         Util.addDummyLabels(cropPanel, 2);
     }
 
@@ -80,11 +87,11 @@ public class BMSDataSelectionPanel {
             DefaultTableModel model = (DefaultTableModel) bmsTrialTable.table.getModel();
             List selectedData = new ArrayList((Collection) model.getDataVector().elementAt(selectedRow));
             BMSRetrofitClient client = sharedInformation.getBmsRetrofitClient();
-            cropsCombo.setEnabled(false);
+            setEnableForComponents(false);
             SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
                 @Override
                 protected Object doInBackground() throws Exception {
-                    String status ;
+                    String status;
                     if (selectedData.get(7) == null || selectedData.get(7) == "")
                         status = client.getTrialData((String) selectedData.get(1), (String) selectedData.get(6));
                     else
@@ -95,7 +102,7 @@ public class BMSDataSelectionPanel {
                         Util.showMessageDialog("Error: " + status);
                     }
                     layerUI.stop();
-                    cropsCombo.setEnabled(true);
+                    setEnableForComponents(true);
                     return null;
                 }
             };
@@ -113,8 +120,7 @@ public class BMSDataSelectionPanel {
     private void getTrialInformation(ActionEvent e) {
         JComboBox cb = (JComboBox) e.getSource();
         String selectedCrop = (String) cb.getSelectedItem();
-        cropsCombo.setEnabled(false);
-        submitPanel.submit.setEnabled(false);
+        setEnableForComponents(false);
         DefaultTableModel model = (DefaultTableModel) bmsTrialTable.table.getModel();
         model.setRowCount(0);
         BMSRetrofitClient client = sharedInformation.getBmsRetrofitClient();
@@ -136,13 +142,23 @@ public class BMSDataSelectionPanel {
                     Util.showMessageDialog("Error: " + triatstatus);
                 }
                 layerUI.stop();
-                cropsCombo.setEnabled(true);
-                submitPanel.submit.setEnabled(true);
+                setEnableForComponents(true);
                 return null;
             }
         };
         worker.execute();
         layerUI.start();
+    }
+
+    private void setEnableForComponents(boolean b) {
+        cropsCombo.setEnabled(b);
+        searchPanel.programInputField.setEnabled(b);
+        searchPanel.trialInputField.setEnabled(b);
+        searchPanel.locationInputField.setEnabled(b);
+        searchPanel.program.setEnabled(b);
+        searchPanel.trial.setEnabled(b);
+        searchPanel.location.setEnabled(b);
+        submitPanel.submit.setEnabled(b);
     }
 
     /**
