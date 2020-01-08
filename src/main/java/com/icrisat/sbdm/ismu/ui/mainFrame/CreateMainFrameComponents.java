@@ -9,8 +9,6 @@ import com.icrisat.sbdm.ismu.ui.openDialog.OpenDialog;
 import com.icrisat.sbdm.ismu.ui.openDialog.components.GenotypeDB;
 import com.icrisat.sbdm.ismu.ui.openDialog.components.PhenotypeDB;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
-import com.icrisat.sbdm.ismu.util.Util;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -134,13 +132,13 @@ public class CreateMainFrameComponents {
 
         // Add menuItems to File
 
-        JMenuItem newProjectMenuItem = new JMenuItem("New project");
+        JMenuItem newProjectMenuItem = new JMenuItem("New Project");
         newProjectMenuItem.setFont(sharedInformation.getOkButtonFont());
         fileMenu.add(newProjectMenuItem);
-        JMenuItem openProjectMenuItem = new JMenuItem("Open project");
+        JMenuItem openProjectMenuItem = new JMenuItem("Open Project");
         openProjectMenuItem.setFont(sharedInformation.getOkButtonFont());
         fileMenu.add(openProjectMenuItem);
-        JMenuItem saveProjectMenuItem = new JMenuItem("Save project");
+        JMenuItem saveProjectMenuItem = new JMenuItem("Save Project");
         saveProjectMenuItem.setFont(sharedInformation.getOkButtonFont());
         fileMenu.add(saveProjectMenuItem);
         fileMenu.addSeparator();
@@ -150,9 +148,6 @@ public class CreateMainFrameComponents {
         openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
         openMenuItem.setFont(sharedInformation.getOkButtonFont());
         fileMenu.add(openMenuItem);
-        JMenuItem importMenuItem = new JMenuItem("Import", KeyEvent.VK_I);
-        importMenuItem.setFont(sharedInformation.getOkButtonFont());
-        fileMenu.add(importMenuItem);
         JMenuItem genotypeFileMenuItem = new JMenuItem("Genotype file", KeyEvent.VK_G);
         genotypeFileMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
         genotypeFileMenuItem.setFont(sharedInformation.getOkButtonFont());
@@ -173,16 +168,16 @@ public class CreateMainFrameComponents {
         fileMenu.add(exitMenuItem);
 
         //Add menuItems to Analysis
-        JMenuItem dataSummaryMenuItem = new JMenuItem("Data summary", KeyEvent.VK_D);
+        JMenuItem dataSummaryMenuItem = new JMenuItem("Data Summary", KeyEvent.VK_D);
         dataSummaryMenuItem.setFont(sharedInformation.getOkButtonFont());
         analysisMenu.add(dataSummaryMenuItem);
         analysisMenu.addSeparator();
-        JMenuItem genomicSelectionMenuItem = new JMenuItem("Genomic selection", KeyEvent.VK_G);
+        JMenuItem genomicSelectionMenuItem = new JMenuItem("Genomic Selection", KeyEvent.VK_G);
         genomicSelectionMenuItem.setFont(sharedInformation.getOkButtonFont());
         analysisMenu.add(genomicSelectionMenuItem);
 
         //Add menuItems to Help
-        JMenuItem manualMenuItem = new JMenuItem("User manual", KeyEvent.VK_U);
+        JMenuItem manualMenuItem = new JMenuItem("User Manual", KeyEvent.VK_U);
         manualMenuItem.setFont(sharedInformation.getOkButtonFont());
         helpMenu.add(manualMenuItem);
         helpMenu.addSeparator();
@@ -199,7 +194,6 @@ public class CreateMainFrameComponents {
         newProjectMenuItem.addActionListener(e -> mainFrameActionListeners.newProjectActionItem(e));
         openProjectMenuItem.addActionListener(e -> mainFrameActionListeners.openProjectActionItem(e));
         saveProjectMenuItem.addActionListener(e -> mainFrameActionListeners.saveProjectActionItem(e));
-        importMenuItem.addActionListener(e -> mainFrameActionListeners.importActionItem(e));
         exitMenuItem.addActionListener(e -> mainFrameActionListeners.exitApplicationActionItem(e));
         dataSummaryMenuItem.addActionListener(e -> mainFrameActionListeners.dataSummaryActionItem(e));
         aboutMenuItem.addActionListener(e -> aboutDialog.setVisible(true));
@@ -219,17 +213,27 @@ public class CreateMainFrameComponents {
         }
         toolBar.add(btnOpen);
 
-        JButton btnImport = new JButton("Import");
-        btnImport.setToolTipText("Selecting the population file");
+        JButton btnGenotype = new JButton("Genotype File");
+        btnGenotype.setToolTipText("Selecting the Genotype File");
         try {
-            btnImport.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/import.png"))));
+            btnGenotype.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/import.png"))));
         } catch (IOException e) {
-            sharedInformation.getLogger().debug("Issue when setting the image for importButton." + e.toString() + "\t" + e.getMessage());
+            sharedInformation.getLogger().debug("Issue when setting the image for genotypeButton." + e.toString() + "\t" + e.getMessage());
 
         }
-        toolBar.add(btnImport);
+        toolBar.add(btnGenotype);
 
-        JButton btnDataSummary = new JButton("Data summary");
+        JButton btnPhenotype = new JButton("Phenotype File");
+        btnPhenotype.setToolTipText("Selecting the Phenotype File");
+        try {
+            btnPhenotype.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/import.png"))));
+        } catch (IOException e) {
+            sharedInformation.getLogger().debug("Issue when setting the image for phenotypeButton." + e.toString() + "\t" + e.getMessage());
+
+        }
+        toolBar.add(btnPhenotype);
+
+        JButton btnDataSummary = new JButton("Data Summary");
         btnDataSummary.setToolTipText("Cleaning of data");
         try {
             btnDataSummary.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/dataSummary.png"))));
@@ -239,7 +243,7 @@ public class CreateMainFrameComponents {
         }
         toolBar.add(btnDataSummary);
 
-        JButton btnAnalysis = new JButton("Genomic selection");
+        JButton btnAnalysis = new JButton("Genomic Selection");
         btnAnalysis.setToolTipText("Genomic selection");
         try {
             btnAnalysis.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/analysis.png"))));
@@ -251,7 +255,8 @@ public class CreateMainFrameComponents {
 
         sharedInformation.getMainFrame().add(toolBar, BorderLayout.NORTH);
         btnOpen.addActionListener(e -> mainFrameActionListeners.openActionItem(e));
-        btnImport.addActionListener(e -> mainFrameActionListeners.importActionItem(e));
+        btnGenotype.addActionListener(e -> mainFrameActionListeners.selectGenotypeFileActionItem(e));
+        btnPhenotype.addActionListener(e -> mainFrameActionListeners.selectPhenotypeFileActionItem(e));
         btnDataSummary.addActionListener(e -> mainFrameActionListeners.dataSummaryActionItem(e));
         btnAnalysis.addActionListener(e -> mainFrameActionListeners.analysisActionItem(e));
     }

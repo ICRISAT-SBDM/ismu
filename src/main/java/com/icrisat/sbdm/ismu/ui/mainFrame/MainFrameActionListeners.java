@@ -238,9 +238,6 @@ public class MainFrameActionListeners {
         dialogBox.setVisible(false);
     }
 
-    void importActionItem(ActionEvent e) {
-    }
-
     /**
      * Data summary action item.
      *
