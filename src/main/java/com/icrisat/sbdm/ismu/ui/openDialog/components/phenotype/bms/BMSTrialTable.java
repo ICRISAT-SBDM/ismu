@@ -7,7 +7,7 @@ class BMSTrialTable {
     JTable table;
 
     BMSTrialTable() {
-        String[] headers = {"  Crop  ", "  Program  ", "  Trial  ", "  Study  ", "  Location  ", "Trial DB Id", "Study DB Id"};
+        String[] headers = {"  S.No  ","  Crop  ", "  Program  ", "  Trial  ", "  Study  ", "  Location  ", "Trial DB Id", "Study DB Id"};
         DefaultTableModel tableModel = new DefaultTableModel(headers, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {

@@ -80,7 +80,13 @@ public class BMSDataSelectionPanel {
             DefaultTableModel model = (DefaultTableModel) bmsTrialTable.table.getModel();
             List selectedData = new ArrayList((Collection) model.getDataVector().elementAt(selectedRow));
             BMSRetrofitClient client = sharedInformation.getBmsRetrofitClient();
-            String status = client.getData(selectedData);
+            String status ;
+            status = client.getTrialData((String) selectedData.get(1), (String) selectedData.get(6));
+            if (selectedData.get(7) == null || selectedData.get(7) == "")
+                status = client.getTrialData((String) selectedData.get(1), (String) selectedData.get(6));
+            else
+                status = client.getStudyData((String) selectedData.get(1), (String) selectedData.get(7));
+
             if (status.equalsIgnoreCase(Constants.SUCCESS)) {
                 setVisible(false);
             } else {
@@ -110,8 +116,12 @@ public class BMSDataSelectionPanel {
                 String triatstatus = client.getTrials(selectedCrop.trim(), trialList);
                 sharedInformation.getLogger().info("Fetched List of Triats.");
                 if (triatstatus.equalsIgnoreCase(Constants.SUCCESS)) {
+                    long serialNo = 0;
                     for (String[] trial : trialList) {
-                        model.addRow(trial);
+                        String[] newTrial = new String[8];
+                        newTrial[0] = String.valueOf(serialNo++);
+                        System.arraycopy(trial, 0, newTrial, 1, trial.length);
+                        model.addRow(newTrial);
                     }
                 } else {
                     Util.showMessageDialog("Error: " + triatstatus);

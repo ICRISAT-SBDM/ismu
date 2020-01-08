@@ -8,10 +8,13 @@ public class PhenotypesSearchTrialDbId {
     private String page;
     private String pageSize;
     private List<String> trialDbIds;
+    private String observationLevel;
+
 
     public PhenotypesSearchTrialDbId() {
         this.page = "0";
         this.pageSize = "1000";
+        this.observationLevel="MEANS";
         this.trialDbIds = new ArrayList<>();
     }
 

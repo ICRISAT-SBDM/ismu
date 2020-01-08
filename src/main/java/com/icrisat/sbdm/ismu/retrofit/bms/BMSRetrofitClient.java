@@ -137,35 +137,38 @@ public class BMSRetrofitClient {
     }
 
     /**
-     * Make a rest call to get trial or study data.
+     * Make a rest call to get trial data.
      *
-     * @param selectedData selected data row.
      * @return success status
      */
-    public String getData(List selectedData) {
-
+    public String getTrialData(String crop, String trialDbId) {
         String status;
         String authToken = BEARER + token.getAccess_token();
-        String crop = (String) selectedData.get(0);
-        boolean isTrial = selectedData.get(6) == "";
         List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> traitData = new ArrayList<>();
-        if (isTrial) {
-            String trialDbId = (String) selectedData.get(5);
-            PhenotypesSearchTrialDbId phenotypesSearchTrialDbId = new PhenotypesSearchTrialDbId();
-            phenotypesSearchTrialDbId.setTrialDbIds(new ArrayList(Collections.singleton(trialDbId)));
-            Call<TriatData> getData = client.getTrialData(authToken, crop, phenotypesSearchTrialDbId);
-            status = downloadTraitData(getData, traitData);
-            if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
-        } else {
-            String studyDbId = (String) selectedData.get(6);
-            PhenotypesSearchStudyDbId phenotypesSearchStudyDbId = new PhenotypesSearchStudyDbId();
-            phenotypesSearchStudyDbId.setStudyDbIds(new ArrayList(Collections.singleton(studyDbId)));
-            Call<TriatData> getData = client.getStudyData(authToken, crop, phenotypesSearchStudyDbId);
-            status = downloadTraitData(getData, traitData);
-            if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
-        }
+        PhenotypesSearchTrialDbId phenotypesSearchTrialDbId = new PhenotypesSearchTrialDbId();
+        phenotypesSearchTrialDbId.setTrialDbIds(new ArrayList(Collections.singleton(trialDbId)));
+        Call<TriatData> getData = client.getTrialData(authToken, crop, phenotypesSearchTrialDbId);
+        status = downloadTraitData(getData, traitData);
+        if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
         status = writeTrialDataToFile(traitData, sharedInformation);
-        System.out.println();
+        return status;
+    }
+
+    /**
+     * Make a rest call to get study data.
+     *
+     * @return success status
+     */
+    public String getStudyData(String crop, String studyDbId) {
+        String status;
+        String authToken = BEARER + token.getAccess_token();
+        List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> traitData = new ArrayList<>();
+        PhenotypesSearchStudyDbId phenotypesSearchStudyDbId = new PhenotypesSearchStudyDbId();
+        phenotypesSearchStudyDbId.setStudyDbIds(new ArrayList(Collections.singleton(studyDbId)));
+        Call<TriatData> getData = client.getStudyData(authToken, crop, phenotypesSearchStudyDbId);
+        status = downloadTraitData(getData, traitData);
+        if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
+        status = writeTrialDataToFile(traitData, sharedInformation);
         return status;
     }
 
@@ -183,7 +186,9 @@ public class BMSRetrofitClient {
                 Response<TriatData> data = getData.clone().execute();
                 if (data.isSuccessful()) {
                     traitData.addAll(data.body().getData());
-                    status = Constants.SUCCESS;
+                    if (traitData.size() == 0)
+                        status = "Mean Data for the selected trial is not available";
+                    else status = Constants.SUCCESS;
                 } else {
                     RetrofitError errorMessage = new Gson().fromJson(data.errorBody().charStream(), RetrofitError.class);
                     status = returnExitStatus(data.code(), errorMessage.toString());
