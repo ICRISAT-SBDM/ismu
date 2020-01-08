@@ -1,7 +1,6 @@
 package com.icrisat.sbdm.ismu.ui.analysis;
 
 import com.icrisat.sbdm.ismu.util.SharedInformation;
-import com.icrisat.sbdm.ismu.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

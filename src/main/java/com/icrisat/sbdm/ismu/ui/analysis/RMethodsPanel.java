@@ -1,6 +1,7 @@
-package com.icrisat.sbdm.ismu.ui.analysis.AnalysisMethods;
+package com.icrisat.sbdm.ismu.ui.analysis;
 
 import com.icrisat.sbdm.ismu.util.SharedInformation;
+import com.icrisat.sbdm.ismu.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +39,7 @@ public class RMethodsPanel extends JPanel {
 
     @Autowired
     public RMethodsPanel(SharedInformation sharedInformation) {
-
+        setBorder(Util.getCompoundBorder("Analysis method(s)", sharedInformation));
         setSize(600, 150);
         setLayout(new GridLayout(6, 1));
 

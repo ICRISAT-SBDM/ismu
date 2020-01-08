@@ -2,15 +2,9 @@ package com.icrisat.sbdm.ismu.ui.analysis;
 
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 

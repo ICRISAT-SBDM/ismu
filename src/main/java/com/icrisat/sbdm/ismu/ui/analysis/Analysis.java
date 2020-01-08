@@ -1,9 +1,6 @@
 package com.icrisat.sbdm.ismu.ui.analysis;
 
 import com.icrisat.sbdm.ismu.ui.analysis.AdditionalParametersPanel.AdditionalParametersPanel;
-import com.icrisat.sbdm.ismu.ui.analysis.AnalysisMethods.AnalysisMethodsPanel;
-import com.icrisat.sbdm.ismu.ui.analysis.AnalysisMethods.FortranMethodsPanel;
-import com.icrisat.sbdm.ismu.ui.analysis.AnalysisMethods.RMethodsPanel;
 import com.icrisat.sbdm.ismu.ui.components.ColumnSelectionPanel;
 import com.icrisat.sbdm.ismu.ui.mainFrame.DynamicTree;
 import com.icrisat.sbdm.ismu.util.*;
@@ -18,8 +15,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Analysis panel.
@@ -32,14 +30,12 @@ public class Analysis {
     private ColumnSelectionPanel columnSelectionPanel;
     private SelectFilesPanel selectFilesPanel;
     private AdditionalParametersPanel additionalParametersPanel;
-    private AnalysisMethodsPanel analysisMethodsPanel;
     private DataSubsetPanel dataSubsetPanel;
     private AnalysisDataObject analysisDataObject;
     private AnalysisUtil analysisUtil;
     private DynamicTree dynamicTree;
     private AnalysisProgress analysisProgress;
     private RMethodsPanel rMethodsPanel;
-    private FortranMethodsPanel fortranMethodsPanel;
     private boolean isAnalysisCancelled = false;
 
     public void setIsAnalysisCancelled(boolean analysisCancelled) {
@@ -93,8 +89,6 @@ public class Analysis {
         this.columnSelectionPanel = columnSelectionPanel;
         additionalParametersPanel.createAdditionalParametersPanel();
         rMethodsPanel = new RMethodsPanel(sharedInformation);
-        fortranMethodsPanel = new FortranMethodsPanel(sharedInformation);
-        analysisMethodsPanel = new AnalysisMethodsPanel(sharedInformation, rMethodsPanel, fortranMethodsPanel);
         dialogBox = new JDialog(sharedInformation.getMainFrame(), Dialog.ModalityType.APPLICATION_MODAL);
         dialogBox.setSize(950, 700);
         dialogBox.setLocation(Util.getLocation(900, 700));
@@ -132,12 +126,7 @@ public class Analysis {
      * Resets all components to its default value.
      */
     private void resetComponents() {
-        JTabbedPane methodPane = analysisMethodsPanel.getMethodPane();
-        RMethodsPanel rMethodsPanel = (RMethodsPanel) methodPane.getComponentAt(0);
         rMethodsPanel.setSelected(false);
-        FortranMethodsPanel fortranMethodsPanel = (FortranMethodsPanel) methodPane.getComponentAt(1);
-        fortranMethodsPanel.setSelected(false);
-
         dataSubsetPanel.resetValues();
         additionalParametersPanel.getBayesPanel().enableComponent(false);
         additionalParametersPanel.getSecondPanel().getRandomForestPanel().enableComponent(false);
@@ -156,8 +145,8 @@ public class Analysis {
         dialogBox.add(selectFilesPanel);
         additionalParametersPanel.setBounds(10, 460, 700, 210);
         dialogBox.add(additionalParametersPanel);
-        analysisMethodsPanel.setBounds(560, 10, 380, 300);
-        dialogBox.add(analysisMethodsPanel);
+        rMethodsPanel.setBounds(560, 10, 380, 300);
+        dialogBox.add(rMethodsPanel);
         dataSubsetPanel.setBounds(560, 310, 380, 150);
         dialogBox.add(dataSubsetPanel);
         JButton start = new JButton("Start");
@@ -371,9 +360,6 @@ public class Analysis {
     }
 
     private void fillMethodSelectionStatus() {
-        JTabbedPane methodPane = analysisMethodsPanel.getMethodPane();
-        RMethodsPanel rMethodsPanel = (RMethodsPanel) methodPane.getComponentAt(0);
-        FortranMethodsPanel fortranMethodsPanel = (FortranMethodsPanel) methodPane.getComponentAt(1);
         List<Integer> methodsSelected = analysisDataObject.getMethodsSelected();
 
         if (rMethodsPanel.getChkRidgeRegression().isSelected()) methodsSelected.add(1);
@@ -394,11 +380,10 @@ public class Analysis {
         if (rMethodsPanel.getChkRandomForest().isSelected()) methodsSelected.add(1);
         else methodsSelected.add(-1);
 
-        if (fortranMethodsPanel.getChkRidgeRegression().isSelected()) methodsSelected.add(1);
-        else methodsSelected.add(-1);
-
-        if (fortranMethodsPanel.getChkBayesA().isSelected()) methodsSelected.add(1);
-        else methodsSelected.add(-1);
+        //Previously there are two fortan methods. Now they are removed.
+        //So they are defaulted to not selected.
+        methodsSelected.add(-1);
+        methodsSelected.add(-1);
     }
 
     class Triat {

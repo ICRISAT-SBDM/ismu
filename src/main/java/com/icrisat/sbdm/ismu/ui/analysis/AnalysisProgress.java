@@ -2,7 +2,6 @@ package com.icrisat.sbdm.ismu.ui.analysis;
 
 import com.icrisat.sbdm.ismu.ui.WaitLayerUI;
 import com.icrisat.sbdm.ismu.util.Util;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
