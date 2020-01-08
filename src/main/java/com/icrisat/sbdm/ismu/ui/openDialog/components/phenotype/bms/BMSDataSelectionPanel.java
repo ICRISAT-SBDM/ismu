@@ -1,6 +1,7 @@
 package com.icrisat.sbdm.ismu.ui.openDialog.components.phenotype.bms;
 
 import com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitClient;
+import com.icrisat.sbdm.ismu.ui.WaitLayerUI;
 import com.icrisat.sbdm.ismu.ui.openDialog.components.SubmitPanel;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
@@ -20,7 +21,10 @@ import java.util.List;
 public class BMSDataSelectionPanel {
     private JDialog dialogBox;
     private SharedInformation sharedInformation;
+    private JComboBox<String> cropsCombo;
     private BMSTrialTable bmsTrialTable;
+    private SubmitPanel submitPanel;
+    private WaitLayerUI layerUI = new WaitLayerUI();
 
     public BMSDataSelectionPanel(SharedInformation sharedInformation) {
         this.sharedInformation = sharedInformation;
@@ -33,7 +37,7 @@ public class BMSDataSelectionPanel {
         mainPanel.setLayout(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
-        JComboBox<String> cropsCombo = new JComboBox<>();
+        cropsCombo = new JComboBox<>();
         cropsCombo.setFont(sharedInformation.getFont());
         addCrops(cropsCombo);
         cropsCombo.addActionListener(this::getTrialInformation);
@@ -47,12 +51,13 @@ public class BMSDataSelectionPanel {
         bmsTrialTable.table.setFillsViewportHeight(true);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        SubmitPanel submitPanel = new SubmitPanel(sharedInformation.getOkButtonFont());
+        submitPanel = new SubmitPanel(sharedInformation.getOkButtonFont());
         submitPanel.submit.addActionListener(this::getData);
         submitPanel.cancel.addActionListener(e -> dialogBox.setVisible(false));
         mainPanel.add(submitPanel, BorderLayout.SOUTH);
 
         dialogBox.add(mainPanel);
+        dialogBox.add(new JLayer<>(mainPanel, layerUI));
     }
 
     private void addCropsList(JComboBox<String> cropsCombo, JPanel cropPanel) {
@@ -91,21 +96,34 @@ public class BMSDataSelectionPanel {
      * @param e Action Event.
      */
     private void getTrialInformation(ActionEvent e) {
-
         JComboBox cb = (JComboBox) e.getSource();
         String selectedCrop = (String) cb.getSelectedItem();
+        cropsCombo.setEnabled(false);
+        submitPanel.submit.setEnabled(false);
         DefaultTableModel model = (DefaultTableModel) bmsTrialTable.table.getModel();
         model.setRowCount(0);
         BMSRetrofitClient client = sharedInformation.getBmsRetrofitClient();
         List<String[]> trialList = new ArrayList<>();
-        String status = client.getTrials(selectedCrop.trim(), trialList);
-        if (status.equalsIgnoreCase(Constants.SUCCESS)) {
-            for (String[] trial : trialList) {
-                model.addRow(trial);
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                String triatstatus = client.getTrials(selectedCrop.trim(), trialList);
+                sharedInformation.getLogger().info("Fetched List of Triats.");
+                if (triatstatus.equalsIgnoreCase(Constants.SUCCESS)) {
+                    for (String[] trial : trialList) {
+                        model.addRow(trial);
+                    }
+                } else {
+                    Util.showMessageDialog("Error: " + triatstatus);
+                }
+                layerUI.stop();
+                cropsCombo.setEnabled(true);
+                submitPanel.submit.setEnabled(true);
+                return null;
             }
-        } else {
-            Util.showMessageDialog("Error: " + status);
-        }
+        };
+        worker.execute();
+        layerUI.start();
     }
 
     /**
