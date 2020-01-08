@@ -80,18 +80,27 @@ public class BMSDataSelectionPanel {
             DefaultTableModel model = (DefaultTableModel) bmsTrialTable.table.getModel();
             List selectedData = new ArrayList((Collection) model.getDataVector().elementAt(selectedRow));
             BMSRetrofitClient client = sharedInformation.getBmsRetrofitClient();
-            String status ;
-            status = client.getTrialData((String) selectedData.get(1), (String) selectedData.get(6));
-            if (selectedData.get(7) == null || selectedData.get(7) == "")
-                status = client.getTrialData((String) selectedData.get(1), (String) selectedData.get(6));
-            else
-                status = client.getStudyData((String) selectedData.get(1), (String) selectedData.get(7));
-
-            if (status.equalsIgnoreCase(Constants.SUCCESS)) {
-                setVisible(false);
-            } else {
-                Util.showMessageDialog("Error: " + status);
-            }
+            cropsCombo.setEnabled(false);
+            SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+                @Override
+                protected Object doInBackground() throws Exception {
+                    String status ;
+                    if (selectedData.get(7) == null || selectedData.get(7) == "")
+                        status = client.getTrialData((String) selectedData.get(1), (String) selectedData.get(6));
+                    else
+                        status = client.getStudyData((String) selectedData.get(1), (String) selectedData.get(7));
+                    if (status.equalsIgnoreCase(Constants.SUCCESS)) {
+                        setVisible(false);
+                    } else {
+                        Util.showMessageDialog("Error: " + status);
+                    }
+                    layerUI.stop();
+                    cropsCombo.setEnabled(true);
+                    return null;
+                }
+            };
+            worker.execute();
+            layerUI.start();
         } else
             Util.showMessageDialog("Please select  a row.");
     }
