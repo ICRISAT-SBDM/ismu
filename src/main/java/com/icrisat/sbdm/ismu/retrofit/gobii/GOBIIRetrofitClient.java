@@ -94,14 +94,13 @@ public class GOBIIRetrofitClient {
     /**
      * Issue an extract request to the selected matrixDbId
      *
-     * @param selectedData Data selected. Second element is matrixDbId
      * @return extract jobId with status message
      */
-    public String downloadData(List selectedData, String fileName) {
+    public String downloadData(String datasetName, String datasetId, String fileName) {
         String status = Constants.SUCCESS;
         List<Calls> callResponseList = new ArrayList<>();
-        logger.info("Submitting data download request for: " + selectedData.get(0) + " with id: " + selectedData.get(2));
-        int variantSetId = Integer.parseInt((String) selectedData.get(2));
+        logger.info("Submitting data download request for: " + datasetName + " with id: " + datasetId);
+        int variantSetId = Integer.parseInt(datasetId);
         String pageToken = "";
         try {
             do {

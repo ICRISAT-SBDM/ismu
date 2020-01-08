@@ -125,7 +125,7 @@ public class BMSDataSelectionPanel {
                 String triatstatus = client.getTrials(selectedCrop.trim(), trialList);
                 sharedInformation.getLogger().info("Fetched List of Triats.");
                 if (triatstatus.equalsIgnoreCase(Constants.SUCCESS)) {
-                    long serialNo = 0;
+                    long serialNo = 1;
                     for (String[] trial : trialList) {
                         String[] newTrial = new String[8];
                         newTrial[0] = String.valueOf(serialNo++);

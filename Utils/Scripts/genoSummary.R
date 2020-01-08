@@ -283,7 +283,7 @@ TRes<-HTML(paste("<b align=\"center\">Marker Statistics</b><br>"), HR=4, file=AR
 TRes<-HTML(GSum, file=ARFILE, Append=T)
 TRes<-HTML("</div>", file=ARFILE, Append=T)
 } else {
-  TRes<-HTML(paste("<b align=\"center\">Refer to summary file for more details</b><br>"), HR=4, file=ARFILE, Append=T, Align="center")
+  TRes<-HTML(paste("<b align=\"center\"> More than 1000 markers, please refer to summary file for more details.</b><br>"), HR=4, file=ARFILE, Append=T, Align="center")
   # TRes<-HTML(GSum, file=ARFILE, Append=T)
   # TRes<-HTML("</div>", file=ARFILE, Append=T)
 }

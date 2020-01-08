@@ -4,6 +4,6 @@ import com.icrisat.sbdm.ismu.ui.openDialog.components.genotype.GenotypeDataSetTa
 
 public class GOBIIDataSetTable extends GenotypeDataSetTable {
     public GOBIIDataSetTable() {
-        super(new String[]{"  Variant Set Name  ", "  Study Name  ", "  variantSet DB Id ", "  Study DB Id  "});
+        super(new String[]{" S.No ", "  Variant Set Name  ", "  Study Name  ", "  variantSet DB Id ", "  Study DB Id  "});
     }
 }

@@ -32,8 +32,12 @@ public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
             status = client.getVariantSets(dataSetList);
         }
         if (status.equalsIgnoreCase(Constants.SUCCESS)) {
+            long serialNo = 1;
             for (String[] dataSet : dataSetList) {
-                model.addRow(dataSet);
+                String[] newDataset = new String[5];
+                newDataset[0] = String.valueOf(serialNo++);
+                System.arraycopy(dataSet, 0, newDataset, 1, dataSet.length);
+                model.addRow(newDataset);
             }
         }
         return status;
@@ -51,7 +55,7 @@ public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
             protected Object doInBackground() {
                 if (finalSelectedData != null) {
                     String outputFileName = getBrapiOutputFileName("GOBII");
-                    String status = sharedInformation.getGobiiRetrofitClient().downloadData(finalSelectedData, outputFileName);
+                    String status = sharedInformation.getGobiiRetrofitClient().downloadData((String) finalSelectedData.get(1), (String) finalSelectedData.get(4), outputFileName);
                     if (status.equals(Constants.SUCCESS)) {
                         sharedInformation.getOpenDialog().getTxtGenotype().setText(outputFileName);
                         dialogBox.setVisible(false);
