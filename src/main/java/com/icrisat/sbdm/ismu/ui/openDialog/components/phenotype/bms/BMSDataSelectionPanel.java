@@ -46,7 +46,8 @@ public class BMSDataSelectionPanel {
 
         cropsCombo.addActionListener(this::getTrialInformation);
         searchPanel = new SearchPanel(sharedInformation);
-        searchPanel.searchButton.addActionListener(this::filterData);
+        searchPanel.searchButton.addActionListener(this::filterTableData);
+        searchPanel.resetButton.addActionListener(this::resetTableData);
         JPanel cropPanel = new JPanel();
         cropPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         addCropsList(cropsCombo, searchPanel, cropPanel);
@@ -114,7 +115,7 @@ public class BMSDataSelectionPanel {
             Util.showMessageDialog("Please select  a row.");
     }
 
-    private void filterData(ActionEvent e) {
+    private void filterTableData(ActionEvent e) {
         setEnableForComponents(false);
         String programText = searchPanel.programInputField.getText();
         String trialText = searchPanel.trialInputField.getText();
@@ -145,6 +146,14 @@ public class BMSDataSelectionPanel {
         }
         bmsTrialTable.table.setModel(newTableModel);
         setEnableForComponents(true);
+    }
+
+    private void resetTableData(ActionEvent e) {
+        searchPanel.programInputField.setText("");
+        searchPanel.trialInputField.setText("");
+        searchPanel.locationInputField.setText("");
+        bmsTrialTable.table.setModel(bmsTrialTable.defaultTableModel);
+
     }
 
     public static boolean containsIgnoreCase(String str, String subString) {
@@ -196,6 +205,7 @@ public class BMSDataSelectionPanel {
         searchPanel.trialInputField.setEnabled(b);
         searchPanel.locationInputField.setEnabled(b);
         searchPanel.searchButton.setEnabled(b);
+        searchPanel.resetButton.setEnabled(b);
         submitPanel.submit.setEnabled(b);
     }
 

@@ -8,7 +8,7 @@ import java.awt.*;
 public class SearchPanel extends JPanel {
 
     public JTextField programInputField, trialInputField, locationInputField;
-    public JButton searchButton;
+    public JButton searchButton, resetButton;
 
     public SearchPanel(SharedInformation sharedInformation) {
         JPanel dataPanel = new JPanel();
@@ -22,11 +22,13 @@ public class SearchPanel extends JPanel {
         trialLabel.setFont(sharedInformation.getBoldFont());
         JLabel locationLabel = new JLabel("Location");
         locationLabel.setFont(sharedInformation.getBoldFont());
-        programInputField = new CustomTextField(15);
-        trialInputField = new CustomTextField(15);
-        locationInputField = new CustomTextField(15);
+        programInputField = new CustomTextField(10);
+        trialInputField = new CustomTextField(10);
+        locationInputField = new CustomTextField(10);
         searchButton = new JButton("  Search  ");
         searchButton.setFont(sharedInformation.getOkButtonFont());
+        resetButton = new JButton("  Reset  ");
+        resetButton.setFont(sharedInformation.getOkButtonFont());
         add(programLabel);
         add(programInputField);
         add(trialLabel);
@@ -34,5 +36,6 @@ public class SearchPanel extends JPanel {
         add(locationLabel);
         add(locationInputField);
         add(searchButton);
+        add(resetButton);
     }
 }
