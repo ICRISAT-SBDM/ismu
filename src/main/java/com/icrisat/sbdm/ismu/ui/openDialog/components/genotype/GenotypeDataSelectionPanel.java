@@ -20,6 +20,7 @@ public abstract class GenotypeDataSelectionPanel {
     protected JDialog dialogBox;
     protected SharedInformation sharedInformation;
     protected GenotypeDataSetTable genotypeDataSetTable;
+    protected GOBIISearchPanel gobiiSearchPanel;
     protected SubmitPanel submitPanel;
     protected WaitLayerUI layerUI = new WaitLayerUI();
 
@@ -34,10 +35,17 @@ public abstract class GenotypeDataSelectionPanel {
         dataPanel.setLayout(new BorderLayout());
         dataPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
+        gobiiSearchPanel = new GOBIISearchPanel(sharedInformation);
+        gobiiSearchPanel.searchButton.addActionListener(this::filterTableData);
+        gobiiSearchPanel.resetButton.addActionListener(this::resetTableData);
+
+
         genotypeDataSetTable = dataSetTable;
-        String status = getDataSets((DefaultTableModel) genotypeDataSetTable.table.getModel());
+        String status = getDataSets(genotypeDataSetTable.defaultTableModel);
         if (status.equalsIgnoreCase(Constants.SUCCESS)) {
             sharedInformation.getGenotypeURLPanel().setVisible(false);
+            dataPanel.add(gobiiSearchPanel, BorderLayout.NORTH);
+            genotypeDataSetTable.table.setModel(genotypeDataSetTable.defaultTableModel);
             JScrollPane scrollPane = new JScrollPane(genotypeDataSetTable.table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
             genotypeDataSetTable.table.setFillsViewportHeight(true);
             dataPanel.add(scrollPane, BorderLayout.CENTER);
@@ -59,6 +67,12 @@ public abstract class GenotypeDataSelectionPanel {
             Util.showMessageDialog("Error: " + status);
         }
     }
+
+    protected void filterTableData(ActionEvent e) {
+
+    }
+
+    protected abstract void resetTableData(ActionEvent e);
 
     protected abstract void downloadData(String s);
 

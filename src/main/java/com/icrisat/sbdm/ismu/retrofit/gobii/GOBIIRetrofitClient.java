@@ -104,6 +104,7 @@ public class GOBIIRetrofitClient {
         String pageToken = "";
         try {
             do {
+                logger.info("Submitting data download request for: " + datasetName + " with id: " + datasetId + " for page: " + pageToken);
                 Call<Calls> downloadVariantSetCall = client.downloadVariantSet(token.getToken(), variantSetId, 1000, pageToken);
                 Response<Calls> downloadVariantSetResponse = downloadVariantSetCall.execute();
                 if (downloadVariantSetResponse.isSuccessful()) {
@@ -128,6 +129,7 @@ public class GOBIIRetrofitClient {
             status = e.getMessage();
             logger.error(status);
         }
+        logger.info("Submitting data download request completed ");
         return status;
     }
 

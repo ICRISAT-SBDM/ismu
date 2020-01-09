@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
 
@@ -55,7 +56,7 @@ public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
             protected Object doInBackground() {
                 if (finalSelectedData != null) {
                     String outputFileName = getBrapiOutputFileName("GOBII");
-                    String status = sharedInformation.getGobiiRetrofitClient().downloadData((String) finalSelectedData.get(1), (String) finalSelectedData.get(4), outputFileName);
+                    String status = sharedInformation.getGobiiRetrofitClient().downloadData((String) finalSelectedData.get(1), (String) finalSelectedData.get(3), outputFileName);
                     if (status.equals(Constants.SUCCESS)) {
                         sharedInformation.getOpenDialog().getTxtGenotype().setText(outputFileName);
                         dialogBox.setVisible(false);
@@ -70,6 +71,49 @@ public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
         worker.execute();
         submitPanel.submit.setEnabled(false);
         layerUI.start();
+    }
+
+    private void setEnableForComponents(boolean b) {
+        gobiiSearchPanel.variantSetInputField.setEnabled(b);
+        gobiiSearchPanel.studyInputField.setEnabled(b);
+        gobiiSearchPanel.searchButton.setEnabled(b);
+        gobiiSearchPanel.resetButton.setEnabled(b);
+        submitPanel.submit.setEnabled(b);
+    }
+
+    @Override
+    protected void filterTableData(ActionEvent e) {
+        setEnableForComponents(false);
+        String variantSetInputFieldText = gobiiSearchPanel.variantSetInputField.getText();
+        String studyInputFieldText = gobiiSearchPanel.studyInputField.getText();
+        if (Objects.equals(variantSetInputFieldText, "") && Objects.equals(studyInputFieldText, ""))
+            genotypeDataSetTable.table.setModel(genotypeDataSetTable.defaultTableModel);
+        DefaultTableModel newTableModel = new DefaultTableModel(Constants.gobiiHeaders, 0);
+        for (Object obj : genotypeDataSetTable.defaultTableModel.getDataVector()) {
+            List<String> row = (List<String>) obj;
+            boolean variantSearchMatch = false, studyMatch = false;
+            if (Objects.equals(variantSearchMatch, "")) {
+                variantSearchMatch = true;
+            } else if (Util.containsIgnoreCase(row.get(1), variantSetInputFieldText)) {
+                variantSearchMatch = true;
+            }
+            if (Objects.equals(studyInputFieldText, "")) {
+                studyMatch = true;
+            } else if (Util.containsIgnoreCase(row.get(2), studyInputFieldText)) {
+                studyMatch = true;
+            }
+            if (variantSearchMatch && studyMatch)
+                newTableModel.addRow(row.toArray());
+        }
+        genotypeDataSetTable.table.setModel(newTableModel);
+        setEnableForComponents(true);
+    }
+
+    @Override
+    protected void resetTableData(ActionEvent e) {
+        gobiiSearchPanel.variantSetInputField.setText("");
+        gobiiSearchPanel.studyInputField.setText("");
+        genotypeDataSetTable.table.setModel(genotypeDataSetTable.defaultTableModel);
     }
 
     @Override

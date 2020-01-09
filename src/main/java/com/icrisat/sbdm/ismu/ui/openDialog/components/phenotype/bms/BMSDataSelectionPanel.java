@@ -2,7 +2,6 @@ package com.icrisat.sbdm.ismu.ui.openDialog.components.phenotype.bms;
 
 import com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitClient;
 import com.icrisat.sbdm.ismu.ui.WaitLayerUI;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.SearchPanel;
 import com.icrisat.sbdm.ismu.ui.openDialog.components.SubmitPanel;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
@@ -24,7 +23,7 @@ public class BMSDataSelectionPanel {
     private JDialog dialogBox;
     private SharedInformation sharedInformation;
     private JComboBox<String> cropsCombo;
-    private SearchPanel searchPanel;
+    private BMSSearchPanel bmsSearchPanel;
     private BMSTrialTable bmsTrialTable;
     private SubmitPanel submitPanel;
     private WaitLayerUI layerUI = new WaitLayerUI();
@@ -45,12 +44,12 @@ public class BMSDataSelectionPanel {
         addCrops(cropsCombo);
 
         cropsCombo.addActionListener(this::getTrialInformation);
-        searchPanel = new SearchPanel(sharedInformation);
-        searchPanel.searchButton.addActionListener(this::filterTableData);
-        searchPanel.resetButton.addActionListener(this::resetTableData);
+        bmsSearchPanel = new BMSSearchPanel(sharedInformation);
+        bmsSearchPanel.searchButton.addActionListener(this::filterTableData);
+        bmsSearchPanel.resetButton.addActionListener(this::resetTableData);
         JPanel cropPanel = new JPanel();
         cropPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        addCropsList(cropsCombo, searchPanel, cropPanel);
+        addCropsList(cropsCombo, bmsSearchPanel, cropPanel);
         mainPanel.add(cropPanel, BorderLayout.NORTH);
 
         bmsTrialTable = new BMSTrialTable();
@@ -67,7 +66,7 @@ public class BMSDataSelectionPanel {
         dialogBox.add(new JLayer<>(mainPanel, layerUI));
     }
 
-    private void addCropsList(JComboBox<String> cropsCombo, SearchPanel searchPanel, JPanel cropPanel) {
+    private void addCropsList(JComboBox<String> cropsCombo, BMSSearchPanel BMSSearchPanel, JPanel cropPanel) {
         cropPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 20, 5));
         Util.addDummyLabels(cropPanel, 4);
         JLabel selectACrop = new JLabel("Select a crop");
@@ -75,7 +74,7 @@ public class BMSDataSelectionPanel {
         cropPanel.add(selectACrop);
         cropPanel.add(cropsCombo);
         Util.addDummyLabels(cropPanel, 4);
-        cropPanel.add(searchPanel);
+        cropPanel.add(BMSSearchPanel);
         Util.addDummyLabels(cropPanel, 4);
     }
 
@@ -117,9 +116,9 @@ public class BMSDataSelectionPanel {
 
     private void filterTableData(ActionEvent e) {
         setEnableForComponents(false);
-        String programText = searchPanel.programInputField.getText();
-        String trialText = searchPanel.trialInputField.getText();
-        String locationText = searchPanel.locationInputField.getText();
+        String programText = bmsSearchPanel.programInputField.getText();
+        String trialText = bmsSearchPanel.trialInputField.getText();
+        String locationText = bmsSearchPanel.locationInputField.getText();
         if (Objects.equals(programText, "") && Objects.equals(trialText, "") && Objects.equals(locationText, ""))
             bmsTrialTable.table.setModel(bmsTrialTable.defaultTableModel);
         DefaultTableModel newTableModel = new DefaultTableModel(Constants.bmsHeaders, 0);
@@ -128,17 +127,17 @@ public class BMSDataSelectionPanel {
             boolean programMatch = false, trialMatch = false, locationMatch = false;
             if (Objects.equals(programText, "")) {
                 programMatch = true;
-            } else if (containsIgnoreCase(row.get(2), programText)) {
+            } else if (Util.containsIgnoreCase(row.get(2), programText)) {
                 programMatch = true;
             }
             if (Objects.equals(trialText, "")) {
                 trialMatch = true;
-            } else if (containsIgnoreCase(row.get(3), trialText)) {
+            } else if (Util.containsIgnoreCase(row.get(3), trialText)) {
                 trialMatch = true;
             }
             if (Objects.equals(locationText, "")) {
                 locationMatch = true;
-            } else if (containsIgnoreCase(row.get(5), locationText)) {
+            } else if (Util.containsIgnoreCase(row.get(5), locationText)) {
                 locationMatch = true;
             }
             if (programMatch && trialMatch && locationMatch)
@@ -149,16 +148,13 @@ public class BMSDataSelectionPanel {
     }
 
     private void resetTableData(ActionEvent e) {
-        searchPanel.programInputField.setText("");
-        searchPanel.trialInputField.setText("");
-        searchPanel.locationInputField.setText("");
+        bmsSearchPanel.programInputField.setText("");
+        bmsSearchPanel.trialInputField.setText("");
+        bmsSearchPanel.locationInputField.setText("");
         bmsTrialTable.table.setModel(bmsTrialTable.defaultTableModel);
 
     }
 
-    public static boolean containsIgnoreCase(String str, String subString) {
-        return str.toLowerCase().contains(subString.toLowerCase());
-    }
 
     /**
      * Gets the trial information using REST call.
@@ -201,11 +197,11 @@ public class BMSDataSelectionPanel {
 
     private void setEnableForComponents(boolean b) {
         cropsCombo.setEnabled(b);
-        searchPanel.programInputField.setEnabled(b);
-        searchPanel.trialInputField.setEnabled(b);
-        searchPanel.locationInputField.setEnabled(b);
-        searchPanel.searchButton.setEnabled(b);
-        searchPanel.resetButton.setEnabled(b);
+        bmsSearchPanel.programInputField.setEnabled(b);
+        bmsSearchPanel.trialInputField.setEnabled(b);
+        bmsSearchPanel.locationInputField.setEnabled(b);
+        bmsSearchPanel.searchButton.setEnabled(b);
+        bmsSearchPanel.resetButton.setEnabled(b);
         submitPanel.submit.setEnabled(b);
     }
 

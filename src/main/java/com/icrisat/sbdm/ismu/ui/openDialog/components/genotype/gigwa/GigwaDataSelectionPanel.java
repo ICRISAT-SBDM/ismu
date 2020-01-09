@@ -21,6 +21,16 @@ public class GigwaDataSelectionPanel extends GenotypeDataSelectionPanel {
         Util.showMessageDialog("Work in progress.");
     }
 
+    @Override
+    protected void filterTableData(ActionEvent e) {
+
+    }
+
+    @Override
+    protected void resetTableData(ActionEvent e) {
+
+    }
+
     protected void downloadData(String genotypeFile) {
     }
 

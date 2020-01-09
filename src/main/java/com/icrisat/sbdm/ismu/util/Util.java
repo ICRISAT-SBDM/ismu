@@ -77,7 +77,7 @@ public class Util {
             if (!returnStatus.endsWith(Constants.SUCCESS)) return returnStatus;
 
             List<List<String>> valuesList = Files.lines(Paths.get(source))
-                    .map(line -> line.replace("\"",""))
+                    .map(line -> line.replace("\"", ""))
                     .map(line -> Arrays.asList(line.split(",")))
                     .collect(Collectors.toList());
 
@@ -475,6 +475,10 @@ public class Util {
         int xCoord = (int) ((screenSize.getWidth() - x) / 2);
         int yCoord = (int) (screenSize.getHeight() - y) / 2;
         return new Point(xCoord, yCoord);
+    }
+
+    public static boolean containsIgnoreCase(String str, String subString) {
+        return str.toLowerCase().contains(subString.toLowerCase());
     }
 
 }

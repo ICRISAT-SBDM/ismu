@@ -24,7 +24,7 @@ public class CustomTextField extends JTextField {
      * You can insert all constructors.
      * I inserted only this one.*
      */
-    CustomTextField(int columns) {
+    public CustomTextField(int columns) {
         super(columns);
     }
 

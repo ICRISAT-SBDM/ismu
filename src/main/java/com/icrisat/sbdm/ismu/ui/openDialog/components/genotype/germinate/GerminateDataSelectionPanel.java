@@ -73,6 +73,16 @@ public class GerminateDataSelectionPanel extends GenotypeDataSelectionPanel {
     }
 
     @Override
+    protected void filterTableData(ActionEvent e) {
+
+    }
+
+    @Override
+    protected void resetTableData(ActionEvent e) {
+
+    }
+
+    @Override
     protected void downloadData(String genotypeFile) {
         GerminateRetrofitClient germinateRetrofitClient = sharedInformation.getGerminateRetrofitClient();
         String outputFileName = getBrapiOutputFileName("Germinate");

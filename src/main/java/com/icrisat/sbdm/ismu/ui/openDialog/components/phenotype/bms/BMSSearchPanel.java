@@ -1,16 +1,17 @@
-package com.icrisat.sbdm.ismu.ui.openDialog.components;
+package com.icrisat.sbdm.ismu.ui.openDialog.components.phenotype.bms;
 
+import com.icrisat.sbdm.ismu.ui.openDialog.components.CustomTextField;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SearchPanel extends JPanel {
+public class BMSSearchPanel extends JPanel {
 
     public JTextField programInputField, trialInputField, locationInputField;
     public JButton searchButton, resetButton;
 
-    public SearchPanel(SharedInformation sharedInformation) {
+    public BMSSearchPanel(SharedInformation sharedInformation) {
         JPanel dataPanel = new JPanel();
         dataPanel.setSize(500, 300);
         dataPanel.setLayout(null);
