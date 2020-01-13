@@ -105,7 +105,7 @@ public class GOBIIRetrofitClient {
         try {
             do {
                 logger.info("Submitting data download request for: " + datasetName + " with id: " + datasetId + " for page: " + pageToken);
-                Call<Calls> downloadVariantSetCall = client.downloadVariantSet(token.getToken(), variantSetId, 1000, pageToken);
+                Call<Calls> downloadVariantSetCall = client.downloadVariantSet(token.getToken(), variantSetId, 10000, pageToken);
                 Response<Calls> downloadVariantSetResponse = downloadVariantSetCall.execute();
                 if (downloadVariantSetResponse.isSuccessful()) {
                     Calls callResponseJSON = downloadVariantSetResponse.body();

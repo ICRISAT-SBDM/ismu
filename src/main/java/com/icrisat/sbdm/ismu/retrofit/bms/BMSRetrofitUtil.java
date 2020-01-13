@@ -76,10 +76,16 @@ class BMSRetrofitUtil {
     static String writeTrialDataToFile(List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> triatJSONList, SharedInformation sharedInformation) {
         String status = Constants.SUCCESS;
         String outputFileName = sharedInformation.getPathConstants().tempResultDirectory + "BMS_data" + new SimpleDateFormat("hhmmss").format(new Date()) + ".csv";
-        try (CSVWriter csvWriter = new CSVWriter(new FileWriter(outputFileName))) {
+        String uuidGermplasmNameFileName = sharedInformation.getPathConstants().tempResultDirectory + "BMS_data_uuid" + new SimpleDateFormat("hhmmss").format(new Date()) + ".csv";
+        try (
+                CSVWriter csvWriter = new CSVWriter(new FileWriter(outputFileName));
+                CSVWriter uuidWriter = new CSVWriter(new FileWriter(uuidGermplasmNameFileName))) {
             //Write Headers
             List<String> headers = new ArrayList<>();
-            headers.add(Constants.SAMPLE_ID);
+            List<String> uuidHeaders = new ArrayList<>();
+            headers.add(Constants.GERMPLASM_NAME);
+            uuidHeaders.add(Constants.SAMPLE_ID);
+            uuidHeaders.add(Constants.GERMPLASM_NAME);
             List<Observations> observations = triatJSONList.get(0).getObservations();
             Map<String, String> rowMap = new HashMap<>();
             for (Observations observation : observations) {
@@ -87,6 +93,7 @@ class BMSRetrofitUtil {
                 rowMap.put(observation.getObservationVariableName(), "NA");
             }
             csvWriter.writeNext(headers.toArray(new String[headers.size()]));
+            uuidWriter.writeNext(uuidHeaders.toArray(new String[uuidHeaders.size()]));
             headers.remove(0);
             // Write Data
             for (com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data triatJSON : triatJSONList) {
@@ -94,17 +101,20 @@ class BMSRetrofitUtil {
                     myEntry.setValue("NA");
                 }
                 List<String> dataRow = new ArrayList<>();
-                dataRow.add(triatJSON.getObservationUnitDbId());
+                List<String> uuidRow = new ArrayList<>();
+                uuidRow.add(triatJSON.getGermplasmName());
+                uuidRow.add(triatJSON.getObservationUnitDbId());
+                dataRow.add(triatJSON.getGermplasmName());
                 List<Observations> observationList = triatJSON.getObservations();
                 for (Observations observation : observationList) {
-                    rowMap.replace(observation.getObservationVariableName(),observation.getValue());
+                    rowMap.replace(observation.getObservationVariableName(), observation.getValue());
                 }
-                for(String header:headers){
+                for (String header : headers) {
                     dataRow.add(rowMap.get(header));
                 }
                 csvWriter.writeNext(dataRow.toArray(new String[dataRow.size()]));
+                uuidWriter.writeNext(uuidRow.toArray(new String[uuidRow.size()]));
             }
-
             csvWriter.flush();
             sharedInformation.getOpenDialog().getTxtPhenotype().setText(outputFileName);
         } catch (Exception e) {

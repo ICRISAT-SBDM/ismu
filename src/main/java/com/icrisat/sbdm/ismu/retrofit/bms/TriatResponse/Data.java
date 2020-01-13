@@ -32,4 +32,11 @@ public class Data {
         return observations;
     }
 
+    public String getGermplasmName() {
+        return germplasmName;
+    }
+
+    public void setGermplasmName(String germplasmName) {
+        this.germplasmName = germplasmName;
+    }
 }
