@@ -1,13 +1,15 @@
 package com.icrisat.sbdm.ismu.ui.openDialog.components;
 
-import java.awt.*;
-import javax.swing.*;
-
+import com.icrisat.sbdm.ismu.ui.openDialog.components.connectionPanel.ConnectionPanel;
+import com.icrisat.sbdm.ismu.ui.openDialog.components.connectionPanel.LogoFooterPanel;
 import com.icrisat.sbdm.ismu.ui.openDialog.components.loginPanel.BMSLoginPanel;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Creating GUI dialog box to connect to available pheno type data bases.
@@ -33,18 +35,13 @@ public class PhenotypeDB {
      * Creates the phenotype database dialog box..
      */
     public void createPhenotypeDB() {
-        dialogBox = new JDialog(sharedInformation.getMainFrame(), "Connect to Phenotype databases", Dialog.ModalityType.APPLICATION_MODAL);
-        dialogBox.setSize(new Dimension(500, 120));
-        dialogBox.setLocation(Util.getLocation(500, 120));
+        dialogBox = new JDialog(sharedInformation.getMainFrame(), "Connect to BMS", Dialog.ModalityType.APPLICATION_MODAL);
+        dialogBox.setSize(new Dimension(400, 250));
+        dialogBox.setLocation(Util.getLocation(400, 250));
         dialogBox.setLocationRelativeTo(sharedInformation.getMainFrame());
         sharedInformation.setPhenotypeURLPanel(dialogBox);
-        URLPanel bmsURLPanel = new URLPanel(sharedInformation, "BMS", new BMSLoginPanel(sharedInformation));
-        //b4rURLPanel = new URLPanel(parent,"B4R", new B4rLoginPanel(parent));
-        dialogBox.setLayout(new FlowLayout());
-
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.add(bmsURLPanel);
-        dialogBox.add(mainPanel);
+        dialogBox.setLayout(new BorderLayout());
+        dialogBox.add(new ConnectionPanel(sharedInformation, new BMSLoginPanel(sharedInformation)), BorderLayout.CENTER);
+        dialogBox.add(new LogoFooterPanel(sharedInformation, "bms"), BorderLayout.SOUTH);
     }
 }
