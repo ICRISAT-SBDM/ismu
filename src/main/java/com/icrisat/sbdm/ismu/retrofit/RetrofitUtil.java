@@ -1,10 +1,8 @@
 package com.icrisat.sbdm.ismu.retrofit;
 
 import com.google.gson.Gson;
-import com.icrisat.sbdm.ismu.retrofit.germinate.GerminateRetrofitUtil;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -73,28 +71,6 @@ public class RetrofitUtil {
             } else {
                 RetrofitError errorMessage = new Gson().fromJson(extractDataSetResponse.errorBody().charStream(), RetrofitError.class);
                 status = returnExitStatus(extractDataSetResponse.code(), errorMessage.toString());
-            }
-        } catch (IOException e) {
-            status = e.getMessage();
-        }
-        return status;
-    }
-
-    public static String downloadData(String fileName, Call<ResponseBody> call, String type) {
-        String status = Constants.SUCCESS;
-        try {
-            Response<ResponseBody> downloadDataSetResponse = call.execute();
-            if (downloadDataSetResponse.isSuccessful()) {
-                switch (type) {
-                    case Constants.GERMINATE:
-                        if (!GerminateRetrofitUtil.writeResponseBodyToDisk(downloadDataSetResponse.body(), fileName)) {
-                            status = "Error in writing file to disk. Please check log file for details.";
-                        }
-                        break;
-                }
-            } else {
-                RetrofitError errorMessage = new Gson().fromJson(downloadDataSetResponse.errorBody().charStream(), RetrofitError.class);
-                status = returnExitStatus(downloadDataSetResponse.code(), errorMessage.toString());
             }
         } catch (IOException e) {
             status = e.getMessage();

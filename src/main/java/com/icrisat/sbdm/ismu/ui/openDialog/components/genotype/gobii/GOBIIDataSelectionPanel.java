@@ -65,6 +65,7 @@ public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
                     }
                 }
                 layerUI.stop();
+                submitPanel.submit.setEnabled(true);
                 return null;
             }
         };
@@ -114,10 +115,5 @@ public class GOBIIDataSelectionPanel extends GenotypeDataSelectionPanel {
         gobiiSearchPanel.variantSetInputField.setText("");
         gobiiSearchPanel.studyInputField.setText("");
         genotypeDataSetTable.table.setModel(genotypeDataSetTable.defaultTableModel);
-    }
-
-    @Override
-    protected void downloadData(String genotypeFile) {
-        //Never used
     }
 }

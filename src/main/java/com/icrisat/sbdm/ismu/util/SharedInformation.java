@@ -1,9 +1,6 @@
 package com.icrisat.sbdm.ismu.util;
 
 import com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitClient;
-import com.icrisat.sbdm.ismu.retrofit.germinate.GerminateRetrofitClient;
-import com.icrisat.sbdm.ismu.retrofit.gigwa.GigwaRetrofitClient;
-import com.icrisat.sbdm.ismu.retrofit.gigwa.GigwaRetrofitUtil;
 import com.icrisat.sbdm.ismu.retrofit.gobii.GOBIIRetrofitClient;
 import com.icrisat.sbdm.ismu.ui.mainFrame.ClosableTabbedPane;
 import com.icrisat.sbdm.ismu.ui.openDialog.OpenDialog;
@@ -31,8 +28,6 @@ public class SharedInformation {
     private OpenDialog openDialog;
     private BMSRetrofitClient bmsRetrofitClient;
     private GOBIIRetrofitClient gobiiRetrofitClient;
-    private GerminateRetrofitClient germinateRetrofitClient;
-    private GigwaRetrofitClient gigwaRetrofitClient;
     private String OS;
     private String workingDirectory = System.getProperty("user.dir");
     private Logger logger = LoggerFactory.getLogger(SharedInformation.class);
@@ -64,24 +59,6 @@ public class SharedInformation {
     @Autowired
     public void setGobiiRetrofitClient(GOBIIRetrofitClient gobiiRetrofitClient) {
         this.gobiiRetrofitClient = gobiiRetrofitClient;
-    }
-
-    public GerminateRetrofitClient getGerminateRetrofitClient() {
-        return germinateRetrofitClient;
-    }
-
-    @Autowired
-    public void setGerminateRetrofitClient(GerminateRetrofitClient germinateRetrofitClient) {
-        this.germinateRetrofitClient = germinateRetrofitClient;
-    }
-
-    public GigwaRetrofitClient getGigwaRetrofitClient() {
-        return gigwaRetrofitClient;
-    }
-
-    @Autowired
-    public void setGigwaRetrofitClient(GigwaRetrofitClient gigwaRetrofitClient) {
-        this.gigwaRetrofitClient = gigwaRetrofitClient;
     }
 
     public PathConstants getPathConstants() {

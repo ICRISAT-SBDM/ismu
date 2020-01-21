@@ -40,9 +40,5 @@ public class Constants {
     static final String END = "END";
     static final String PROJ_CORRUPTED = "CORRUPTED PROJECT. COULD NOT LOAD";
     static final String PNG = "PNG";
-    public static final String GERMINATE = "Germinate";
     public static final String GOBII = "GOBII";
-    public static final int GOBII_TYPE = 1;
-    public static final int GERMINATE_TYPE = 2;
-    public static final int GIGWA_TYPE = 3;
 }

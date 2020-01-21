@@ -74,41 +74,10 @@ public abstract class GenotypeDataSelectionPanel {
 
     protected abstract void resetTableData(ActionEvent e);
 
-    protected abstract void downloadData(String s);
-
     protected abstract String getDataSets(DefaultTableModel model);
 
     protected abstract void startDataExtract(ActionEvent actionEvent);
 
-    /**
-     * Takes jobId and queries until completion or failure
-     *
-     * @param clientType Germinate, GIGWA.
-     * @param jobId      jobId
-     */
-    protected void checkJobStatusNDownload(int clientType, String jobId) {
-        try {
-            boolean proceed = true;
-            while (proceed) {
-                Thread.sleep(5000);
-                List<String> extractStatus = null;
-                if (clientType == Constants.GERMINATE_TYPE)
-                    extractStatus = sharedInformation.getGerminateRetrofitClient().getExtractStatus(jobId);
-                else if (clientType == Constants.GIGWA_TYPE) {/*extractStatus = germinateRetrofitClient.getExtractStatus(jobId);*/}
-
-                String status = extractStatus.get(extractStatus.size() - 1);
-                if (extractStatus.size() > 1) {
-                    downloadData(extractStatus.get(0));
-                    proceed = false;
-                } else if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
-                    Util.showMessageDialog("Error: could not download the data-set. " + status);
-                    proceed = false;
-                }
-            }
-        } catch (InterruptedException e1) {
-            Util.showMessageDialog("Error: could not download the data-set.\n " + e1.getMessage());
-        }
-    }
 
     /**
      * Brapi output file name. Used for BMS, GOBII, Germinate etc.

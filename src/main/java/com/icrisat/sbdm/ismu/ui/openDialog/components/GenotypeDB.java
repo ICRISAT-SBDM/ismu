@@ -33,14 +33,9 @@ public class GenotypeDB {
         dialogBox.setLocationRelativeTo(sharedInformation.getMainFrame());
         sharedInformation.setGenotypeURLPanel(dialogBox);
         URLPanel gobiiURLPanel = new URLPanel(sharedInformation, "GOBII", new GOBIILoginPanel(sharedInformation));
-        //   URLPanel germinateURLPanel = new URLPanel(sharedInformation, "GERMINATE", new GerminateLoginPanel(sharedInformation));
-        //   URLPanel gigwaURLPanel = new URLPanel(sharedInformation, "GIGWA", new GigwaLoginPanel(sharedInformation));
-
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(gobiiURLPanel);
-        //   mainPanel.add(germinateURLPanel);
-        //   mainPanel.add(gigwaURLPanel);
         dialogBox.add(mainPanel);
     }
 }
