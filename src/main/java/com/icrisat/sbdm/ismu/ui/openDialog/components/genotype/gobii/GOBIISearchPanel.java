@@ -1,4 +1,4 @@
-package com.icrisat.sbdm.ismu.ui.openDialog.components.genotype;
+package com.icrisat.sbdm.ismu.ui.openDialog.components.genotype.gobii;
 
 import com.icrisat.sbdm.ismu.ui.openDialog.components.CustomTextField;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
