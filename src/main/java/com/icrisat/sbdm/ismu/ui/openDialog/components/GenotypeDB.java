@@ -1,6 +1,8 @@
 package com.icrisat.sbdm.ismu.ui.openDialog.components;
 
-import com.icrisat.sbdm.ismu.ui.openDialog.components.loginPanel.GOBIILoginPanel;
+import com.icrisat.sbdm.ismu.ui.openDialog.components.connectionPanel.ConnectionPanel;
+import com.icrisat.sbdm.ismu.ui.openDialog.components.connectionPanel.LogoFooterPanel;
+import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +29,12 @@ public class GenotypeDB {
      * Creates the genotype database dialog box..
      */
     public void createGenotypeDB() {
-        dialogBox = new JDialog(sharedInformation.getMainFrame(), "Connect to Genotype databases", Dialog.ModalityType.APPLICATION_MODAL);
-        dialogBox.setSize(new Dimension(500, 100));
-        dialogBox.setLocation(Util.getLocation(500, 100));
+        dialogBox = new JDialog(sharedInformation.getMainFrame(), "Connect to GOBii", Dialog.ModalityType.APPLICATION_MODAL);
+        dialogBox.setSize(new Dimension(400, 250));
+        dialogBox.setLocation(Util.getLocation(400, 250));
         dialogBox.setLocationRelativeTo(sharedInformation.getMainFrame());
-        sharedInformation.setGenotypeURLPanel(dialogBox);
-        URLPanel gobiiURLPanel = new URLPanel(sharedInformation, "GOBII", new GOBIILoginPanel(sharedInformation));
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.add(gobiiURLPanel);
-        dialogBox.add(mainPanel);
+        dialogBox.setLayout(new BorderLayout());
+        dialogBox.add(new ConnectionPanel(sharedInformation, Constants.GOBII,dialogBox), BorderLayout.CENTER);
+        dialogBox.add(new LogoFooterPanel(sharedInformation, Constants.GOBII), BorderLayout.SOUTH);
     }
 }

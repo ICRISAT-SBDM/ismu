@@ -43,7 +43,6 @@ public class GOBIIDataSelectionPanel {
         this.gobiiDataSetTable = gobiiDataSetTable;
         String status = getDataSets(this.gobiiDataSetTable.defaultTableModel);
         if (status.equalsIgnoreCase(Constants.SUCCESS)) {
-            sharedInformation.getGenotypeURLPanel().setVisible(false);
             dataPanel.add(gobiiSearchPanel, BorderLayout.NORTH);
             this.gobiiDataSetTable.table.setModel(this.gobiiDataSetTable.defaultTableModel);
             JScrollPane scrollPane = new JScrollPane(this.gobiiDataSetTable.table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);

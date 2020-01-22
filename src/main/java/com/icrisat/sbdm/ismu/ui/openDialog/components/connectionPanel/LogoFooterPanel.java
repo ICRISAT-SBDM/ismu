@@ -1,5 +1,6 @@
 package com.icrisat.sbdm.ismu.ui.openDialog.components.connectionPanel;
 
+import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 
 import javax.imageio.ImageIO;
@@ -11,7 +12,7 @@ public class LogoFooterPanel extends JPanel {
         setBorder(BorderFactory.createRaisedSoftBevelBorder());
         JLabel serviceLogo = new JLabel();
         try {
-            if (imageName.equalsIgnoreCase("bms"))
+            if (imageName.equalsIgnoreCase(Constants.BMS))
                 serviceLogo.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/bms.jpg"))));
             else
                 serviceLogo.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/gobii.png"))));

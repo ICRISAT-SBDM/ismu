@@ -40,5 +40,6 @@ public class Constants {
     static final String END = "END";
     static final String PROJ_CORRUPTED = "CORRUPTED PROJECT. COULD NOT LOAD";
     static final String PNG = "PNG";
+    public static final String BMS = "BMS";
     public static final String GOBII = "GOBII";
 }

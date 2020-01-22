@@ -24,7 +24,7 @@ public class SharedInformation {
     private ClosableTabbedPane tabbedPane;
     private Font font, boldFont, okButtonFont, titleBoldFont;
     private PathConstants pathConstants;
-    private JDialog phenotypeURLPanel, genotypeURLPanel;
+    private JDialog genotypeURLPanel;
     private OpenDialog openDialog;
     private BMSRetrofitClient bmsRetrofitClient;
     private GOBIIRetrofitClient gobiiRetrofitClient;
@@ -101,7 +101,7 @@ public class SharedInformation {
         return boldFont;
     }
 
-    Font getTitleBoldFont() {
+    public Font getTitleBoldFont() {
         return titleBoldFont;
     }
 
@@ -117,21 +117,6 @@ public class SharedInformation {
         this.OS = OS;
     }
 
-    public JDialog getPhenotypeURLPanel() {
-        return phenotypeURLPanel;
-    }
-
-    public void setPhenotypeURLPanel(JDialog phenotypeURLDialog) {
-        this.phenotypeURLPanel = phenotypeURLDialog;
-    }
-
-    public JDialog getGenotypeURLPanel() {
-        return genotypeURLPanel;
-    }
-
-    public void setGenotypeURLPanel(JDialog genotypeURLPanel) {
-        this.genotypeURLPanel = genotypeURLPanel;
-    }
 
     public String getWorkingDirectory() {
         return workingDirectory;

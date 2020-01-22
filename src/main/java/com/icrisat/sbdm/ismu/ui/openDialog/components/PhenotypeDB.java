@@ -2,7 +2,7 @@ package com.icrisat.sbdm.ismu.ui.openDialog.components;
 
 import com.icrisat.sbdm.ismu.ui.openDialog.components.connectionPanel.ConnectionPanel;
 import com.icrisat.sbdm.ismu.ui.openDialog.components.connectionPanel.LogoFooterPanel;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.loginPanel.BMSLoginPanel;
+import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +39,8 @@ public class PhenotypeDB {
         dialogBox.setSize(new Dimension(400, 250));
         dialogBox.setLocation(Util.getLocation(400, 250));
         dialogBox.setLocationRelativeTo(sharedInformation.getMainFrame());
-        sharedInformation.setPhenotypeURLPanel(dialogBox);
         dialogBox.setLayout(new BorderLayout());
-        dialogBox.add(new ConnectionPanel(sharedInformation, new BMSLoginPanel(sharedInformation)), BorderLayout.CENTER);
-        dialogBox.add(new LogoFooterPanel(sharedInformation, "bms"), BorderLayout.SOUTH);
+        dialogBox.add(new ConnectionPanel(sharedInformation, Constants.BMS,dialogBox), BorderLayout.CENTER);
+        dialogBox.add(new LogoFooterPanel(sharedInformation, Constants.BMS), BorderLayout.SOUTH);
     }
 }
