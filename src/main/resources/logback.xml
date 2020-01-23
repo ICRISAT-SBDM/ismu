@@ -8,7 +8,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>${log.dir}/ismuLogFile.txt</file>
+        <file>${log.dir}/IsmuLogFile.txt</file>
         <encoder>
             <pattern>%d{HH:mm} [%thread] %-5level %class{0}.%M %L - %msg%n</pattern>
         </encoder>

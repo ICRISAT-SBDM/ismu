@@ -11,20 +11,35 @@ import java.util.List;
 @Component("pathConstants")
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class PathConstants {
-    public String resultDirectory = null;
+    public static String resultDirectory = null;
+    public static String lastChosenFilePath = null;
+    public static String recentGenotypeFile = null;
+    public static String recentPhenotypeFile = null;
+    public static List<FileLocation> genotypeFiles = new ArrayList<>();
+    public static HashMap<String, String> summaryFilesMap = new HashMap<>();
+    public static List<FileLocation> phenotypeFiles = new ArrayList<>();
+    public static List<FileLocation> resultFiles = new ArrayList<>();
+    public static boolean isBrapiCallPheno = false;
+    public static boolean isBrapiCallGeno = false;
+    public static int noOfHeadersPheno = 0;
+    public static List<String> qualitativeTraits = new ArrayList<>();
+
+
     public String tempResultDirectory = null;
-    public String lastChosenFilePath = null;
-    public String recentGenotypeFile = null;
-    public boolean isFirstGenoFile = true;
-    public boolean isFirstPhenoFile = true;
-    public List<FileLocation> genotypeFiles = new ArrayList<>();
-    public HashMap<String, String> summaryFilesMap = new HashMap<>();
-    public String recentPhenotypeFile = null;
-    public List<FileLocation> phenotypeFiles = new ArrayList<>();
-    public List<FileLocation> resultFiles = new ArrayList<>();
-    // Default engine is R unless changed.
-    public String engine = "R";
-    public boolean isBrapiCallPheno = false;
-    public int noOfHeadersPheno = 0;
-    public List<String> qualitativeTraits = new ArrayList<>();
+
+    public static void resetPathConstants() {
+        resultDirectory = null;
+        lastChosenFilePath = null;
+        recentGenotypeFile = null;
+        genotypeFiles = new ArrayList<>();
+        summaryFilesMap = new HashMap<>();
+        recentPhenotypeFile = null;
+        phenotypeFiles = new ArrayList<>();
+        resultFiles = new ArrayList<>();
+        isBrapiCallPheno = false;
+        isBrapiCallGeno = false;
+        noOfHeadersPheno = 0;
+        qualitativeTraits = new ArrayList<>();
+    }
+
 }

@@ -242,11 +242,11 @@ public class Analysis {
             if (userObject.getFileNameInApplication().equalsIgnoreCase("a_log.txt"))
                 return;
         }
-        FileLocation aLogFileLocation = new FileLocation("a_log.txt", sharedInformation.getPathConstants().resultDirectory + "a_log.txt");
+        FileLocation aLogFileLocation = new FileLocation("a_log.txt", PathConstants.resultDirectory + "a_log.txt");
         dynamicTree.addObject(dynamicTree.getLogNode(), aLogFileLocation, Boolean.TRUE);
-        FileLocation abLogFileLocation = new FileLocation("ab_log.txt", sharedInformation.getPathConstants().resultDirectory + "ab_log.txt");
+        FileLocation abLogFileLocation = new FileLocation("ab_log.txt", PathConstants.resultDirectory + "ab_log.txt");
         dynamicTree.addObject(dynamicTree.getLogNode(), abLogFileLocation, Boolean.TRUE);
-        FileLocation bLogFileLocation = new FileLocation("b_log.txt", sharedInformation.getPathConstants().resultDirectory + "b_log.txt");
+        FileLocation bLogFileLocation = new FileLocation("b_log.txt", PathConstants.resultDirectory + "b_log.txt");
         dynamicTree.addObject(dynamicTree.getLogNode(), bLogFileLocation, Boolean.TRUE);
     }
 

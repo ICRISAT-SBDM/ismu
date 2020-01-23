@@ -145,7 +145,7 @@ public class DynamicTree extends MouseAdapter {
                             FileLocation selectedFile = (FileLocation) selectedNode.getUserObject();
                             //TODO: FIll actual content. Based on the type of file.
                             if (Util.getFileExtension(selectedFile.getFileNameInApplication()).equalsIgnoreCase(Constants.CSV)) {
-                                UtilCSV.addCSVToTabbedPanel(selectedFile, isGenoTypeFile(selectedFile.getFileNameInApplication()));
+                                UtilCSV.addCSVToTabbedPanel(selectedFile.getFileNameInApplication(), selectedFile.getFileLocationOnDisk(), isGenoTypeFile(selectedFile.getFileNameInApplication()));
                             } else if (Util.getFileExtension(selectedFile.getFileNameInApplication()).equalsIgnoreCase(Constants.HTM)) {
                                 UtilHTML.displayHTMLFile(selectedFile);
                             } else if (Util.getFileExtension(selectedFile.getFileNameInApplication()).equalsIgnoreCase(Constants.TXT)) {
@@ -282,17 +282,16 @@ public class DynamicTree extends MouseAdapter {
      * @param selectedNode Node to be deleted.
      */
     private void delete(DefaultMutableTreeNode selectedNode, boolean deleteFileAlso) {
-        PathConstants pathConstants = sharedInformation.getPathConstants();
         FileLocation selectedFileLocation = (FileLocation) selectedNode.getUserObject();
         if (isFileInDisplay(selectedNode) != -1) {
             sharedInformation.getTabbedPane().removeTabAt(isFileInDisplay(selectedNode));
         }
-        if (pathConstants.phenotypeFiles.contains(selectedFileLocation)) {
-            pathConstants.phenotypeFiles.remove(selectedFileLocation);
+        if (PathConstants.phenotypeFiles.contains(selectedFileLocation)) {
+            PathConstants.phenotypeFiles.remove(selectedFileLocation);
         }
-        if (pathConstants.genotypeFiles.contains(selectedFileLocation)) {
-            pathConstants.genotypeFiles.remove(selectedFileLocation);
-            String summaryFile = pathConstants.summaryFilesMap.remove(selectedFileLocation.getFileNameInApplication());
+        if (PathConstants.genotypeFiles.contains(selectedFileLocation)) {
+            PathConstants.genotypeFiles.remove(selectedFileLocation);
+            String summaryFile = PathConstants.summaryFilesMap.remove(selectedFileLocation.getFileNameInApplication());
 
             int noOfChildren = resultsNode.getChildCount();
             for (int i = 0; i < noOfChildren; i++) {
@@ -302,11 +301,11 @@ public class DynamicTree extends MouseAdapter {
                     if (isFileInDisplay(childAt) != -1) {
                         sharedInformation.getTabbedPane().removeTabAt(isFileInDisplay(childAt));
                     }
-                    pathConstants.resultFiles.remove(childAtUserObject);
+                    PathConstants.resultFiles.remove(childAtUserObject);
                     ((DefaultTreeModel) ismuTree.getModel()).removeNodeFromParent(childAt);
                     if (deleteFileAlso) {
                         try {
-                            Files.delete(Paths.get(pathConstants.resultDirectory + childAtUserObject.getFileNameInApplication()));
+                            Files.delete(Paths.get(PathConstants.resultDirectory + childAtUserObject.getFileNameInApplication()));
                         } catch (IOException ignored) {
 
                         }
@@ -314,9 +313,9 @@ public class DynamicTree extends MouseAdapter {
                 }
             }
         }
-        if (pathConstants.resultFiles.contains(selectedFileLocation)) {
-            pathConstants.resultFiles.remove(selectedFileLocation);
-            pathConstants.summaryFilesMap.forEach((k, v) -> {
+        if (PathConstants.resultFiles.contains(selectedFileLocation)) {
+            PathConstants.resultFiles.remove(selectedFileLocation);
+            PathConstants.summaryFilesMap.forEach((k, v) -> {
                 System.out.println(k + "           " + v);
                 if (v.equals(selectedFileLocation.getFileNameInApplication())) {
                     int noOfChildren = genotypeNode.getChildCount();
@@ -327,11 +326,11 @@ public class DynamicTree extends MouseAdapter {
                             if (isFileInDisplay(childAt) != -1) {
                                 sharedInformation.getTabbedPane().removeTabAt(isFileInDisplay(childAt));
                             }
-                            pathConstants.genotypeFiles.remove(childAtUserObject);
+                            PathConstants.genotypeFiles.remove(childAtUserObject);
                             ((DefaultTreeModel) ismuTree.getModel()).removeNodeFromParent(childAt);
                             if (deleteFileAlso) {
                                 try {
-                                    Files.delete(Paths.get(pathConstants.resultDirectory + childAtUserObject.getFileNameInApplication()));
+                                    Files.delete(Paths.get(PathConstants.resultDirectory + childAtUserObject.getFileNameInApplication()));
                                 } catch (IOException ignored) {
                                 }
                             }
@@ -344,7 +343,7 @@ public class DynamicTree extends MouseAdapter {
         ((DefaultTreeModel) ismuTree.getModel()).removeNodeFromParent(selectedNode);
         if (deleteFileAlso) {
             try {
-                Files.delete(Paths.get(sharedInformation.getPathConstants().resultDirectory + selectedFileLocation.getFileNameInApplication()));
+                Files.delete(Paths.get(PathConstants.resultDirectory + selectedFileLocation.getFileNameInApplication()));
             } catch (IOException ignored) {
 
             }

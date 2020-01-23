@@ -233,7 +233,7 @@ public class DataSummary {
             Util.resetStdout();
             sharedInformation.getLogger().info("Geno Summary completed:\t" + String.valueOf(exitStatus));
             if (exitStatus) {
-                String logFile = sharedInformation.getPathConstants().resultDirectory + "GenoSummaryLogFile.txt";
+                String logFile = PathConstants.resultDirectory + "GenoSummaryLogFile.txt";
                 final String[] lastLine = new String[1];
                 try (Stream<String> stream = Files.lines(Paths.get(logFile))) {
                     stream.forEach(line -> lastLine[0] = line);
@@ -296,10 +296,10 @@ public class DataSummary {
      * @param timeTaken Time taken to compute the result.
      */
     private void savePhenoSummaryFiles(String timeTaken) {
-        if (Files.exists(Paths.get(sharedInformation.getPathConstants().resultDirectory + dataSummaryDataObject.getPhenoHtmlName()))) {
-            FileLocation phenoHtmlFileLocation = new FileLocation(dataSummaryDataObject.getPhenoHtmlName(), sharedInformation.getPathConstants().resultDirectory + dataSummaryDataObject.getPhenoHtmlName());
+        if (Files.exists(Paths.get(PathConstants.resultDirectory + dataSummaryDataObject.getPhenoHtmlName()))) {
+            FileLocation phenoHtmlFileLocation = new FileLocation(dataSummaryDataObject.getPhenoHtmlName(), PathConstants.resultDirectory + dataSummaryDataObject.getPhenoHtmlName());
             dynamicTree.addObject(dynamicTree.getResultsNode(), phenoHtmlFileLocation, Boolean.TRUE);
-            sharedInformation.getPathConstants().resultFiles.add(phenoHtmlFileLocation);
+            PathConstants.resultFiles.add(phenoHtmlFileLocation);
             processHTMLFile(timeTaken, phenoHtmlFileLocation);
         } else {
             Util.showMessageDialog("Error in computing phenotype summary. Check log file.");
@@ -312,16 +312,16 @@ public class DataSummary {
      * @param timeTaken Time taken to compute the result.
      */
     private void saveGenoSummaryFiles(String timeTaken) {
-        if (Files.exists(Paths.get(sharedInformation.getPathConstants().resultDirectory + dataSummaryDataObject.getGenoHtmlName()))) {
-            FileLocation genoHtmlFileLocation = new FileLocation(dataSummaryDataObject.getGenoHtmlName(), sharedInformation.getPathConstants().resultDirectory + dataSummaryDataObject.getGenoHtmlName());
+        if (Files.exists(Paths.get(PathConstants.resultDirectory + dataSummaryDataObject.getGenoHtmlName()))) {
+            FileLocation genoHtmlFileLocation = new FileLocation(dataSummaryDataObject.getGenoHtmlName(), PathConstants.resultDirectory + dataSummaryDataObject.getGenoHtmlName());
             dynamicTree.addObject(dynamicTree.getResultsNode(), genoHtmlFileLocation, Boolean.TRUE);
-            sharedInformation.getPathConstants().resultFiles.add(genoHtmlFileLocation);
+            PathConstants.resultFiles.add(genoHtmlFileLocation);
             if (!processHTMLFile(timeTaken, genoHtmlFileLocation)) return;
 
-            FileLocation genoCSVFileLocation = new FileLocation(dataSummaryDataObject.getGenoSummaryCsvName(), sharedInformation.getPathConstants().resultDirectory + dataSummaryDataObject.getGenoSummaryCsvName());
+            FileLocation genoCSVFileLocation = new FileLocation(dataSummaryDataObject.getGenoSummaryCsvName(), PathConstants.resultDirectory + dataSummaryDataObject.getGenoSummaryCsvName());
             dynamicTree.addObject(dynamicTree.getResultsNode(), genoCSVFileLocation, Boolean.TRUE);
-            sharedInformation.getPathConstants().resultFiles.add(genoCSVFileLocation);
-            UtilCSV.addCSVToTabbedPanel(genoCSVFileLocation, false);
+            PathConstants.resultFiles.add(genoCSVFileLocation);
+            UtilCSV.addCSVToTabbedPanel(genoCSVFileLocation.getFileNameInApplication(), genoCSVFileLocation.getFileLocationOnDisk(), false);
         } else {
             Util.showMessageDialog("Error in computing genotype summary. Check log file.");
         }
@@ -431,9 +431,9 @@ public class DataSummary {
             if (userObject.getFileNameInApplication().equalsIgnoreCase("GenoSummaryLogFile.txt"))
                 return;
         }
-        FileLocation genoFileLocation = new FileLocation("GenoSummaryLogFile.txt", sharedInformation.getPathConstants().resultDirectory + "GenoSummaryLogFile.txt");
+        FileLocation genoFileLocation = new FileLocation("GenoSummaryLogFile.txt", PathConstants.resultDirectory + "GenoSummaryLogFile.txt");
         dynamicTree.addObject(dynamicTree.getLogNode(), genoFileLocation, Boolean.TRUE);
-        FileLocation phenoFileLocation = new FileLocation("PhenoSummaryLogFile.txt", sharedInformation.getPathConstants().resultDirectory + "PhenoSummaryLogFile.txt");
+        FileLocation phenoFileLocation = new FileLocation("PhenoSummaryLogFile.txt", PathConstants.resultDirectory + "PhenoSummaryLogFile.txt");
         dynamicTree.addObject(dynamicTree.getLogNode(), phenoFileLocation, Boolean.TRUE);
     }
 }

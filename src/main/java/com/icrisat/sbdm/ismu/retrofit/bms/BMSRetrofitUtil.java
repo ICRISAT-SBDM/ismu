@@ -3,6 +3,7 @@ package com.icrisat.sbdm.ismu.retrofit.bms;
 import com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Observations;
 import com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.TriatData;
 import com.icrisat.sbdm.ismu.util.Constants;
+import com.icrisat.sbdm.ismu.util.PathConstants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.opencsv.CSVWriter;
 import okhttp3.OkHttpClient;
@@ -116,7 +117,7 @@ class BMSRetrofitUtil {
                 uuidWriter.writeNext(uuidRow.toArray(new String[uuidRow.size()]));
             }
             csvWriter.flush();
-            sharedInformation.getOpenDialog().getTxtPhenotype().setText(outputFileName);
+            PathConstants.recentPhenotypeFile = outputFileName;
         } catch (Exception e) {
             status = e.getMessage();
             sharedInformation.getLogger().error(e.getMessage() + e.getStackTrace());

@@ -3,7 +3,6 @@ package com.icrisat.sbdm.ismu.util;
 import com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitClient;
 import com.icrisat.sbdm.ismu.retrofit.gobii.GOBIIRetrofitClient;
 import com.icrisat.sbdm.ismu.ui.mainFrame.ClosableTabbedPane;
-import com.icrisat.sbdm.ismu.ui.openDialog.OpenDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,22 +24,11 @@ public class SharedInformation {
     private Font font, boldFont, okButtonFont, titleBoldFont;
     private PathConstants pathConstants;
     private JDialog genotypeURLPanel;
-    private OpenDialog openDialog;
     private BMSRetrofitClient bmsRetrofitClient;
     private GOBIIRetrofitClient gobiiRetrofitClient;
     private String OS;
     private String workingDirectory = System.getProperty("user.dir");
     private Logger logger = LoggerFactory.getLogger(SharedInformation.class);
-
-    public OpenDialog getOpenDialog() {
-        return openDialog;
-    }
-
-    @Autowired
-    public void setOpenDialog(OpenDialog openDialog) {
-        this.openDialog = openDialog;
-        this.openDialog.setSharedInformation(this);
-    }
 
     public BMSRetrofitClient getBmsRetrofitClient() {
         return bmsRetrofitClient;

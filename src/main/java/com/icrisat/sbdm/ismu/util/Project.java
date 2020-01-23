@@ -1,7 +1,7 @@
 package com.icrisat.sbdm.ismu.util;
 
+import com.icrisat.sbdm.ismu.ui.mainFrame.CreateMainFrameComponents;
 import com.icrisat.sbdm.ismu.ui.mainFrame.DynamicTree;
-import com.icrisat.sbdm.ismu.ui.openDialog.OpenDialog;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,11 +40,11 @@ public class Project {
     public String saveProject() {
         String status;
         // Result directory is not yet set. So no processing happened. No need to save anything.
-        if (sharedInformation.getPathConstants().resultDirectory == null) {
+        if (PathConstants.resultDirectory == null) {
             //"No need to save.";
             return Constants.SUCCESS;
         }
-        String filePath = sharedInformation.getPathConstants().resultDirectory + Constants.ISMU_PROJECT_FILE;
+        String filePath = PathConstants.resultDirectory + Constants.ISMU_PROJECT_FILE;
         status = deleteIfFileExists(filePath);
         if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
             return status;
@@ -91,16 +92,58 @@ public class Project {
 
     public void newProject(ActionEvent e) {
         clearCurrentApplicationState();
-        OpenDialog openDialog = sharedInformation.getOpenDialog();
-        PathConstants pathConstants = sharedInformation.getPathConstants();
-        openDialog.getTxtResultDir().setText("");
-        openDialog.actionResultDir(e);
-        if (pathConstants.tempResultDirectory != null) {
-            openDialog.getResultPanel().txtResult.setText(pathConstants.tempResultDirectory);
-            pathConstants.resultDirectory = pathConstants.tempResultDirectory;
-            openDialog.getResultBrowseBtn().setEnabled(false);
-            Logger log = Util.createLogger(Project.class, getClass().getResource("/logback.xml"));
-            log.info("Logger restarted");
+        NativeJFileChooser fileChooser = Util.getFolderChooser("Folder to open and save project");
+        if (fileChooser.showOpenDialog(sharedInformation.getMainFrame()) == JFileChooser.APPROVE_OPTION) {
+            if (Files.isDirectory(Paths.get(fileChooser.getSelectedFile().toString()))) {
+                setResultDir(fileChooser);
+            } else {
+                // folder not exits
+                int option = JOptionPane.showOptionDialog(sharedInformation.getMainFrame(),
+                        "Folder does not exits.\nDo you want to create folder for the path",
+                        "New Folder Creation", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
+                if (option == JOptionPane.YES_OPTION) {
+                    new File(fileChooser.getSelectedFile().toString()).mkdir();
+                    setResultDir(fileChooser);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets result dir.
+     * Enables buttons to select genotype and phenotype files.
+     *
+     * @param fileChooser fileChooser
+     */
+    private void setResultDir(NativeJFileChooser fileChooser) {
+        String resDir = fileChooser.getSelectedFile().toString();
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
+            resDir = resDir + "\\";
+            sharedInformation.setOS(Constants.WINDOWS);
+        } else {
+            resDir = resDir + "/";
+            sharedInformation.setOS(Constants.OTHEROS);
+        }
+        PathConstants.resultDirectory = resDir;
+        CreateMainFrameComponents.setEnableComponenents(true);
+        copyCSSFile();
+        Util.showMessageDialog("Project created, proceed to import Genotype and Phenotype files.");
+    }
+
+    void copyCSSFile() {
+        if (!new File(PathConstants.resultDirectory + Constants.CSS).exists()) {
+            String cssPath = Util.getJarDirectory(this.getClass());
+            cssPath = cssPath + "/doc/" + Constants.CSS;
+            try {
+                FileChannel inputFileChannel = new FileInputStream(new File(cssPath)).getChannel();
+                FileChannel outputFileChannel = new FileOutputStream(new File(PathConstants.resultDirectory + Constants.CSS)).getChannel();
+                outputFileChannel.transferFrom(inputFileChannel, 0, inputFileChannel.size());
+                inputFileChannel.close();
+                outputFileChannel.close();
+            } catch (Exception ex) {
+                sharedInformation.getLogger().error("ISSUE IN COPYING CSS.");
+            }
         }
     }
 
@@ -108,19 +151,16 @@ public class Project {
      * Adds the file to the tree and displays it.
      */
     private void addToTree() {
-        for (FileLocation file : sharedInformation.getPathConstants().genotypeFiles) {
+        for (FileLocation file : PathConstants.genotypeFiles) {
             dynamicTree.addObject(dynamicTree.getGenotypeNode(), file, Boolean.TRUE);
-            UtilCSV.addCSVToTabbedPanel(file, true);
         }
-        for (FileLocation file : sharedInformation.getPathConstants().phenotypeFiles) {
+        for (FileLocation file : PathConstants.phenotypeFiles) {
             dynamicTree.addObject(dynamicTree.getPhenotypeNode(), file, Boolean.TRUE);
-            UtilCSV.addCSVToTabbedPanel(file, false);
         }
-        for (FileLocation file : sharedInformation.getPathConstants().resultFiles) {
+        for (FileLocation file : PathConstants.resultFiles) {
             dynamicTree.addObject(dynamicTree.getResultsNode(), file, Boolean.TRUE);
-            if (file.getFileNameInApplication().endsWith(Constants.HTM)) UtilHTML.displayHTMLFile(file);
-            else UtilCSV.addCSVToTabbedPanel(file, false);
         }
+        //TODO: SHow msg that project loaded
     }
 
     /**
@@ -133,21 +173,15 @@ public class Project {
         if (os.contains("win")) sharedInformation.setOS(Constants.WINDOWS);
         else sharedInformation.setOS(Constants.OTHEROS);
 
-        PathConstants pathConstants = sharedInformation.getPathConstants();
-        pathConstants.resultDirectory = projDir;
-        pathConstants.tempResultDirectory = projDir;
-
-        Logger log = Util.createLogger(Project.class, getClass().getResource("/logback.xml"));
-        log.info("Logger restarted");
+        PathConstants.resultDirectory = projDir;
+/*
         sharedInformation.getOpenDialog().getTxtResultDir().setText(projDir);
         sharedInformation.getOpenDialog().getResultBrowseBtn().setEnabled(false);
-
-        pathConstants.lastChosenFilePath = projDir;
-        pathConstants.genotypeFiles = genotypeFiles;
-        pathConstants.phenotypeFiles = phenotypeFiles;
-        relations.forEach((k, v) -> {
-            pathConstants.summaryFilesMap.put(k, v);
-        });
+*/
+        PathConstants.lastChosenFilePath = projDir;
+        PathConstants.genotypeFiles = genotypeFiles;
+        PathConstants.phenotypeFiles = phenotypeFiles;
+        relations.forEach((k, v) -> PathConstants.summaryFilesMap.put(k, v));
         String imageDirectory = null;
         for (FileLocation file : resultFiles) {
             if (file.getFileLocationOnDisk().endsWith(Constants.HTM)) {
@@ -172,7 +206,7 @@ public class Project {
                 }
                 UtilHTML.editHTML2DisplayImages(file, imageDirectory, projDir);
             }
-            pathConstants.resultFiles.add(file);
+            PathConstants.resultFiles.add(file);
         }
         return Constants.SUCCESS;
     }
@@ -349,21 +383,7 @@ public class Project {
     private void clearCurrentApplicationState() {
         dynamicTree.remove(dynamicTree.getRootNode(), false);
         sharedInformation.setOS(null);
-        PathConstants pathConstants = sharedInformation.getPathConstants();
-        pathConstants.resultDirectory = null;
-        pathConstants.tempResultDirectory = null;
-        pathConstants.lastChosenFilePath = null;
-        pathConstants.recentGenotypeFile = null;
-        pathConstants.isFirstGenoFile = true;
-        pathConstants.isFirstPhenoFile = true;
-        pathConstants.genotypeFiles = new ArrayList<>();
-        pathConstants.summaryFilesMap = new HashMap<>();
-        pathConstants.recentPhenotypeFile = null;
-        pathConstants.phenotypeFiles = new ArrayList<>();
-        pathConstants.resultFiles = new ArrayList<>();
-        // Default engine is R unless changed.
-        pathConstants.engine = "R";
-        pathConstants.isBrapiCallPheno = false;
+        PathConstants.resetPathConstants();
     }
 
     /**
@@ -372,10 +392,16 @@ public class Project {
      * @param filePath File path
      */
     private String writeToProjectFile(String filePath) {
+        //TODO: Copy log file also
+        /*
+        DefaultMutableTreeNode childAt = (DefaultMutableTreeNode) dynamicTree.getLogNode().getChildAt(0);
+        FileLocation selectedFileLocation = (FileLocation) childAt.getUserObject();
+        System.out.println("");
+        * */
         final String[] status = new String[1];
-        genotypeFiles = sharedInformation.getPathConstants().genotypeFiles;
-        phenotypeFiles = sharedInformation.getPathConstants().phenotypeFiles;
-        resultFiles = sharedInformation.getPathConstants().resultFiles;
+        genotypeFiles = PathConstants.genotypeFiles;
+        phenotypeFiles = PathConstants.phenotypeFiles;
+        resultFiles = PathConstants.resultFiles;
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))) {
             writer.write(Constants.GENOTYPE_FILES);
             writer.newLine();
@@ -450,7 +476,7 @@ public class Project {
                 }
             }
         }
-        List<Path> files = Files.list(Paths.get(sharedInformation.getPathConstants().resultDirectory))
+        List<Path> files = Files.list(Paths.get(PathConstants.resultDirectory))
                 // .filter(Files::isRegularFile)
                 .collect(toList());
         for (FileLocation image : imageFiles) {

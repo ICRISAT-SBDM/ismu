@@ -45,16 +45,13 @@ public class Main extends SingleFrameApplication {
         mainFrame = getMainFrame();
         sharedInformation.setMainFrame(getMainFrame());
         CreateMainFrameComponents createMainFrameComponents = context.getBean("createMainFrameComponents", CreateMainFrameComponents.class);
-        createMainFrameComponents.setFrameProperties();
-        createMainFrameComponents.createMenuBar();
-        createMainFrameComponents.createToolBar();
-        createMainFrameComponents.createFooterStatusBar();
-        createMainFrameComponents.createBody();
+        createMainFrameComponents.initialize();
+
 
         // Exit Listener.
         addExitListener(new ExitListener() {
             public boolean canExit(EventObject e) {
-                return Util.closeApplication(e, sharedInformation, project);
+                return Util.closeApplication(e, project);
             }
 
             public void willExit(EventObject event) {

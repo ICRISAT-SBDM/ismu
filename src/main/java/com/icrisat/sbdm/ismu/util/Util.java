@@ -1,11 +1,7 @@
 package com.icrisat.sbdm.ismu.util;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
 import com.opencsv.CSVWriter;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,13 +13,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EventObject;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.icrisat.sbdm.ismu.util.Constants.GENO;
+import static com.icrisat.sbdm.ismu.util.Constants.PHENO;
 
 @Component
 public class Util {
@@ -69,10 +69,11 @@ public class Util {
      */
     public static String copyFile(String source, String destination, int isGeno) {
         String returnStatus;
+        sharedInformation.getLogger().info("Copying file from " + source + " to " + destination);
         File source_file = new File(source);
         File dest_file = new File(destination);
         try {
-            if (source.equalsIgnoreCase(destination)) return Constants.SUCCESS;
+            if (source.equalsIgnoreCase(destination)) return "Please select a file outside project directory.";
             returnStatus = validate(source_file, dest_file, source, destination);
             if (!returnStatus.endsWith(Constants.SUCCESS)) return returnStatus;
 
@@ -81,7 +82,7 @@ public class Util {
                     .map(line -> Arrays.asList(line.split(",")))
                     .collect(Collectors.toList());
 
-            if (isGeno == Constants.GENO) {
+            if (isGeno == GENO) {
                 GenoFileFirstTImeProcessing.genofileComputation(destination, valuesList);
             } else {
                 CSVWriter writer = new CSVWriter(new FileWriter(destination));
@@ -90,8 +91,10 @@ public class Util {
                 writer.close();
             }
         } catch (IOException ie) {
+            sharedInformation.getLogger().info(ie.getStackTrace().toString());
             returnStatus = "IOException: Please refer to the log file. for details" + ie.toString() + ie.getMessage();
         } catch (Exception e) {
+            sharedInformation.getLogger().info(e.getStackTrace().toString());
             returnStatus = "Exception: Please refer to the log file. for details" + e.toString() + e.getMessage();
         }
         return returnStatus;
@@ -107,6 +110,7 @@ public class Util {
      */
     public static String processHapMap(String source, String destination) {
         String returnStatus;
+        sharedInformation.getLogger().info("Copying hapmap file from " + source + " to " + destination);
         File source_file = new File(source);
         File dest_file = new File(destination);
         returnStatus = validate(source_file, dest_file, source, destination);
@@ -139,26 +143,24 @@ public class Util {
             }
             GenoFileFirstTImeProcessing.genofileComputation(destination, outputLines);
         } catch (IOException ie) {
+            sharedInformation.getLogger().info(ie.getStackTrace().toString());
             returnStatus = "IOException: Please refer to the log file. for details" + ie.toString() + ie.getMessage();
         } catch (Exception e) {
+            sharedInformation.getLogger().info(e.getStackTrace().toString());
             returnStatus = "Exception: Please refer to the log file. for details" + e.toString() + e.getMessage();
         }
         return returnStatus;
     }
 
     private static String validate(File source_file, File dest_file, String source, String destination) {
-        String returnStatus = Constants.SUCCESS;
         if (!source_file.exists() || !source_file.isFile()) {
-            returnStatus = "No source file found : " + source + "\n" + "Please select correct file";
-            return returnStatus;
+            return "No source file found : " + source + "\n" + "Please select correct file";
         }
         if (!source_file.canRead()) {
-            returnStatus = "Source file is unreadable: " + source;
-            return returnStatus;
+            return "Source file is unreadable: " + source;
         }
         if (dest_file.exists()) {
-            returnStatus = "A file with same name already exists in destination directory\n" + destination;
-            return returnStatus;
+            return "A file with same name already exists in destination directory\n" + destination;
         } else {
              /* File.getParent() can return null when the file is specified without a directory or is in the root directory.
        This method handles those cases.*/
@@ -173,15 +175,13 @@ public class Util {
                 parentDir = new File(dest_file.getParent());
             }
             if (!parentDir.exists()) {
-                returnStatus = "No Destination directory exist: " + destination;
-                return returnStatus;
+                return "No Destination directory exist: " + destination;
             }
             if (!parentDir.canWrite()) {
-                returnStatus = "Destination directory is not writable: " + destination;
-                return returnStatus;
+                return "Destination directory is not writable: " + destination;
             }
         }
-        return returnStatus;
+        return Constants.SUCCESS;
     }
 
     /**
@@ -233,33 +233,6 @@ public class Util {
         return computedOn;
     }
 
-    /**
-     * Creates a logger.
-     *
-     * @param className name of the class for the logger.
-     * @param path      URI
-     * @return Logger
-     */
-    public static Logger createLogger(Class className, URL path) {
-        /* Logger Cases:
-         *   There are three cases.
-         *   Open, New project, Open project
-         *   */
-        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-        context.reset();
-        String resultDir = sharedInformation.getPathConstants().resultDirectory;
-        System.setProperty("log.dir", resultDir);
-        JoranConfigurator jc = new JoranConfigurator();
-        jc.setContext(context);
-        try {
-            jc.doConfigure(path);
-        } catch (JoranException e) {
-            e.printStackTrace();
-        }
-        Logger logger = LoggerFactory.getLogger(className);
-        sharedInformation.setLogger(logger);
-        return logger;
-    }
 
     public static String getJarDirectory(Class className) {
         String jarDirectory = className.getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -326,11 +299,11 @@ public class Util {
         genoCombo.removeAllItems();
         phenoCombo.removeAllItems();
         genoCombo.addItem(Constants.SELECT);
-        for (FileLocation genoFile : sharedInformation.getPathConstants().genotypeFiles)
+        for (FileLocation genoFile : PathConstants.genotypeFiles)
             genoCombo.addItem(genoFile.getFileNameInApplication());
         genoCombo.setSelectedIndex(0);
         phenoCombo.addItem(Constants.SELECT);
-        for (FileLocation phenoFile : sharedInformation.getPathConstants().phenotypeFiles)
+        for (FileLocation phenoFile : PathConstants.phenotypeFiles)
             phenoCombo.addItem(phenoFile.getFileNameInApplication());
         phenoCombo.setSelectedIndex(0);
     }
@@ -338,13 +311,11 @@ public class Util {
     /**
      * If result directory is not set then processing not happened so exit else ask for saving project.
      *
-     * @param e                 Event
-     * @param sharedInformation shared information
-     * @param openSaveProject   open save project object
+     * @param e               Event
+     * @param openSaveProject open save project object
      */
-    public static boolean closeApplication(EventObject e, SharedInformation sharedInformation, Project
-            openSaveProject) {
-        if (sharedInformation.getPathConstants().resultDirectory != null) {
+    public static boolean closeApplication(EventObject e, Project openSaveProject) {
+        if (PathConstants.resultDirectory != null) {
             int exitStatus = JOptionPane.showConfirmDialog((java.awt.Component) e.getSource(), "Do you want to save project?");
             if (exitStatus == JOptionPane.YES_OPTION) {
                 String status = openSaveProject.saveProject();
@@ -385,36 +356,45 @@ public class Util {
      * Selects a csv file.
      *
      * @param fileChooserTitle Title for file chooser
-     * @param field            Text field to set the text.
      * @param type             Either Geno/Pheno
      * @param e                Action event e;
      */
-    public static void selectFile(String fileChooserTitle, JTextField field, int type, PathConstants
-            pathConstants, ActionEvent e) {
+    public static void selectFile(String fileChooserTitle, int type, ActionEvent e) {
+        NativeJFileChooser chooser = getNativeJFileChooser(fileChooserTitle, type);
+        if (chooser.showOpenDialog((java.awt.Component) e.getSource()) == JFileChooser.APPROVE_OPTION) {
+            String path = chooser.getSelectedFile().getPath();
+            if (!new File(path).exists()) {
+                showMessageDialog("Selected file doesn't exists. \nPlease select valid file");
+                if (type == PHENO)
+                    PathConstants.recentPhenotypeFile = null;
+                else
+                    PathConstants.recentGenotypeFile = null;
+                return;
+            }
+            if (type == PHENO)
+                PathConstants.recentPhenotypeFile = path;
+            else
+                PathConstants.recentGenotypeFile = path;
+            PathConstants.lastChosenFilePath = chooser.getSelectedFile().getAbsolutePath();
+        }
+    }
 
+    private static NativeJFileChooser getNativeJFileChooser(String fileChooserTitle, int type) {
         NativeJFileChooser chooser;// getting the browsePath if file already chosen
-        if (pathConstants.lastChosenFilePath == null) {
+        if (PathConstants.lastChosenFilePath == null) {
             chooser = new NativeJFileChooser();
         } else {
-            chooser = new NativeJFileChooser(pathConstants.lastChosenFilePath);
+            chooser = new NativeJFileChooser(PathConstants.lastChosenFilePath);
         }
         chooser.removeChoosableFileFilter(chooser.getFileFilter());
         chooser.setDialogTitle(fileChooserTitle);// setting the
         FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV (Comma delimited) (*.csv)", "csv");
         chooser.setFileFilter(filter);
-        if (type == Constants.GENO) {
+        if (type == GENO) {
             FileNameExtensionFilter filter1 = new FileNameExtensionFilter("Hapmap (Tab delimited) (*.hmp.txt)", "txt");
             chooser.setFileFilter(filter1);
         }
-        if (chooser.showOpenDialog((java.awt.Component) e.getSource()) == JFileChooser.APPROVE_OPTION) {
-            field.setText(chooser.getSelectedFile().getPath());
-            pathConstants.lastChosenFilePath = chooser.getSelectedFile().getAbsolutePath();
-            File file = new File(field.getText());
-            if (!file.exists()) {
-                showMessageDialog("Selected file doesn't exists. \nPlease select valid file");
-                field.setText("");
-            }
-        }
+        return chooser;
     }
 
     public static boolean checkLogStatus(String file) {
@@ -438,30 +418,6 @@ public class Util {
         JOptionPane.showMessageDialog(sharedInformation.getMainFrame(), message);
     }
 
-    /**
-     * Sets temporary result dir.
-     * Once ok is clicked this is moved to result directory.
-     * Enables buttons to select genotype and phenotype files.
-     *
-     * @param fileChooser fileChooser
-     */
-    public static void setTempResultDir(NativeJFileChooser fileChooser) {
-        String resDir = fileChooser.getSelectedFile().toString();
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win")) {
-            resDir = resDir + "\\";
-            sharedInformation.setOS(Constants.WINDOWS);
-        } else {
-            resDir = resDir + "/";
-            sharedInformation.setOS(Constants.OTHEROS);
-        }
-        sharedInformation.getOpenDialog().getResultPanel().txtResult.setText(resDir);
-        sharedInformation.getPathConstants().tempResultDirectory = resDir;
-        sharedInformation.getOpenDialog().getPhenoPanel().btnBrowse.setEnabled(true);
-        sharedInformation.getOpenDialog().getPhenoPanel().btnConnect.setEnabled(true);
-        sharedInformation.getOpenDialog().getGenoPanel().btnConnect.setEnabled(true);
-        sharedInformation.getOpenDialog().getGenoPanel().btnBrowse.setEnabled(true);
-    }
 
     /**
      * Position of the dialog box

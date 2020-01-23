@@ -2,7 +2,6 @@ package com.icrisat.sbdm.ismu.util;
 
 
 public class Constants {
-    public static final String LOG_FILE_NAME = "logFile.txt";
     public static final String SUCCESS = "success";
     public static final String USER_CANCELLED = "user-cancelled";
     public static final String SUMMARY_RELATION = "GENO SUMMARY RELATION";

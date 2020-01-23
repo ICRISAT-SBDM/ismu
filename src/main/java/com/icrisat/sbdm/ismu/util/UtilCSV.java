@@ -29,42 +29,21 @@ public class UtilCSV {
 
     /**
      * Add's the corresponding file to a panel.
-     *
-     * @param csvFileLocation CSV file location.
      */
-    public static void addCSVToTabbedPanel(FileLocation csvFileLocation, boolean value) {
-        String status;
+    public static String addCSVToTabbedPanel(String fileNameInApplication, String fileLocationOnDisk, boolean rotateHeader) {
         JPanel csvPanel = new JPanel(new BorderLayout());
         csvPanel.setBounds(0, 0, 100, 100);
-        Util.setJPanelName(csvPanel, csvFileLocation.toString());
-        status = csvReader(csvFileLocation.getFileLocationOnDisk(), csvPanel, value);
-        if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
-            showMessageDialog(status);
-        } else {
-            sharedInformation.getTabbedPane().add(csvPanel);
-            sharedInformation.getTabbedPane().setSelectedIndex(sharedInformation.getTabbedPane().getTabCount() - 1);
-        }
-    }
-
-    /**
-     * Reads a csv file and adds content to the panel.
-     *
-     * @param fileName File Name
-     * @param csvPanel Panel Name
-     * @return Status of file reading.
-     */
-    public static String csvReader(String fileName, JPanel csvPanel, boolean rotateHeader) {
+        Util.setJPanelName(csvPanel, fileNameInApplication);
         String status = Constants.SUCCESS;
         try {
             //initialized a CsvReader object with file path. Assumes default separator as Comma.
-            CSVReader reader = new CSVReader(new FileReader(fileName));
+            CSVReader reader = new CSVReader(new FileReader(fileLocationOnDisk));
             // you have to always call readHeaders first before you do any other operation
             String[] headers = reader.readNext();
             int maxSizeOfHeader = 0;
             for (String header : headers) {
                 if (header.length() > maxSizeOfHeader) maxSizeOfHeader = header.length();
             }
-            headers[0] = "";
             if (headers[1].length() < maxSizeOfHeader)
                 headers[1] = headers[1] + String.format("%" + (maxSizeOfHeader - headers[1].length()) * 3 + "s", "");
             DefaultTableModel tableModel;
@@ -156,7 +135,13 @@ public class UtilCSV {
             csvPanel.repaint();
         } catch (Exception e) {
             sharedInformation.getLogger().error(e.getMessage());
-            status = "Error when reading file:" + fileName + "\n Pls check log file for details.";
+            status = "Error when reading file:" + fileLocationOnDisk + "\n Pls check log file for details.";
+        }
+        if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
+            showMessageDialog(status);
+        } else {
+            sharedInformation.getTabbedPane().add(csvPanel);
+            sharedInformation.getTabbedPane().setSelectedIndex(sharedInformation.getTabbedPane().getTabCount() - 1);
         }
         return status;
     }

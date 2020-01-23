@@ -4,6 +4,7 @@ import com.icrisat.sbdm.ismu.retrofit.gobii.GOBIIRetrofitClient;
 import com.icrisat.sbdm.ismu.ui.WaitLayerUI;
 import com.icrisat.sbdm.ismu.ui.openDialog.components.SubmitPanel;
 import com.icrisat.sbdm.ismu.util.Constants;
+import com.icrisat.sbdm.ismu.util.PathConstants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
 
@@ -127,7 +128,7 @@ public class GOBIIDataSelectionPanel {
                     String outputFileName = getBrapiOutputFileName();
                     String status = sharedInformation.getGobiiRetrofitClient().downloadData((String) finalSelectedData.get(1), (String) finalSelectedData.get(3), outputFileName);
                     if (status.equals(Constants.SUCCESS)) {
-                        sharedInformation.getOpenDialog().getTxtGenotype().setText(outputFileName);
+                        PathConstants.recentGenotypeFile = outputFileName;
                         dialogBox.setVisible(false);
                     } else {
                         Util.showMessageDialog(status);
