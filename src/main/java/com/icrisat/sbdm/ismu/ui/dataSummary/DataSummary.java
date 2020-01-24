@@ -2,7 +2,7 @@ package com.icrisat.sbdm.ismu.ui.dataSummary;
 
 import com.icrisat.sbdm.ismu.ui.WaitLayerUI;
 import com.icrisat.sbdm.ismu.ui.mainFrame.DynamicTree;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.SubmitPanel;
+import com.icrisat.sbdm.ismu.ui.SubmitPanel;
 import com.icrisat.sbdm.ismu.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

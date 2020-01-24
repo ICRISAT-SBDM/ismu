@@ -63,7 +63,7 @@ public class GenoFileFirstTImeProcessing {
                     String.valueOf(numberFormat.format(markerInfo.getMafValue()))});
         }
         summaryWriter.close();
-        HashMap<String, String> summaryFilesMap = sharedInformation.getPathConstants().summaryFilesMap;
+        HashMap<String, String> summaryFilesMap = PathConstants.summaryFilesMap;
         summaryFilesMap.put(dest_file.getName(), summaryName);
     }
 
@@ -133,8 +133,7 @@ public class GenoFileFirstTImeProcessing {
     private static void actualComputeOfMAF(MarkerSummaryInfo markerSummaryInfo, float a, float b) {
         double a2 = Math.pow(a, 2);
         double b2 = Math.pow(b, 2);
-        if (a < b) markerSummaryInfo.setMafValue(a);
-        else markerSummaryInfo.setMafValue(b);
+        markerSummaryInfo.setMafValue(Math.min(a, b));
         markerSummaryInfo.setPicValue((float) (1 - (a2 + b2) - 2 * a2 * b2));
     }
 

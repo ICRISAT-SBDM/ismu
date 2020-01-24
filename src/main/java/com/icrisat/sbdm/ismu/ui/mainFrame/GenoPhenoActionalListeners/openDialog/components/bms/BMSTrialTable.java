@@ -1,4 +1,4 @@
-package com.icrisat.sbdm.ismu.ui.openDialog.components.phenotype.bms;
+package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.bms;
 
 import com.icrisat.sbdm.ismu.util.Constants;
 
@@ -10,14 +10,13 @@ class BMSTrialTable {
     DefaultTableModel defaultTableModel;
 
     BMSTrialTable() {
-         defaultTableModel = new DefaultTableModel(Constants.bmsHeaders,0);
-        DefaultTableModel tableModel = new DefaultTableModel(Constants.bmsHeaders, 0) {
+        defaultTableModel = new DefaultTableModel(Constants.bmsHeaders, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        table = new JTable(tableModel);
+        table = new JTable(defaultTableModel);
         table.setAutoCreateRowSorter(false);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }

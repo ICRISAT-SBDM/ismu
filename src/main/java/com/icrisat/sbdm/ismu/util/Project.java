@@ -92,7 +92,7 @@ public class Project {
 
     public void newProject(ActionEvent e) {
         clearCurrentApplicationState();
-        NativeJFileChooser fileChooser = Util.getFolderChooser("Folder to open and save project");
+        NativeJFileChooser fileChooser = Util.getFolderChooser("Select a folder to create project");
         if (fileChooser.showOpenDialog(sharedInformation.getMainFrame()) == JFileChooser.APPROVE_OPTION) {
             if (Files.isDirectory(Paths.get(fileChooser.getSelectedFile().toString()))) {
                 setResultDir(fileChooser);

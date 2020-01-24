@@ -1,8 +1,9 @@
-package com.icrisat.sbdm.ismu.ui.openDialog.components.genotype.gobii;
+package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel.gobii;
 
 import com.icrisat.sbdm.ismu.retrofit.gobii.GOBIIRetrofitClient;
+import com.icrisat.sbdm.ismu.ui.SubmitPanel;
 import com.icrisat.sbdm.ismu.ui.WaitLayerUI;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.SubmitPanel;
+import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel.SelectionTable;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.PathConstants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
@@ -20,13 +21,16 @@ public class GOBIIDataSelectionPanel {
 
     protected JDialog dialogBox;
     protected SharedInformation sharedInformation;
-    protected GOBIIDataSetTable gobiiDataSetTable;
+    protected SelectionTable selectionTable;
+    protected GOBIIRetrofitClient client;
     protected GOBIISearchPanel gobiiSearchPanel;
     protected SubmitPanel submitPanel;
     protected WaitLayerUI layerUI = new WaitLayerUI();
 
-    public GOBIIDataSelectionPanel(SharedInformation sharedInformation, GOBIIDataSetTable gobiiDataSetTable) {
+    public GOBIIDataSelectionPanel(SharedInformation sharedInformation, SelectionTable selectionTable) {
         this.sharedInformation = sharedInformation;
+        this.selectionTable = selectionTable;
+        client = sharedInformation.getGobiiRetrofitClient();
         dialogBox = new JDialog(sharedInformation.getMainFrame(), Dialog.ModalityType.APPLICATION_MODAL);
         dialogBox.setTitle("GOBII - Dataset");
         dialogBox.setSize(new Dimension(900, 500));
@@ -40,14 +44,12 @@ public class GOBIIDataSelectionPanel {
         gobiiSearchPanel.searchButton.addActionListener(this::filterTableData);
         gobiiSearchPanel.resetButton.addActionListener(this::resetTableData);
 
-
-        this.gobiiDataSetTable = gobiiDataSetTable;
-        String status = getDataSets(this.gobiiDataSetTable.defaultTableModel);
+        String status = getVariantSets(this.selectionTable.defaultTableModel);
         if (status.equalsIgnoreCase(Constants.SUCCESS)) {
             dataPanel.add(gobiiSearchPanel, BorderLayout.NORTH);
-            this.gobiiDataSetTable.table.setModel(this.gobiiDataSetTable.defaultTableModel);
-            JScrollPane scrollPane = new JScrollPane(this.gobiiDataSetTable.table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-            this.gobiiDataSetTable.table.setFillsViewportHeight(true);
+            this.selectionTable.table.setModel(this.selectionTable.defaultTableModel);
+            JScrollPane scrollPane = new JScrollPane(this.selectionTable.table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+            this.selectionTable.table.setFillsViewportHeight(true);
             dataPanel.add(scrollPane, BorderLayout.CENTER);
 
             submitPanel = new SubmitPanel(sharedInformation.getBoldFont());
@@ -68,20 +70,14 @@ public class GOBIIDataSelectionPanel {
         }
     }
 
-    protected String getBrapiOutputFileName() {
-        String outputFileName;
-        if (sharedInformation.getPathConstants().resultDirectory == null)
-            outputFileName = sharedInformation.getPathConstants().tempResultDirectory + "GOBII" + "_" + new SimpleDateFormat("hhmmss").format(new Date()) + ".csv";
-        else
-            outputFileName = sharedInformation.getPathConstants().resultDirectory + "GOBII" + "_" + new SimpleDateFormat("hhmmss").format(new Date()) + ".csv";
-        return outputFileName;
-    }
-
+    /**
+     * Retrieve the selected row from rowNumber
+     */
     protected List getSelectedData() {
         List selectedData = null;
-        int selectedRow = gobiiDataSetTable.table.getSelectedRow();
+        int selectedRow = selectionTable.table.getSelectedRow();
         if (selectedRow != -1) {
-            DefaultTableModel model = (DefaultTableModel) gobiiDataSetTable.table.getModel();
+            DefaultTableModel model = (DefaultTableModel) selectionTable.table.getModel();
             selectedData = new ArrayList((Collection) model.getDataVector().elementAt(selectedRow));
         } else {
             Util.showMessageDialog("Please select  a row.");
@@ -89,26 +85,27 @@ public class GOBIIDataSelectionPanel {
         return selectedData;
     }
 
-
     /**
-     * Gets the dataSet information using REST call.
+     * Gets the list of variantSets from GOBii.
      */
-    protected String getDataSets(DefaultTableModel model) {
+    protected String getVariantSets(DefaultTableModel model) {
+        //Clears the table and later adds elements to it.
         model.setRowCount(0);
-        GOBIIRetrofitClient client = sharedInformation.getGobiiRetrofitClient();
-        List<String[]> dataSetList = new ArrayList<>();
-        String status = client.getVariantSets(dataSetList);
+        List<String[]> variantSetList = new ArrayList<>();
+        String status = client.getVariantSets(variantSetList);
+        //Retry
         if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
-            // status = client.getDataSets(dataSetList);
-            status = client.getVariantSets(dataSetList);
+            variantSetList = new ArrayList<>();
+            status = client.getVariantSets(variantSetList);
         }
         if (status.equalsIgnoreCase(Constants.SUCCESS)) {
             long serialNo = 1;
-            for (String[] dataSet : dataSetList) {
-                String[] newDataset = new String[5];
-                newDataset[0] = String.valueOf(serialNo++);
-                System.arraycopy(dataSet, 0, newDataset, 1, dataSet.length);
-                model.addRow(newDataset);
+            // Adds serial number at the beginning of the variant set element
+            for (String[] variantSet : variantSetList) {
+                String[] newVariantSet = new String[5];
+                newVariantSet[0] = String.valueOf(serialNo++);
+                System.arraycopy(variantSet, 0, newVariantSet, 1, variantSet.length);
+                model.addRow(newVariantSet);
             }
         }
         return status;
@@ -121,12 +118,13 @@ public class GOBIIDataSelectionPanel {
      */
     protected void startDataExtract(ActionEvent e) {
         List finalSelectedData = getSelectedData();
+        setEnableForComponents(false);
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             @Override
             protected Object doInBackground() {
                 if (finalSelectedData != null) {
-                    String outputFileName = getBrapiOutputFileName();
-                    String status = sharedInformation.getGobiiRetrofitClient().downloadData((String) finalSelectedData.get(1), (String) finalSelectedData.get(3), outputFileName);
+                    String outputFileName = PathConstants.resultDirectory + "GOBII" + "_" + new SimpleDateFormat("hhmmss").format(new Date()) + ".csv";
+                    String status = client.downloadVariantSet((String) finalSelectedData.get(1), (String) finalSelectedData.get(3), outputFileName);
                     if (status.equals(Constants.SUCCESS)) {
                         PathConstants.recentGenotypeFile = outputFileName;
                         dialogBox.setVisible(false);
@@ -135,7 +133,7 @@ public class GOBIIDataSelectionPanel {
                     }
                 }
                 layerUI.stop();
-                submitPanel.submit.setEnabled(true);
+                setEnableForComponents(true);
                 return null;
             }
         };
@@ -157,9 +155,9 @@ public class GOBIIDataSelectionPanel {
         String variantSetInputFieldText = gobiiSearchPanel.variantSetInputField.getText();
         String studyInputFieldText = gobiiSearchPanel.studyInputField.getText();
         if (Objects.equals(variantSetInputFieldText, "") && Objects.equals(studyInputFieldText, ""))
-            gobiiDataSetTable.table.setModel(gobiiDataSetTable.defaultTableModel);
+            selectionTable.table.setModel(selectionTable.defaultTableModel);
         DefaultTableModel newTableModel = new DefaultTableModel(Constants.gobiiHeaders, 0);
-        for (Object obj : gobiiDataSetTable.defaultTableModel.getDataVector()) {
+        for (Object obj : selectionTable.defaultTableModel.getDataVector()) {
             List<String> row = (List<String>) obj;
             boolean variantSearchMatch = false, studyMatch = false;
             if (Objects.equals(variantSearchMatch, "")) {
@@ -175,13 +173,13 @@ public class GOBIIDataSelectionPanel {
             if (variantSearchMatch && studyMatch)
                 newTableModel.addRow(row.toArray());
         }
-        gobiiDataSetTable.table.setModel(newTableModel);
+        selectionTable.table.setModel(newTableModel);
         setEnableForComponents(true);
     }
 
     protected void resetTableData(ActionEvent e) {
         gobiiSearchPanel.variantSetInputField.setText("");
         gobiiSearchPanel.studyInputField.setText("");
-        gobiiDataSetTable.table.setModel(gobiiDataSetTable.defaultTableModel);
+        selectionTable.table.setModel(selectionTable.defaultTableModel);
     }
 }

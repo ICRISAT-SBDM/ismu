@@ -1,6 +1,6 @@
-package com.icrisat.sbdm.ismu.ui.openDialog.components.phenotype.bms;
+package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.phenotype.bms;
 
-import com.icrisat.sbdm.ismu.ui.openDialog.components.CustomTextField;
+import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.CustomTextField;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 
 import javax.swing.*;

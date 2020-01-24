@@ -359,24 +359,18 @@ public class Util {
      * @param type             Either Geno/Pheno
      * @param e                Action event e;
      */
-    public static void selectFile(String fileChooserTitle, int type, ActionEvent e) {
+    public static String selectFile(String fileChooserTitle, int type, ActionEvent e) {
         NativeJFileChooser chooser = getNativeJFileChooser(fileChooserTitle, type);
         if (chooser.showOpenDialog((java.awt.Component) e.getSource()) == JFileChooser.APPROVE_OPTION) {
             String path = chooser.getSelectedFile().getPath();
-            if (!new File(path).exists()) {
-                showMessageDialog("Selected file doesn't exists. \nPlease select valid file");
-                if (type == PHENO)
-                    PathConstants.recentPhenotypeFile = null;
-                else
-                    PathConstants.recentGenotypeFile = null;
-                return;
-            }
+            if (!new File(path).exists()) return "Selected file doesn't exists. \nPlease select valid file";
             if (type == PHENO)
                 PathConstants.recentPhenotypeFile = path;
             else
                 PathConstants.recentGenotypeFile = path;
             PathConstants.lastChosenFilePath = chooser.getSelectedFile().getAbsolutePath();
         }
+        return Constants.SUCCESS;
     }
 
     private static NativeJFileChooser getNativeJFileChooser(String fileChooserTitle, int type) {

@@ -1,8 +1,8 @@
-package com.icrisat.sbdm.ismu.ui.openDialog.components.phenotype.bms;
+package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.phenotype.bms;
 
 import com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitClient;
 import com.icrisat.sbdm.ismu.ui.WaitLayerUI;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.SubmitPanel;
+import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.SubmitPanel;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;

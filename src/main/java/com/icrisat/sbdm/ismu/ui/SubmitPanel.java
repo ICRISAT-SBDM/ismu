@@ -1,4 +1,4 @@
-package com.icrisat.sbdm.ismu.ui.openDialog.components;
+package com.icrisat.sbdm.ismu.ui;
 
 import javax.swing.*;
 import java.awt.*;

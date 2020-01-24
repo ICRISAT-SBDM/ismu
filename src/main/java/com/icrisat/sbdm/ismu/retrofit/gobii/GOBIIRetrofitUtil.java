@@ -24,11 +24,11 @@ class GOBIIRetrofitUtil {
     }
 
     /**
-     * @param variantsetsJSON input JSON
+     * @param variantSetsJSON input JSON
      * @param variantSetsList varaiant set
      */
-    static void processVariantSets(Variantsets variantsetsJSON, List<String[]> variantSetsList) {
-        Variantsets.Data[] variantSets = variantsetsJSON.getResult().getData();
+    static void processVariantSets(Variantsets variantSetsJSON, List<String[]> variantSetsList) {
+        Variantsets.Data[] variantSets = variantSetsJSON.getResult().getData();
         for (Variantsets.Data variantSet : variantSets) {
             String[] data = new String[4];
             data[0] = variantSet.getVariantSetName();

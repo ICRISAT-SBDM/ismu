@@ -99,28 +99,38 @@ public class GenoPhenoPanel extends JPanel {
      * @param ae action event
      */
     private void genoBrowseAction(ActionEvent ae) {
-        Util.selectFile("Select a genotype file", Constants.GENO, ae);
-        for (FileLocation file : PathConstants.genotypeFiles) {
-            if (file.getFileLocationOnDisk().equalsIgnoreCase(PathConstants.recentPhenotypeFile)) {
-                Util.showMessageDialog("Genotype file selected is already open.");
-                return;
+        String status = Util.selectFile("Select a genotype file", Constants.GENO, ae);
+        if (status.equalsIgnoreCase(Constants.SUCCESS)) {
+            for (FileLocation file : PathConstants.genotypeFiles) {
+                if (file.getFileLocationOnDisk().equalsIgnoreCase(PathConstants.recentPhenotypeFile)) {
+                    Util.showMessageDialog("Genotype file selected is already open.");
+                    return;
+                }
             }
+            copyFile(PathConstants.recentGenotypeFile, Constants.GENO);
+            setDialogBoxVisibility(false);
+        } else {
+            Util.showMessageDialog(status);
         }
-        copyFile(PathConstants.recentGenotypeFile, Constants.GENO, false);
-        setDialogBoxVisibility(false);
     }
 
+    /**
+     * When connect button is clicked and the file type is genotype
+     * Handles connecting to GOBII DB
+     *
+     * @param ae action event
+     */
     private void genoConnectAction(ActionEvent ae) {
         PathConstants.recentGenotypeFile = null;
-        ConnectToDB connectToDB = new ConnectToDB(sharedInformation, Constants.GOBII);
-        connectToDB.setVisible(true);
-        String genofile = PathConstants.recentGenotypeFile;
-        //   addPanelTo(genofile, Constants.GENO, false);
-        connectToDB.setVisible(false);
-        dialogBox.setVisible(false);
-
+        new ConnectToDB(sharedInformation, Constants.GOBII);
+        // File already in result directory so add it to panel
+        if (PathConstants.recentGenotypeFile != null) {
+            String sourceFilePath = PathConstants.recentGenotypeFile;
+            String sourceFileName = new File(sourceFilePath).getName();
+            addToPaneAndTree(Constants.GENO, sourceFileName, sourceFilePath);
+        }
+        setDialogBoxVisibility(false);
     }
-
 
     /**
      * When browse button is clicked and the file type is genotype
@@ -129,15 +139,19 @@ public class GenoPhenoPanel extends JPanel {
      * @param ae action event
      */
     private void phenoBrowseAction(ActionEvent ae) {
-        Util.selectFile("Select a phenotype file", Constants.PHENO, ae);
-        for (FileLocation file : PathConstants.phenotypeFiles) {
-            if (file.getFileLocationOnDisk().equalsIgnoreCase(PathConstants.recentPhenotypeFile)) {
-                Util.showMessageDialog("Phenotype file selected is already open.");
-                return;
+        String status = Util.selectFile("Select a phenotype file", Constants.PHENO, ae);
+        if (status.equalsIgnoreCase(Constants.SUCCESS)) {
+            for (FileLocation file : PathConstants.phenotypeFiles) {
+                if (file.getFileLocationOnDisk().equalsIgnoreCase(PathConstants.recentPhenotypeFile)) {
+                    Util.showMessageDialog("Phenotype file selected is already open.");
+                    return;
+                }
             }
+            copyFile(PathConstants.recentPhenotypeFile, Constants.PHENO);
+            setDialogBoxVisibility(false);
+        } else {
+            Util.showMessageDialog(status);
         }
-        copyFile(PathConstants.recentPhenotypeFile, Constants.PHENO, false);
-        setDialogBoxVisibility(false);
     }
 
     private void phenoConnectAction(ActionEvent ae) {
@@ -150,22 +164,8 @@ public class GenoPhenoPanel extends JPanel {
         phenotypeDB.setVisible(false);
         dialogBox.setVisible(false);
   */
-    }
-
-    /**
-     * Copies file to destination directory and adds that file to display panel
-     *
-     * @param sourceFilePath source filepath
-     * @param type           geno/pheno
-     * @param isBrapiCall    is data received from a brapi call
-     */
-    private void copyFile(String sourceFilePath, int type, boolean isBrapiCall) {
-        String status;
-        String sourceFileName = new File(sourceFilePath).getName();
-        String destFileName = Util.stripFileExtension(sourceFileName) + ".csv";
-        String destFilePath = PathConstants.resultDirectory + destFileName;
-
-   /*     if (isBrapiCall) {
+  /*
+   if (isBrapiCall) {
             if (PathConstants.qualitativeTraits.size() > 0) {
                 Util.showMessageDialog("ISMU supports only quantitative traits at the moment." +
                         "\nFollowing traits are ignored\n" + PathConstants.qualitativeTraits);
@@ -180,7 +180,21 @@ public class GenoPhenoPanel extends JPanel {
             sourceFileName = new File(sourceFilePath).getName();
             destFileName = sourceFileName;
             destFilePath = sourceFilePath;
-        } else {*/
+        }
+   */
+    }
+
+    /**
+     * Copies file to destination directory and adds that file to display panel
+     *
+     * @param sourceFilePath source filepath
+     * @param type           geno/pheno
+     */
+    private void copyFile(String sourceFilePath, int type) {
+        String status;
+        String sourceFileName = new File(sourceFilePath).getName();
+        String destFileName = Util.stripFileExtension(sourceFileName) + ".csv";
+        String destFilePath = PathConstants.resultDirectory + destFileName;
         if (sourceFileName.endsWith(".hmp.txt")) {
             status = Util.processHapMap(sourceFilePath, destFilePath);
         } else

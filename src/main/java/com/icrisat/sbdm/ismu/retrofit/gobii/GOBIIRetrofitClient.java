@@ -5,7 +5,6 @@ import com.icrisat.sbdm.ismu.retrofit.ExtractResponse;
 import com.icrisat.sbdm.ismu.retrofit.RetrofitError;
 import com.icrisat.sbdm.ismu.retrofit.Status;
 import com.icrisat.sbdm.ismu.util.Constants;
-import com.icrisat.sbdm.ismu.util.SharedInformation;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -25,14 +24,9 @@ import static com.icrisat.sbdm.ismu.retrofit.gobii.GOBIIRetrofitUtil.*;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class GOBIIRetrofitClient {
 
-    private SharedInformation sharedInformation;
     private GOBIIClient client;
     private Logger logger;
     private Token token;
-
-    public void setSharedInformation(SharedInformation sharedInformation) {
-        this.sharedInformation = sharedInformation;
-    }
 
     /**
      * Authenticate to GOBII.
@@ -40,12 +34,11 @@ public class GOBIIRetrofitClient {
      * @param URL      URL for GOBII service
      * @param userName UserName
      * @param password password
-     * @param sharedInformation
+     * @param logger   Logger
      * @return status of the rest call.
      */
-    public String authenticate(String URL, String userName, String password, SharedInformation sharedInformation) {
-        this.sharedInformation=sharedInformation;
-        logger = this.sharedInformation.getLogger();
+    public String authenticate(String URL, String userName, String password, Logger logger) {
+        this.logger = logger;
         String status = Constants.SUCCESS;
         try {
             client = createClient(URL);
@@ -98,19 +91,19 @@ public class GOBIIRetrofitClient {
     }
 
     /**
-     * Issue an extract request to the selected matrixDbId
+     * Issue an extract request to the selected variantSet ID
      *
      * @return extract jobId with status message
      */
-    public String downloadData(String datasetName, String datasetId, String fileName) {
+    public String downloadVariantSet(String variantSetName, String variantSetIdString, String fileName) {
         String status = Constants.SUCCESS;
         List<Calls> callResponseList = new ArrayList<>();
-        logger.info("Submitting data download request for: " + datasetName + " with id: " + datasetId);
-        int variantSetId = Integer.parseInt(datasetId);
+        logger.info("Submitting data download request for: " + variantSetName + " with id: " + variantSetIdString);
+        int variantSetId = Integer.parseInt(variantSetIdString);
         String pageToken = "";
         try {
             do {
-                logger.info("Submitting data download request for: " + datasetName + " with id: " + datasetId + " for page: " + pageToken);
+                logger.info("Submitting data download request for: " + variantSetName + " with id: " + variantSetId + " for page: " + pageToken);
                 Call<Calls> downloadVariantSetCall = client.downloadVariantSet(token.getToken(), variantSetId, 10000, pageToken);
                 Response<Calls> downloadVariantSetResponse = downloadVariantSetCall.execute();
                 if (downloadVariantSetResponse.isSuccessful()) {
