@@ -1,10 +1,10 @@
-package com.icrisat.sbdm.ismu.ui.openDialog.components.connectionPanel;
+package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel;
 
 import com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitClient;
 import com.icrisat.sbdm.ismu.retrofit.gobii.GOBIIRetrofitClient;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.genotype.gobii.GOBIIDataSelectionPanel;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.genotype.gobii.GOBIIDataSetTable;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.phenotype.bms.BMSDataSelectionPanel;
+import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.genotype.gobii.GOBIIDataSelectionPanel;
+import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.genotype.gobii.GOBIIDataSetTable;
+import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.phenotype.bms.BMSDataSelectionPanel;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;

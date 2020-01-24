@@ -1,6 +1,7 @@
-package com.icrisat.sbdm.ismu.ui.mainFrame.ActionalListeners;
+package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners;
 
 import com.icrisat.sbdm.ismu.ui.mainFrame.DynamicTree;
+import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel.ConnectToDB;
 import com.icrisat.sbdm.ismu.util.*;
 
 import javax.swing.*;
@@ -15,17 +16,34 @@ public class GenoPhenoPanel extends JPanel {
     DynamicTree dynamicTree;
     public JButton btnBrowse, btnConnect;
     public JTextField txtbox;
+    public JPanel panel;
+    boolean useDialogbox;
 
-    public GenoPhenoPanel(SharedInformation sharedInformation, DynamicTree dynamicTree, int type) {
+    //There are cases(New folder) where only the panel is used instead of complete dialog box so e use useDialogbox
+    public GenoPhenoPanel(SharedInformation sharedInformation, DynamicTree dynamicTree, int type, boolean useDialogbox) {
         this.sharedInformation = sharedInformation;
         this.dynamicTree = dynamicTree;
-
+        this.useDialogbox = useDialogbox;
         dialogBox = new JDialog(sharedInformation.getMainFrame(), Dialog.ModalityType.APPLICATION_MODAL);
         dialogBox.setSize(new Dimension(500, 75));
         dialogBox.setLocation(Util.getLocation(500, 75));
         dialogBox.setResizable(false);
 
-        JPanel panel = new JPanel();
+        createJPanel(sharedInformation, type);
+        dialogBox.add(panel);
+        setDialogBoxVisibility(true);
+    }
+
+    private void setDialogBoxVisibility(boolean visibility) {
+        /*Use dialogbox is set when the object is created i.e. in the constructor call
+         * */
+        if (useDialogbox) {
+            dialogBox.setVisible(visibility);
+        }
+    }
+
+    private void createJPanel(SharedInformation sharedInformation, int type) {
+        panel = new JPanel();
         panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         panel.setLayout(new FlowLayout());
         // -----------------------------Geno----------------------------------------
@@ -38,27 +56,27 @@ public class GenoPhenoPanel extends JPanel {
 
         btnBrowse = createNonEditableButton("Browse", sharedInformation.getFont());
         btnBrowse.setEnabled(true);
+        btnConnect = createNonEditableButton("Connect", sharedInformation.getFont());
+        btnConnect.setEnabled(true);
 
         if (type == Constants.PHENO) {
             dialogBox.setTitle("Phenotype file    ");
             lbl.setText("Phenotype file    ");
             lbl.setFont(sharedInformation.getFont());
             btnBrowse.addActionListener(this::phenoBrowseAction);
+            btnConnect.addActionListener(this::phenoConnectAction);
         } else {
             dialogBox.setTitle("Genotype file    ");
             lbl.setText("Genotype file    ");
             lbl.setFont(sharedInformation.getFont());
             btnBrowse.addActionListener(this::genoBrowseAction);
+            btnConnect.addActionListener(this::genoConnectAction);
         }
-        btnConnect = createNonEditableButton("Connect", sharedInformation.getFont());
-        //      genoPanel.btnConnect.addActionListener(ae -> genoConnectAction(ae, genoPanel, dialogBox));
 
         panel.add(lbl);
         panel.add(txtbox);
         panel.add(btnBrowse);
         panel.add(btnConnect);
-        dialogBox.add(panel);
-        dialogBox.setVisible(true);
     }
 
     /**
@@ -74,6 +92,12 @@ public class GenoPhenoPanel extends JPanel {
         return button;
     }
 
+    /**
+     * When browse button is clicked and the file type is genotype
+     * Handles opening a genotype file locally
+     *
+     * @param ae action event
+     */
     private void genoBrowseAction(ActionEvent ae) {
         Util.selectFile("Select a genotype file", Constants.GENO, ae);
         for (FileLocation file : PathConstants.genotypeFiles) {
@@ -83,9 +107,27 @@ public class GenoPhenoPanel extends JPanel {
             }
         }
         copyFile(PathConstants.recentGenotypeFile, Constants.GENO, false);
-        dialogBox.setVisible(false);
+        setDialogBoxVisibility(false);
     }
 
+    private void genoConnectAction(ActionEvent ae) {
+        PathConstants.recentGenotypeFile = null;
+        ConnectToDB connectToDB = new ConnectToDB(sharedInformation, Constants.GOBII);
+        connectToDB.setVisible(true);
+        String genofile = PathConstants.recentGenotypeFile;
+        //   addPanelTo(genofile, Constants.GENO, false);
+        connectToDB.setVisible(false);
+        dialogBox.setVisible(false);
+
+    }
+
+
+    /**
+     * When browse button is clicked and the file type is genotype
+     * Handles opening a phenotype file locally
+     *
+     * @param ae action event
+     */
     private void phenoBrowseAction(ActionEvent ae) {
         Util.selectFile("Select a phenotype file", Constants.PHENO, ae);
         for (FileLocation file : PathConstants.phenotypeFiles) {
@@ -95,7 +137,19 @@ public class GenoPhenoPanel extends JPanel {
             }
         }
         copyFile(PathConstants.recentPhenotypeFile, Constants.PHENO, false);
+        setDialogBoxVisibility(false);
+    }
+
+    private void phenoConnectAction(ActionEvent ae) {
+        ConnectToDB connectToDB = new ConnectToDB(sharedInformation, Constants.BMS);
+        connectToDB.setVisible(true);
+  /*      pathConstants.isBrapiCallPheno = true;
+        String phenofile = phenoPanel.txtbox.getText();
+        if (phenofile.equals("")) return;
+        //  addPanelTo(phenofile, Constants.PHENO, true);
+        phenotypeDB.setVisible(false);
         dialogBox.setVisible(false);
+  */
     }
 
     /**
@@ -150,6 +204,7 @@ public class GenoPhenoPanel extends JPanel {
         else
             status = UtilCSV.addCSVToTabbedPanel(destFileName, destFilePath, false);
         if (status.equalsIgnoreCase(Constants.SUCCESS)) {
+            txtbox.setText(destFilePath);
             FileLocation fileLocation = new FileLocation(destFileName, destFilePath);
             if (type == Constants.GENO) {
                 PathConstants.genotypeFiles.add(fileLocation);

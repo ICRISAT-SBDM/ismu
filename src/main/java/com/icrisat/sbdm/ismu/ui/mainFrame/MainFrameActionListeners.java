@@ -3,9 +3,7 @@ package com.icrisat.sbdm.ismu.ui.mainFrame;
 import com.icrisat.sbdm.ismu.ui.analysis.Analysis;
 import com.icrisat.sbdm.ismu.ui.components.ColumnSelection;
 import com.icrisat.sbdm.ismu.ui.dataSummary.DataSummary;
-import com.icrisat.sbdm.ismu.ui.mainFrame.ActionalListeners.GenoPhenoPanel;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.GenotypeDB;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.PhenotypeDB;
+import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.GenoPhenoPanel;
 import com.icrisat.sbdm.ismu.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,18 +26,6 @@ public class MainFrameActionListeners {
     private ColumnSelection columnSelection;
     private Project project;
     private PdfConverter pdfConverter;
-    private PhenotypeDB phenotypeDB;
-    private GenotypeDB genotypeDB;
-
-    @Autowired
-    public void setGenotypeDB(GenotypeDB genotypeDB) {
-        this.genotypeDB = genotypeDB;
-    }
-
-    @Autowired
-    public void setPhenotypeDB(PhenotypeDB phenotypeDB) {
-        this.phenotypeDB = phenotypeDB;
-    }
 
     @Autowired
     public void setPdfConverter(PdfConverter pdfConverter) {
@@ -82,16 +68,7 @@ public class MainFrameActionListeners {
      * @param e Action Event
      */
     void selectGenotypeFileActionItem(ActionEvent e) {
-        new GenoPhenoPanel(sharedInformation, dynamicTree, Constants.GENO);
-        // genoPanel.btnConnect.addActionListener(ae -> genoConnectAction(ae, genoPanel, dialogBox));
-    }
-
-    private void genoConnectAction(ActionEvent ae, GenoPhenoPanel genoPanel, JDialog dialogBox) {
-        genotypeDB.setVisible(true);
-        String genofile = genoPanel.txtbox.getText();
-        //   addPanelTo(genofile, Constants.GENO, false);
-        genotypeDB.setVisible(false);
-        dialogBox.setVisible(false);
+        new GenoPhenoPanel(sharedInformation, dynamicTree, Constants.GENO, true);
     }
 
     /**
@@ -100,17 +77,7 @@ public class MainFrameActionListeners {
      * @param e Action Event
      */
     void selectPhenotypeFileActionItem(ActionEvent e) {
-        new GenoPhenoPanel(sharedInformation, dynamicTree, Constants.PHENO);
-    }
-
-    private void phenoConnectAction(ActionEvent ae, GenoPhenoPanel phenoPanel, JDialog dialogBox) {
-        phenotypeDB.setVisible(true);
-//        pathConstants.isBrapiCallPheno = true;
-        String phenofile = phenoPanel.txtbox.getText();
-        if (phenofile.equals("")) return;
-        //  addPanelTo(phenofile, Constants.PHENO, true);
-        phenotypeDB.setVisible(false);
-        dialogBox.setVisible(false);
+        new GenoPhenoPanel(sharedInformation, dynamicTree, Constants.PHENO, true);
     }
 
     /**

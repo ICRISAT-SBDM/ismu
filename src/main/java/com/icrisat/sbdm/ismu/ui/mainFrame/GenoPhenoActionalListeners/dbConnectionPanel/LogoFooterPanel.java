@@ -1,4 +1,4 @@
-package com.icrisat.sbdm.ismu.ui.openDialog.components.connectionPanel;
+package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel;
 
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;

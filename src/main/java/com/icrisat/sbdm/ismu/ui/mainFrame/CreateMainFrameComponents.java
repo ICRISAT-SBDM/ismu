@@ -8,8 +8,6 @@ import com.icrisat.sbdm.ismu.ui.analysis.Analysis;
 import com.icrisat.sbdm.ismu.ui.components.ColumnSelection;
 import com.icrisat.sbdm.ismu.ui.components.ColumnSelectionPanel;
 import com.icrisat.sbdm.ismu.ui.dataSummary.DataSummary;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.GenotypeDB;
-import com.icrisat.sbdm.ismu.ui.openDialog.components.PhenotypeDB;
 import com.icrisat.sbdm.ismu.util.FileLocation;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import org.slf4j.Logger;
@@ -40,8 +38,6 @@ public class CreateMainFrameComponents {
     /**
      * Below components are initialized here.
      */
-    private PhenotypeDB phenotypeDB;
-    private GenotypeDB genotypeDB;
     private static JButton btnPhenotype, btnGenotype;
     private static JMenuItem phenotypeFileMenuItem, genotypeFileMenuItem;
     private DataSummary dataSummary;
@@ -73,16 +69,6 @@ public class CreateMainFrameComponents {
     @Autowired
     public void setDataSummary(DataSummary dataSummary) {
         this.dataSummary = dataSummary;
-    }
-
-    @Autowired
-    public void setGenotypeDB(GenotypeDB genotypeDB) {
-        this.genotypeDB = genotypeDB;
-    }
-
-    @Autowired
-    public void setPhenotypeDB(PhenotypeDB phenotypeDB) {
-        this.phenotypeDB = phenotypeDB;
     }
 
     @Autowired
@@ -224,7 +210,7 @@ public class CreateMainFrameComponents {
         toolBar.add(btnNewProject);
 
         JButton btnOpenProject = new JButton("Open");
-        btnNewProject.setToolTipText("Open an existing project");
+        btnOpenProject.setToolTipText("Open an existing project");
         try {
             btnOpenProject.setIcon(new ImageIcon(ImageIO.read(getClass().getResource("/open.png"))));
         } catch (IOException e) {
@@ -300,7 +286,6 @@ public class CreateMainFrameComponents {
     /**
      * Creates an empty footer.
      * Create openDialog
-     * Create PhenotypeDB
      */
     void createFooterStatusBar() {
         JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -310,8 +295,6 @@ public class CreateMainFrameComponents {
         statusBar.add(status);
         sharedInformation.getMainFrame().add(statusBar, BorderLayout.SOUTH);
         columnSelection.createDialog(sharedInformation);
-        phenotypeDB.createPhenotypeDB();
-        genotypeDB.createGenotypeDB();
         dataSummary.createDialog();
         analysis.createDialog(columnSelectionPanel);
         aboutDialog.createDialog(sharedInformation.getMainFrame());
