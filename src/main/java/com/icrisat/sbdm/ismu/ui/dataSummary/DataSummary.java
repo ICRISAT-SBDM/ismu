@@ -271,7 +271,7 @@ public class DataSummary {
             Util.resetStdout();
             sharedInformation.getLogger().info("Pheno Summary completed\t" + String.valueOf(exitStatus));
             if (exitStatus) {
-                String logFile = sharedInformation.getPathConstants().resultDirectory + "PhenoSummaryLogFile.txt";
+                String logFile = PathConstants.resultDirectory + "PhenoSummaryLogFile.txt";
                 final String[] lastLine = new String[1];
                 try (Stream<String> stream = Files.lines(Paths.get(logFile))) {
                     stream.forEach(line -> lastLine[0] = line);

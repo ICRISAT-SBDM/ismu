@@ -198,19 +198,19 @@ public class Analysis {
                 analysisProgress.methodName.setText("Generating input for analysis.");
                 isAnalysisCancelled = false;
                 addAnalysisLogFiles();
-                if (analysisUtil.runAscript(e, analysisDataObject, sharedInformation)) {
+                if (analysisUtil.runAscript(e, analysisDataObject, sharedInformation.getLogger())) {
                     for (Triat triat : requiredTriats) {
                         analysisProgress.clearFields();
                         analysisProgress.triatName.setText(triat.triatName);
                         analysisDataObject.setResultFileName(triat.triatName + "_" + analysisDataObject.getResultFileStub() + ".htm");
-                        if (!analysisUtil.runABscript(e, analysisDataObject, sharedInformation, triat.triatNo))
+                        if (!analysisUtil.runABscript(e, analysisDataObject, sharedInformation.getLogger(), triat.triatNo))
                             break;
                         boolean statusFailed = false;
                         for (int i = 0; i < 6; i++) {
                             if (isAnalysisCancelled) break;
                             if (methodsSelected.get(i) == 1) {
                                 analysisProgress.methodName.setText(getMethodName(i));
-                                if (!analysisUtil.runBscript(e, analysisDataObject, sharedInformation, triat.triatNo, i)) {
+                                if (!analysisUtil.runBscript(e, analysisDataObject, sharedInformation.getLogger(), triat.triatNo, i)) {
                                     statusFailed = true;
                                     break;
                                 } else {
@@ -219,7 +219,7 @@ public class Analysis {
                             }
                         }
                         if (statusFailed || isAnalysisCancelled) break;
-                        analysisUtil.runCscript(e, analysisDataObject, sharedInformation);
+                        analysisUtil.runCscript(e, analysisDataObject, sharedInformation.getLogger());
                         saveAnalysisFiles(analysisDataObject.getResultFileName());
                     }
                 } else {
@@ -317,9 +317,9 @@ public class Analysis {
      * @param fileName result filename.
      */
     private void saveAnalysisFiles(String fileName) {
-        FileLocation analysisFileLocation = new FileLocation(fileName, sharedInformation.getPathConstants().resultDirectory + fileName);
+        FileLocation analysisFileLocation = new FileLocation(fileName, PathConstants.resultDirectory + fileName);
         dynamicTree.addObject(dynamicTree.getResultsNode(), analysisFileLocation, Boolean.TRUE);
-        sharedInformation.getPathConstants().resultFiles.add(analysisFileLocation);
+        PathConstants.resultFiles.add(analysisFileLocation);
 
         String status = UtilHTML.editHTML2DisplayImages(analysisFileLocation, "src='", "src='file:///");
         if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
@@ -332,7 +332,7 @@ public class Analysis {
         List<Triat> triatPosition = new ArrayList<>();
         String phenoFile = Objects.requireNonNull(selectFilesPanel.getPhenoCombo().getSelectedItem()).toString();
         ListModel model = columnSelectionPanel.getSelectedColumns().getModel();
-        List<String> headers = UtilCSV.getHeaders(sharedInformation.getPathConstants().resultDirectory + phenoFile);
+        List<String> headers = UtilCSV.getHeaders(PathConstants.resultDirectory + phenoFile);
         for (int i = 0; i < model.getSize(); i++) {
             // Adding +1 as column no start from 1 in R
             triatPosition.add(new Triat((String) model.getElementAt(i), headers.indexOf(model.getElementAt(i))));

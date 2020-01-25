@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -31,8 +30,8 @@ public class PdfConverter {
         scriptArgs.add(pdfName);
         ProcessBuilder pb = new ProcessBuilder(scriptArgs);
         logger.info("Pdf conversion command: " + scriptArgs.toString());
-        pb.redirectOutput(new java.io.File(sharedInformation.getPathConstants().resultDirectory + "PdfConversionLogFile.txt"));
-        pb.redirectError(new java.io.File(sharedInformation.getPathConstants().resultDirectory + "PdfConversionLogFile.txt"));
+        pb.redirectOutput(new java.io.File(PathConstants.resultDirectory + "PdfConversionLogFile.txt"));
+        pb.redirectError(new java.io.File(PathConstants.resultDirectory + "PdfConversionLogFile.txt"));
         return pb;
     }
 

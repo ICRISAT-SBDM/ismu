@@ -67,6 +67,7 @@ public class GOBIIRetrofitClient {
      */
     public String getVariantSets(List<String[]> variantSetList) {
         String status = Constants.SUCCESS;
+        logger.info("Getting variant sets");
         Call<Variantsets> getVariantSets = client.getVariantSets(token.getToken());
         try {
             Response<Variantsets> dataSetsResponse = getVariantSets.execute();
@@ -87,6 +88,7 @@ public class GOBIIRetrofitClient {
             logger.error(e.getMessage());
             status = e.getMessage();
         }
+        logger.info(variantSetList.size() + " variant sets received.");
         return status;
     }
 

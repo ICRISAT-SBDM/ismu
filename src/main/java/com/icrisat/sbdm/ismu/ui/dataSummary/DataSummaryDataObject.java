@@ -1,6 +1,6 @@
 package com.icrisat.sbdm.ismu.ui.dataSummary;
 
-import com.icrisat.sbdm.ismu.util.Constants;
+import com.icrisat.sbdm.ismu.util.PathConstants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +128,7 @@ public class DataSummaryDataObject {
         this.genoFile = genoFile;
         this.phenoFile = phenoFile;
         this.genoHtmlName = Util.stripFileExtension(genoFile) + "_sum_" + new SimpleDateFormat("hhmmss").format(new Date()) + ".htm";
-        this.genoSummaryCsvName = sharedInformation.getPathConstants().summaryFilesMap.get(genoFile);
+        this.genoSummaryCsvName = PathConstants.summaryFilesMap.get(genoFile);
         this.phenoHtmlName = Util.stripFileExtension(phenoFile) + "_sum_" + new SimpleDateFormat("hhmmss").format(new Date()) + ".htm";
     }
 }

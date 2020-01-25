@@ -2,11 +2,9 @@ package com.icrisat.sbdm.ismu.retrofit.bms;
 
 import com.google.gson.Gson;
 import com.icrisat.sbdm.ismu.retrofit.RetrofitError;
-import com.icrisat.sbdm.ismu.retrofit.bms.SampleResponse.Data;
-import com.icrisat.sbdm.ismu.retrofit.bms.SampleResponse.SampleData;
+import com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data;
 import com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.TriatData;
 import com.icrisat.sbdm.ismu.util.Constants;
-import com.icrisat.sbdm.ismu.util.SharedInformation;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -15,7 +13,9 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static com.icrisat.sbdm.ismu.retrofit.RetrofitUtil.returnExitStatus;
 import static com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitUtil.*;
@@ -24,15 +24,10 @@ import static com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitUtil.*;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class BMSRetrofitClient {
 
-    private SharedInformation sharedInformation;
     private BMSClient client;
     private Token token;
     private Logger logger;
     private static final String BEARER = "Bearer ";// Space required
-
-    public void setSharedInformation(SharedInformation sharedInformation) {
-        this.sharedInformation = sharedInformation;
-    }
 
     /**
      * Authenticate to BMS.
@@ -42,8 +37,8 @@ public class BMSRetrofitClient {
      * @param password password
      * @return status of the rest call.
      */
-    public String authenticate(String URL, String userName, String password) {
-        logger = sharedInformation.getLogger();
+    public String authenticate(String URL, String userName, String password, Logger logger) {
+        this.logger = logger;
         String status = Constants.SUCCESS;
         try {
             client = createClient(URL);
@@ -78,6 +73,7 @@ public class BMSRetrofitClient {
     public String getCrops(List<String> cropsList) {
         String status = Constants.SUCCESS;
         String authToken = BEARER + token.getAccess_token();
+        logger.info("Getting list of crops");
         Call<Crops> getCrops = client.getCrops(authToken);
         try {
             Response<Crops> cropsResponse = getCrops.execute();
@@ -92,6 +88,7 @@ public class BMSRetrofitClient {
             status = Constants.NO_INTERNET;
             logger.error(status + "\t" + e.getMessage());
         }
+        logger.info("Received " + cropsList.size() + " crops.");
         return status;
     }
 
@@ -143,14 +140,16 @@ public class BMSRetrofitClient {
      */
     public String getTrialData(String crop, String trialDbId) {
         String status;
+        logger.info("Fetching trial " + trialDbId + " for crop " + crop);
         String authToken = BEARER + token.getAccess_token();
-        List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> traitData = new ArrayList<>();
+        List<Data> traitData = new ArrayList<>();
         PhenotypesSearchTrialDbId phenotypesSearchTrialDbId = new PhenotypesSearchTrialDbId();
         phenotypesSearchTrialDbId.setTrialDbIds(new ArrayList(Collections.singleton(trialDbId)));
         Call<TriatData> getData = client.getTrialData(authToken, crop, phenotypesSearchTrialDbId);
         status = downloadTraitData(getData, traitData);
         if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
-        status = writeTrialDataToFile(traitData, sharedInformation);
+        status = writeTrialDataToFile(traitData, logger);
+        logger.info("Fetching trial " + trialDbId + " for crop " + crop + " completed");
         return status;
     }
 
@@ -161,14 +160,16 @@ public class BMSRetrofitClient {
      */
     public String getStudyData(String crop, String studyDbId) {
         String status;
+        logger.info("Fetching study " + studyDbId + " for crop " + crop);
         String authToken = BEARER + token.getAccess_token();
-        List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> traitData = new ArrayList<>();
+        List<Data> traitData = new ArrayList<>();
         PhenotypesSearchStudyDbId phenotypesSearchStudyDbId = new PhenotypesSearchStudyDbId();
         phenotypesSearchStudyDbId.setStudyDbIds(new ArrayList(Collections.singleton(studyDbId)));
         Call<TriatData> getData = client.getStudyData(authToken, crop, phenotypesSearchStudyDbId);
         status = downloadTraitData(getData, traitData);
         if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
-        status = writeTrialDataToFile(traitData, sharedInformation);
+        status = writeTrialDataToFile(traitData, logger);
+        logger.info("Fetching study " + studyDbId + " for crop " + crop + " completed");
         return status;
     }
 
@@ -178,7 +179,7 @@ public class BMSRetrofitClient {
      * @param getData retrofit client to get the data.
      * @return success status.
      */
-    private String downloadTraitData(Call<TriatData> getData, List<com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.Data> traitData) {
+    private String downloadTraitData(Call<TriatData> getData, List<Data> traitData) {
         String status = "";
         int retryCount = 0;
         while (!status.equalsIgnoreCase(Constants.SUCCESS) && retryCount < 4) {
@@ -189,37 +190,6 @@ public class BMSRetrofitClient {
                     if (traitData.size() == 0)
                         status = "Mean Data for the selected trial is not available";
                     else status = Constants.SUCCESS;
-                } else {
-                    RetrofitError errorMessage = new Gson().fromJson(data.errorBody().charStream(), RetrofitError.class);
-                    status = returnExitStatus(data.code(), errorMessage.toString());
-                }
-            } catch (Exception e) {
-                status = e.getMessage();
-                logger.error(e.getMessage());
-            }
-            retryCount++;
-        }
-        return status;
-    }
-
-    /**
-     * Downloads trial data from BMS.
-     *
-     * @param getData retrofit client to get the data.
-     * @return success status.
-     */
-    private String downloadSampleData(Call<SampleData> getData, Map<String, String> sampleData) {
-        String status = "";
-        int retryCount = 0;
-        while (!status.equalsIgnoreCase(Constants.SUCCESS) && retryCount < 4) {
-            try {
-                Response<SampleData> data = getData.clone().execute();
-                if (data.isSuccessful()) {
-                    List<Data> dataList = data.body().getData();
-                    for (Data data1 : dataList) {
-                        sampleData.put(data1.getSampleDbId(), data1.getObservationUnitDbId());
-                    }
-                    status = Constants.SUCCESS;
                 } else {
                     RetrofitError errorMessage = new Gson().fromJson(data.errorBody().charStream(), RetrofitError.class);
                     status = returnExitStatus(data.code(), errorMessage.toString());

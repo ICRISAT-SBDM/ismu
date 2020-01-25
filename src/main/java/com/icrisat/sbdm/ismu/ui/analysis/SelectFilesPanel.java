@@ -1,10 +1,7 @@
 package com.icrisat.sbdm.ismu.ui.analysis;
 
 import com.icrisat.sbdm.ismu.ui.components.ColumnSelectionPanel;
-import com.icrisat.sbdm.ismu.util.Constants;
-import com.icrisat.sbdm.ismu.util.SharedInformation;
-import com.icrisat.sbdm.ismu.util.Util;
-import com.icrisat.sbdm.ismu.util.UtilCSV;
+import com.icrisat.sbdm.ismu.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -77,9 +74,9 @@ public class SelectFilesPanel extends JPanel {
     private void actionPhenoCombo(ActionEvent e) {
         if (phenoCombo.getSelectedItem() != null)
             if (!phenoCombo.getSelectedItem().toString().equalsIgnoreCase(Constants.SELECT)) {
-                List<String> headers = UtilCSV.getHeaders(sharedInformation.getPathConstants().resultDirectory + phenoCombo.getSelectedItem());
+                List<String> headers = UtilCSV.getHeaders(PathConstants.resultDirectory + phenoCombo.getSelectedItem());
                 if (headers.size() > 0) {
-                    columnSelectionPanel.populateAllColumns(sharedInformation.getPathConstants().resultDirectory + phenoCombo.getSelectedItem(), 1);
+                    columnSelectionPanel.populateAllColumns(PathConstants.resultDirectory + phenoCombo.getSelectedItem(), 1);
                 }
             } else {
                 columnSelectionPanel.clearColumns();

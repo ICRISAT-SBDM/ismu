@@ -1,8 +1,8 @@
 package com.icrisat.sbdm.ismu.ui.dataSummary;
 
 import com.icrisat.sbdm.ismu.util.Constants;
+import com.icrisat.sbdm.ismu.util.PathConstants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ class DataSummaryUtil {
             scriptArgs.add("\"" + dataSummaryDataObject.getGenoSummaryScript() + "\"");
         else
             scriptArgs.add("\"" + dataSummaryDataObject.getPhenoSummaryScript() + "\"");
-        scriptArgs.add("\"" + sharedInformation.getPathConstants().resultDirectory + "\"");
+        scriptArgs.add("\"" + PathConstants.resultDirectory + "\"");
         scriptArgs.add(dataSummaryDataObject.getPercentMissing());
         scriptArgs.add(dataSummaryDataObject.getPICValue());
         scriptArgs.add(dataSummaryDataObject.getMaf());
@@ -43,12 +43,12 @@ class DataSummaryUtil {
         ProcessBuilder pb = new ProcessBuilder(scriptArgs);
         if (type == Constants.GENO) {
             sharedInformation.getLogger().info("Geno summary command: " + scriptArgs.toString());
-            pb.redirectOutput(new java.io.File(sharedInformation.getPathConstants().resultDirectory  + "GenoSummaryLogFile.txt"));
-            pb.redirectError(new java.io.File(sharedInformation.getPathConstants().resultDirectory  + "GenoSummaryLogFile.txt"));
+            pb.redirectOutput(new java.io.File(PathConstants.resultDirectory + "GenoSummaryLogFile.txt"));
+            pb.redirectError(new java.io.File(PathConstants.resultDirectory + "GenoSummaryLogFile.txt"));
         } else {
             sharedInformation.getLogger().info("Pheno summary command: " + scriptArgs.toString());
-            pb.redirectOutput(new java.io.File(sharedInformation.getPathConstants().resultDirectory  + "PhenoSummaryLogFile.txt"));
-            pb.redirectError(new java.io.File(sharedInformation.getPathConstants().resultDirectory  + "PhenoSummaryLogFile.txt"));
+            pb.redirectOutput(new java.io.File(PathConstants.resultDirectory + "PhenoSummaryLogFile.txt"));
+            pb.redirectError(new java.io.File(PathConstants.resultDirectory + "PhenoSummaryLogFile.txt"));
         }
         return pb;
     }

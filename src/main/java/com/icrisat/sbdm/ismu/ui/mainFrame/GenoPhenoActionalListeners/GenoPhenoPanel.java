@@ -7,7 +7,11 @@ import com.icrisat.sbdm.ismu.util.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GenoPhenoPanel extends JPanel {
 
@@ -155,8 +159,20 @@ public class GenoPhenoPanel extends JPanel {
     }
 
     private void phenoConnectAction(ActionEvent ae) {
-        ConnectToDB connectToDB = new ConnectToDB(sharedInformation, Constants.BMS);
-        connectToDB.setVisible(true);
+        PathConstants.recentPhenotypeFile = null;
+        new ConnectToDB(sharedInformation, Constants.BMS);
+        if (PathConstants.recentPhenotypeFile != null) {
+            String sourceFilePath = PathConstants.recentPhenotypeFile;
+            computeQualitativeTraits(sourceFilePath);
+            List<String> dsds = PathConstants.qualitativeTraits;
+            String sourceFileName = new File(sourceFilePath).getName();
+            addToPaneAndTree(Constants.PHENO, sourceFileName, sourceFilePath);
+        }
+        setDialogBoxVisibility(false);
+        System.out.println("We");
+        System.out.println("We");
+        System.out.println("We");
+        System.out.println("We");
   /*      pathConstants.isBrapiCallPheno = true;
         String phenofile = phenoPanel.txtbox.getText();
         if (phenofile.equals("")) return;
@@ -182,6 +198,48 @@ public class GenoPhenoPanel extends JPanel {
             destFilePath = sourceFilePath;
         }
    */
+    }
+
+    /**
+     * Find which traits are quantitative and store in path constants
+     *
+     * @param sourceFilePath source file
+     */
+    private void computeQualitativeTraits(String sourceFilePath) {
+        ArrayList<String[]> fileMatrix = new ArrayList();
+        try (BufferedReader reader = new BufferedReader(new FileReader(sourceFilePath))) {
+            String line = reader.readLine();
+            String[] headerSplit = line.split(",");
+            int noOfColumns = headerSplit.length;
+            Boolean[] isQuanlitative = new Boolean[noOfColumns];
+            for (int i = 0; i < isQuanlitative.length; i++) isQuanlitative[i] = false;
+            while ((line = reader.readLine()) != null)
+                fileMatrix.add(line.split(","));
+            // First is genotype name
+            for (int i = 1; i < noOfColumns; i++) {
+                for (String[] row : fileMatrix) {
+                    /*
+                     * row[i] = ""50.3809694723533""
+                     * val = "50.3809694723533"
+                     */
+                    String val = row[i].substring(1, row[i].length() - 1);
+                    if (!val.equalsIgnoreCase("NA")) {
+                        try {
+                            double d = Double.parseDouble(val);
+                        } catch (NumberFormatException nfe) {
+                            isQuanlitative[i] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            isQuanlitative[3] = true;
+            for (int i = 1; i < noOfColumns; i++) {
+                if (isQuanlitative[i]) PathConstants.qualitativeTraits.add(headerSplit[i]);
+            }
+        } catch (Exception e) {
+            System.out.println("Could not open file" + sourceFilePath);
+        }
     }
 
     /**

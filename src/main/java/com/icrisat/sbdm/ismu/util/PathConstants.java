@@ -19,13 +19,8 @@ public class PathConstants {
     public static HashMap<String, String> summaryFilesMap = new HashMap<>();
     public static List<FileLocation> phenotypeFiles = new ArrayList<>();
     public static List<FileLocation> resultFiles = new ArrayList<>();
-    public static boolean isBrapiCallPheno = false;
-    public static boolean isBrapiCallGeno = false;
     public static int noOfHeadersPheno = 0;
     public static List<String> qualitativeTraits = new ArrayList<>();
-
-
-    public String tempResultDirectory = null;
 
     public static void resetPathConstants() {
         resultDirectory = null;
@@ -36,8 +31,6 @@ public class PathConstants {
         recentPhenotypeFile = null;
         phenotypeFiles = new ArrayList<>();
         resultFiles = new ArrayList<>();
-        isBrapiCallPheno = false;
-        isBrapiCallGeno = false;
         noOfHeadersPheno = 0;
         qualitativeTraits = new ArrayList<>();
     }

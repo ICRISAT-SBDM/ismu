@@ -22,8 +22,6 @@ public class SharedInformation {
     private JFrame mainFrame;
     private ClosableTabbedPane tabbedPane;
     private Font font, boldFont, okButtonFont, titleBoldFont;
-    private PathConstants pathConstants;
-    private JDialog genotypeURLPanel;
     private BMSRetrofitClient bmsRetrofitClient;
     private GOBIIRetrofitClient gobiiRetrofitClient;
     private String OS;
@@ -37,7 +35,6 @@ public class SharedInformation {
     @Autowired
     public void setBmsRetrofitClient(BMSRetrofitClient bmsRetrofitClient) {
         this.bmsRetrofitClient = bmsRetrofitClient;
-        this.bmsRetrofitClient.setSharedInformation(this);
     }
 
     public GOBIIRetrofitClient getGobiiRetrofitClient() {
@@ -47,15 +44,6 @@ public class SharedInformation {
     @Autowired
     public void setGobiiRetrofitClient(GOBIIRetrofitClient gobiiRetrofitClient) {
         this.gobiiRetrofitClient = gobiiRetrofitClient;
-    }
-
-    public PathConstants getPathConstants() {
-        return pathConstants;
-    }
-
-    @Autowired
-    public void setPathConstants(PathConstants pathConstants) {
-        this.pathConstants = pathConstants;
     }
 
     public SharedInformation() {

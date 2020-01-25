@@ -1,6 +1,5 @@
 package com.icrisat.sbdm.ismu.retrofit.bms;
 
-import com.icrisat.sbdm.ismu.retrofit.bms.SampleResponse.SampleData;
 import com.icrisat.sbdm.ismu.retrofit.bms.TriatResponse.TriatData;
 import retrofit2.Call;
 import retrofit2.http.*;
@@ -28,9 +27,4 @@ public interface BMSClient {
     Call<TriatData> getStudyData(@Header("Authorization") String value,
                                  @Path("crop") String crop,
                                  @Body PhenotypesSearchStudyDbId phenotypesSearchStudyDbId);
-
-    @POST("/bmsapi/{crop}/brapi/v1/samples-search")
-    Call<SampleData> getSampleIdsForStudy(@Header("Authorization") String value,
-                                          @Path("crop") String crop,
-                                          @Body SampleSearchStudyDbId sampleSearchStudyDbId);
 }

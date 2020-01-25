@@ -3,7 +3,7 @@ package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnecti
 import com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitClient;
 import com.icrisat.sbdm.ismu.retrofit.gobii.GOBIIRetrofitClient;
 import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel.gobii.GOBIIDataSelectionPanel;
-import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.bms.BMSDataSelectionPanel;
+import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel.bms.BMSDataSelectionPanel;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
@@ -175,21 +175,18 @@ public class ConnectToDB {
      */
     private void loginBMS() {
         BMSRetrofitClient client = sharedInformation.getBmsRetrofitClient();
-        String status = client.authenticate(url, userName, password);
+        String status = client.authenticate(url, userName, password, sharedInformation.getLogger());
         // Retry logic.
         if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
-            status = client.authenticate(url, userName, password);
+            status = client.authenticate(url, userName, password, sharedInformation.getLogger());
         }
-        clearPasswordField();
         if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
-            if (status.equalsIgnoreCase(Constants.URL_ISSUE))
-                urlField.setText("");
             Util.showMessageDialog(status);
         } else {
             setVisible(false);
-            BMSDataSelectionPanel bmsDataSelectionPanel = new BMSDataSelectionPanel(sharedInformation);
-            bmsDataSelectionPanel.setVisible(true);
+            new BMSDataSelectionPanel(sharedInformation, new SelectionTable(Constants.BMS));
         }
+        clearPasswordField();
     }
 
     public void setVisible(boolean visible) {
@@ -202,9 +199,9 @@ public class ConnectToDB {
         userName = usernameField.getText().trim();
         password = String.valueOf(passwordField.getPassword());
         password = password.trim();
-        password = "g0b11Admin";
-        userName = "gadm";
-        url = "http://api.gobii.org:8081/gobii-dev/";
+        password = "abcd@1234";
+        userName = "arathore";
+        url = "bms.icrisat.ac.in:48080/bmsapi/";
         if (url.equalsIgnoreCase(""))
             return "Please enter a valid URL.";
         if (!(url.contains("http") || url.contains("HTTP") || url.contains("https") || url.contains("HTTPS")))

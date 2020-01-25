@@ -1,8 +1,9 @@
-package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.phenotype.bms;
+package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel.bms;
 
 import com.icrisat.sbdm.ismu.retrofit.bms.BMSRetrofitClient;
+import com.icrisat.sbdm.ismu.ui.SubmitPanel;
 import com.icrisat.sbdm.ismu.ui.WaitLayerUI;
-import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components.SubmitPanel;
+import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel.SelectionTable;
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
@@ -22,14 +23,17 @@ import java.util.Objects;
 public class BMSDataSelectionPanel {
     private JDialog dialogBox;
     private SharedInformation sharedInformation;
+    protected BMSRetrofitClient client;
     private JComboBox<String> cropsCombo;
     private BMSSearchPanel bmsSearchPanel;
-    private BMSTrialTable bmsTrialTable;
+    protected SelectionTable selectionTable;
     private SubmitPanel submitPanel;
     private WaitLayerUI layerUI = new WaitLayerUI();
 
-    public BMSDataSelectionPanel(SharedInformation sharedInformation) {
+    public BMSDataSelectionPanel(SharedInformation sharedInformation, SelectionTable selectionTable) {
         this.sharedInformation = sharedInformation;
+        this.selectionTable = selectionTable;
+        client = sharedInformation.getBmsRetrofitClient();
         dialogBox = new JDialog(sharedInformation.getMainFrame(), Dialog.ModalityType.APPLICATION_MODAL);
         dialogBox.setTitle("BMS - Trial ");
         dialogBox.setSize(new Dimension(900, 600));
@@ -41,7 +45,7 @@ public class BMSDataSelectionPanel {
 
         cropsCombo = new JComboBox<>();
         cropsCombo.setFont(sharedInformation.getFont());
-        addCrops(cropsCombo);
+        if (!addCrops(cropsCombo).equalsIgnoreCase(Constants.SUCCESS)) return;
 
         cropsCombo.addActionListener(this::getTrialInformation);
         bmsSearchPanel = new BMSSearchPanel(sharedInformation);
@@ -49,12 +53,11 @@ public class BMSDataSelectionPanel {
         bmsSearchPanel.resetButton.addActionListener(this::resetTableData);
         JPanel cropPanel = new JPanel();
         cropPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        addCropsList(cropsCombo, bmsSearchPanel, cropPanel);
+        addToCropPanel(cropsCombo, bmsSearchPanel, cropPanel);
         mainPanel.add(cropPanel, BorderLayout.NORTH);
 
-        bmsTrialTable = new BMSTrialTable();
-        JScrollPane scrollPane = new JScrollPane(bmsTrialTable.table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        bmsTrialTable.table.setFillsViewportHeight(true);
+        JScrollPane scrollPane = new JScrollPane(selectionTable.table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        selectionTable.table.setFillsViewportHeight(true);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         submitPanel = new SubmitPanel(sharedInformation.getOkButtonFont());
@@ -64,9 +67,13 @@ public class BMSDataSelectionPanel {
 
         dialogBox.add(mainPanel);
         dialogBox.add(new JLayer<>(mainPanel, layerUI));
+        setVisible(true);
     }
 
-    private void addCropsList(JComboBox<String> cropsCombo, BMSSearchPanel BMSSearchPanel, JPanel cropPanel) {
+    /**
+     * Add subpanels to crops panel
+     */
+    private void addToCropPanel(JComboBox<String> cropsCombo, BMSSearchPanel BMSSearchPanel, JPanel cropPanel) {
         cropPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 20, 5));
         Util.addDummyLabels(cropPanel, 4);
         JLabel selectACrop = new JLabel("Select a crop");
@@ -84,11 +91,10 @@ public class BMSDataSelectionPanel {
      * @param e Action Event.
      */
     private void getData(ActionEvent e) {
-        int selectedRow = bmsTrialTable.table.getSelectedRow();
+        int selectedRow = selectionTable.table.getSelectedRow();
         if (selectedRow != -1) {
-            DefaultTableModel model = (DefaultTableModel) bmsTrialTable.table.getModel();
+            DefaultTableModel model = (DefaultTableModel) selectionTable.table.getModel();
             List selectedData = new ArrayList((Collection) model.getDataVector().elementAt(selectedRow));
-            BMSRetrofitClient client = sharedInformation.getBmsRetrofitClient();
             setEnableForComponents(false);
             SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
                 @Override
@@ -120,9 +126,9 @@ public class BMSDataSelectionPanel {
         String trialText = bmsSearchPanel.trialInputField.getText();
         String locationText = bmsSearchPanel.locationInputField.getText();
         if (Objects.equals(programText, "") && Objects.equals(trialText, "") && Objects.equals(locationText, ""))
-            bmsTrialTable.table.setModel(bmsTrialTable.defaultTableModel);
+            selectionTable.table.setModel(selectionTable.defaultTableModel);
         DefaultTableModel newTableModel = new DefaultTableModel(Constants.bmsHeaders, 0);
-        for (Object obj : bmsTrialTable.defaultTableModel.getDataVector()) {
+        for (Object obj : selectionTable.defaultTableModel.getDataVector()) {
             List<String> row = (List<String>) obj;
             boolean programMatch = false, trialMatch = false, locationMatch = false;
             if (Objects.equals(programText, "")) {
@@ -143,7 +149,7 @@ public class BMSDataSelectionPanel {
             if (programMatch && trialMatch && locationMatch)
                 newTableModel.addRow(row.toArray());
         }
-        bmsTrialTable.table.setModel(newTableModel);
+        selectionTable.table.setModel(newTableModel);
         setEnableForComponents(true);
     }
 
@@ -151,13 +157,11 @@ public class BMSDataSelectionPanel {
         bmsSearchPanel.programInputField.setText("");
         bmsSearchPanel.trialInputField.setText("");
         bmsSearchPanel.locationInputField.setText("");
-        bmsTrialTable.table.setModel(bmsTrialTable.defaultTableModel);
-
+        selectionTable.table.setModel(selectionTable.defaultTableModel);
     }
 
-
     /**
-     * Gets the trial information using REST call.
+     * Gets the trial information for selected crop.
      *
      * @param e Action Event.
      */
@@ -165,9 +169,8 @@ public class BMSDataSelectionPanel {
         JComboBox cb = (JComboBox) e.getSource();
         String selectedCrop = (String) cb.getSelectedItem();
         setEnableForComponents(false);
-        DefaultTableModel model = (DefaultTableModel) bmsTrialTable.defaultTableModel;
+        DefaultTableModel model = selectionTable.defaultTableModel;
         model.setRowCount(0);
-        BMSRetrofitClient client = sharedInformation.getBmsRetrofitClient();
         List<String[]> trialList = new ArrayList<>();
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             @Override
@@ -182,7 +185,7 @@ public class BMSDataSelectionPanel {
                         System.arraycopy(trial, 0, newTrial, 1, trial.length);
                         model.addRow(newTrial);
                     }
-                    bmsTrialTable.table.setModel(model);
+                    selectionTable.table.setModel(model);
                 } else {
                     Util.showMessageDialog("Error: " + triatstatus);
                 }
@@ -210,8 +213,7 @@ public class BMSDataSelectionPanel {
      *
      * @param cropsCombo Combo box.
      */
-    private void addCrops(JComboBox<String> cropsCombo) {
-        BMSRetrofitClient client = sharedInformation.getBmsRetrofitClient();
+    private String addCrops(JComboBox<String> cropsCombo) {
         ArrayList<String> crops = new ArrayList<>();
         String status = client.getCrops(crops);
         if (status.equalsIgnoreCase(Constants.SUCCESS)) {
@@ -221,11 +223,12 @@ public class BMSDataSelectionPanel {
         } else {
             Util.showMessageDialog("Error: " + status);
         }
+        return status;
     }
 
     public void setVisible(boolean visible) {
         dialogBox.setVisible(visible);
-        DefaultTableModel model = (DefaultTableModel) bmsTrialTable.table.getModel();
+        DefaultTableModel model = (DefaultTableModel) selectionTable.table.getModel();
         model.setRowCount(0);
     }
 }

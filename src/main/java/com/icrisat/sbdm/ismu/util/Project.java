@@ -428,7 +428,7 @@ public class Project {
             writer.write(Constants.SUMMARY_RELATION);
             writer.newLine();
             final String[] sumStatus = {Constants.SUCCESS};
-            sharedInformation.getPathConstants().summaryFilesMap.forEach((String k, String v) -> {
+            PathConstants.summaryFilesMap.forEach((String k, String v) -> {
                 try {
                     writer.write(k + "@@@" + v);
                     writer.newLine();
