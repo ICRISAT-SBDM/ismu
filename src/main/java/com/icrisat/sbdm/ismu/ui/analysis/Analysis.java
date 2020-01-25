@@ -1,7 +1,7 @@
 package com.icrisat.sbdm.ismu.ui.analysis;
 
 import com.icrisat.sbdm.ismu.ui.analysis.AdditionalParametersPanel.AdditionalParametersPanel;
-import com.icrisat.sbdm.ismu.ui.components.ColumnSelectionPanel;
+import com.icrisat.sbdm.ismu.ui.columnSelection.ColumnSelectionPanel;
 import com.icrisat.sbdm.ismu.ui.mainFrame.DynamicTree;
 import com.icrisat.sbdm.ismu.util.*;
 import org.springframework.beans.factory.annotation.Autowired;

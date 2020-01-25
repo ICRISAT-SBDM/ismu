@@ -19,8 +19,6 @@ public class PathConstants {
     public static HashMap<String, String> summaryFilesMap = new HashMap<>();
     public static List<FileLocation> phenotypeFiles = new ArrayList<>();
     public static List<FileLocation> resultFiles = new ArrayList<>();
-    public static int noOfHeadersPheno = 0;
-    public static List<String> qualitativeTraits = new ArrayList<>();
 
     public static void resetPathConstants() {
         resultDirectory = null;
@@ -31,8 +29,6 @@ public class PathConstants {
         recentPhenotypeFile = null;
         phenotypeFiles = new ArrayList<>();
         resultFiles = new ArrayList<>();
-        noOfHeadersPheno = 0;
-        qualitativeTraits = new ArrayList<>();
     }
 
 }

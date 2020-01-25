@@ -1,6 +1,6 @@
 package com.icrisat.sbdm.ismu.util;
 
-import com.icrisat.sbdm.ismu.ui.components.VerticalTableHeaderCellRenderer;
+import com.icrisat.sbdm.ismu.ui.columnSelection.VerticalTableHeaderCellRenderer;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,44 +210,6 @@ public class UtilCSV {
         return status;
     }
 
-    /**
-     * Sorts the BMS data and then compute the average of the data
-     *
-     * @param outputLines
-     * @param csvWriter
-     */
-    private static void processBMSDate(List<List<String>> outputLines, CSVWriter csvWriter) {
-        List<String> firstOutputLine = outputLines.get(0);
-        csvWriter.writeNext(firstOutputLine.toArray(new String[firstOutputLine.size()]));
-        outputLines.remove(0);
-        Collections.sort(outputLines, new Comparator<List<String>>() {
-            @Override
-            public int compare(List<String> o1, List<String> o2) {
-                return o1.get(0).compareTo(o2.get(0));
-            }
-        });
-        while (outputLines.size() > 0) {
-            List<String> line = outputLines.get(0);
-            outputLines.remove(0);
-            int count = 0;
-            while (outputLines.size() > 0 && outputLines.get(0).get(0).equalsIgnoreCase(line.get(0))) {
-                count++;
-                List<String> nextLine = outputLines.get(0);
-                outputLines.remove(0);
-                for (int i = 1; i < line.size(); i++) {
-                    if (!line.get(i).equalsIgnoreCase("") && nextLine.get(i).equalsIgnoreCase(""))
-                        line.set(i, String.valueOf(Integer.valueOf(line.get(i)) + Integer.valueOf(nextLine.get(i))));
-                    else if (!nextLine.get(i).equalsIgnoreCase(""))
-                        line.set(i, nextLine.get(i));
-                }
-            }
-            for (int i = 1; i < line.size(); i++) {
-                if (!line.get(i).equalsIgnoreCase(""))
-                    line.set(i, String.valueOf(Integer.valueOf(line.get(i)) / count));
-            }
-            csvWriter.writeNext(line.toArray(new String[line.size()]));
-        }
-    }
 
     /**
      * Gets the required header indices in sorted order.
@@ -264,24 +226,4 @@ public class UtilCSV {
         Collections.sort(requiredIndices);
         return requiredIndices;
     }
-
-    static class MultiLineTableHeaderRenderer extends JTextArea implements TableCellRenderer {
-        public MultiLineTableHeaderRenderer() {
-            setEditable(false);
-            setLineWrap(true);
-            setOpaque(false);
-            setFocusable(false);
-            setWrapStyleWord(true);
-            LookAndFeel.installBorder(this, "TableHeader.cellBorder");
-        }
-
-        @Override
-        public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            int width = table.getColumnModel().getColumn(column).getWidth();
-            setText((String) value);
-            setSize(width, getPreferredSize().height);
-            return this;
-        }
-    }
-
 }

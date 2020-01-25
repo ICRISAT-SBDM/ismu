@@ -1,4 +1,4 @@
-package com.icrisat.sbdm.ismu.ui.components;
+package com.icrisat.sbdm.ismu.ui.columnSelection;
 
 import java.awt.Component;
 import java.awt.Graphics;

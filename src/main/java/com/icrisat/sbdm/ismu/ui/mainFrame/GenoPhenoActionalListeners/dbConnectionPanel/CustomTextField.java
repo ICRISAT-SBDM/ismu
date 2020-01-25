@@ -1,4 +1,4 @@
-package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.openDialog.components;
+package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

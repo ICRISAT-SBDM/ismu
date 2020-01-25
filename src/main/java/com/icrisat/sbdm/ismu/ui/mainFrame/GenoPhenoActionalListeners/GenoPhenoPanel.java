@@ -1,5 +1,6 @@
 package com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners;
 
+import com.icrisat.sbdm.ismu.ui.columnSelection.ColumnSelection;
 import com.icrisat.sbdm.ismu.ui.mainFrame.DynamicTree;
 import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.dbConnectionPanel.ConnectToDB;
 import com.icrisat.sbdm.ismu.util.*;
@@ -132,8 +133,8 @@ public class GenoPhenoPanel extends JPanel {
             String sourceFilePath = PathConstants.recentGenotypeFile;
             String sourceFileName = new File(sourceFilePath).getName();
             addToPaneAndTree(Constants.GENO, sourceFileName, sourceFilePath);
+            setDialogBoxVisibility(false);
         }
-        setDialogBoxVisibility(false);
     }
 
     /**
@@ -163,49 +164,39 @@ public class GenoPhenoPanel extends JPanel {
         new ConnectToDB(sharedInformation, Constants.BMS);
         if (PathConstants.recentPhenotypeFile != null) {
             String sourceFilePath = PathConstants.recentPhenotypeFile;
-            computeQualitativeTraits(sourceFilePath);
-            List<String> dsds = PathConstants.qualitativeTraits;
-            String sourceFileName = new File(sourceFilePath).getName();
-            addToPaneAndTree(Constants.PHENO, sourceFileName, sourceFilePath);
-        }
-        setDialogBoxVisibility(false);
-        System.out.println("We");
-        System.out.println("We");
-        System.out.println("We");
-        System.out.println("We");
-  /*      pathConstants.isBrapiCallPheno = true;
-        String phenofile = phenoPanel.txtbox.getText();
-        if (phenofile.equals("")) return;
-        //  addPanelTo(phenofile, Constants.PHENO, true);
-        phenotypeDB.setVisible(false);
-        dialogBox.setVisible(false);
-  */
-  /*
-   if (isBrapiCall) {
-            if (PathConstants.qualitativeTraits.size() > 0) {
-                Util.showMessageDialog("ISMU supports only quantitative traits at the moment." +
-                        "\nFollowing traits are ignored\n" + PathConstants.qualitativeTraits);
+            List<String> quantitativeHeaders = new ArrayList<>();
+            computeQualitativeTraits(sourceFilePath, quantitativeHeaders);
+            List<String> selectTraits = selectTraits(quantitativeHeaders);
+            if (selectTraits != null) {
+                String destFileName = Util.stripFileExtension(new File(sourceFilePath).getName()) + "_selected" + ".csv";
+                String destFilePath = PathConstants.resultDirectory + destFileName;
+                UtilCSV.createCSVwithRequiredFields(sourceFilePath, destFilePath, selectTraits);
+                addToPaneAndTree(Constants.PHENO, destFileName, destFilePath);
             }
-            status = columnSelection.selectColumns(sourceFilePath, PathConstants.noOfHeadersPheno);
-            if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
-                if (status.equals(Constants.USER_CANCELLED)) return;
-                Util.showMessageDialog(status);
-                return;
-            }
-            sourceFilePath = columnSelection.getColumnSelectionPanel().getOutputFileName();
-            sourceFileName = new File(sourceFilePath).getName();
-            destFileName = sourceFileName;
-            destFilePath = sourceFilePath;
+            setDialogBoxVisibility(false);
         }
-   */
+    }
+
+    private List<String> selectTraits(List<String> quantitativeHeaders) {
+        ColumnSelection columnSelection = new ColumnSelection();
+        columnSelection.createDialog(sharedInformation);
+        String status = columnSelection.selectColumns(quantitativeHeaders);
+        if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
+            Util.showMessageDialog(status);
+            return null;
+        } else {
+            return columnSelection.getSelectedFields();
+        }
     }
 
     /**
      * Find which traits are quantitative and store in path constants
      *
-     * @param sourceFilePath source file
+     * @param sourceFilePath      source file
+     * @param quantitativeHeaders quantitative traits
      */
-    private void computeQualitativeTraits(String sourceFilePath) {
+    private void computeQualitativeTraits(String sourceFilePath, List<String> quantitativeHeaders) {
+        quantitativeHeaders = new ArrayList<>();
         ArrayList<String[]> fileMatrix = new ArrayList();
         try (BufferedReader reader = new BufferedReader(new FileReader(sourceFilePath))) {
             String line = reader.readLine();
@@ -233,9 +224,16 @@ public class GenoPhenoPanel extends JPanel {
                     }
                 }
             }
-            isQuanlitative[3] = true;
+            List<String> qualitativeTraits = new ArrayList<>();
             for (int i = 1; i < noOfColumns; i++) {
-                if (isQuanlitative[i]) PathConstants.qualitativeTraits.add(headerSplit[i]);
+                if (isQuanlitative[i]) {
+                    qualitativeTraits.add(headerSplit[i]);
+                } else
+                    quantitativeHeaders.add(headerSplit[i]);
+            }
+            if (qualitativeTraits.size() > 0) {
+                Util.showMessageDialog("ISMU supports only quantitative traits at the moment." +
+                        "\nFollowing traits are ignored\n" + qualitativeTraits);
             }
         } catch (Exception e) {
             System.out.println("Could not open file" + sourceFilePath);

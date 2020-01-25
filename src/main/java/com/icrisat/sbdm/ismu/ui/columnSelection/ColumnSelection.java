@@ -1,9 +1,8 @@
-package com.icrisat.sbdm.ismu.ui.components;
+package com.icrisat.sbdm.ismu.ui.columnSelection;
 
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
-import com.icrisat.sbdm.ismu.util.UtilCSV;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -25,12 +24,8 @@ public class ColumnSelection {
     private JDialog dialogBox;
     private SharedInformation sharedInformation;
     private ColumnSelectionPanel columnSelectionPanel;
-    private JPanel buttonPanel;
     boolean isCancelled = false;
-
-    public ColumnSelectionPanel getColumnSelectionPanel() {
-        return columnSelectionPanel;
-    }
+    List<String> selectedFields;
 
     /**
      * Creates the dialog box.
@@ -40,22 +35,23 @@ public class ColumnSelection {
     public void createDialog(SharedInformation sharedInformation) {
         this.sharedInformation = sharedInformation;
         this.columnSelectionPanel = new ColumnSelectionPanel(sharedInformation);
+        selectedFields = new ArrayList<>();
+        isCancelled = true;
         dialogBox = new JDialog(sharedInformation.getMainFrame(), Dialog.ModalityType.APPLICATION_MODAL);
         dialogBox.setTitle("Select required field's ");
         dialogBox.setSize(new Dimension(600, 300));
         dialogBox.setLocation(Util.getLocation(600, 550));
         dialogBox.setLayout(new BorderLayout());
         dialogBox.add(columnSelectionPanel, BorderLayout.CENTER);
-        buttonPanel = new JPanel();
-        addButtons();
-        dialogBox.add(buttonPanel, BorderLayout.SOUTH);
+        dialogBox.add(getButtonPanel(), BorderLayout.SOUTH);
         dialogBox.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     }
 
     /**
      * Add buttons to the panel.
      */
-    private void addButtons() {
+    private JPanel getButtonPanel() {
+        JPanel buttonPanel = new JPanel();
         JButton submit = new JButton("Submit");
         submit.setFont(sharedInformation.getBoldFont());
         submit.addActionListener(e -> submitAction());
@@ -67,6 +63,7 @@ public class ColumnSelection {
         buttonPanel.add(submit);
         buttonPanel.add(cancel);
         Util.addDummyLabels(buttonPanel, 2);
+        return buttonPanel;
     }
 
     /**
@@ -77,14 +74,18 @@ public class ColumnSelection {
         isCancelled = false;
         DefaultListModel selectedModel = (DefaultListModel) columnSelectionPanel.getSelectedColumns().getModel();
         if (selectedModel.getSize() == 0) {
-            Util.showMessageDialog("Please select the fields required.");
+            Util.showMessageDialog("Please select atleast one field.");
         } else {
-            List<String> requiredFields = new ArrayList<>();
+            selectedFields = new ArrayList<>();
             for (int i = 0; i < selectedModel.getSize(); i++) {
-                requiredFields.add((String) selectedModel.getElementAt(i));
+                String elementAt = (String) selectedModel.getElementAt(i);
+                /*
+                 * elementAt = ""TraitName""
+                 * elementAt = "TraitName"
+                 */
+                elementAt = elementAt.substring(1, elementAt.length() - 1);
+                selectedFields.add(elementAt);
             }
-            columnSelectionPanel.setOutputFileName(Util.stripFileExtension(columnSelectionPanel.getFileName()) + "_selected" + ".csv");
-            UtilCSV.createCSVwithRequiredFields(columnSelectionPanel.getFileName(), columnSelectionPanel.getOutputFileName(), requiredFields);
             dialogBox.setVisible(false);
         }
     }
@@ -92,20 +93,24 @@ public class ColumnSelection {
     /**
      * Displays panel to select few columns.
      *
-     * @param fileName    File name
-     * @param noOfHeaders no of headers
+     * @param columnNames Column Names
      */
-    public String selectColumns(String fileName, int noOfHeaders) {
-        String status = columnSelectionPanel.populateAllColumns(fileName, noOfHeaders);
+    public String selectColumns(List<String> columnNames) {
+        String status = columnSelectionPanel.populateAllColumns(columnNames);
         if (status.equals(Constants.SUCCESS)) {
             this.dialogBox.setVisible(true);
         }
-        if(isCancelled)return Constants.USER_CANCELLED;
+        if (isCancelled) status = Constants.USER_CANCELLED;
         return status;
+    }
+
+    public List<String> getSelectedFields() {
+        return selectedFields;
     }
 
     private void cancelAction(ActionEvent e) {
         dialogBox.setVisible(false);
+
         isCancelled = true;
     }
 }

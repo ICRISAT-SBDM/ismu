@@ -1,9 +1,8 @@
-package com.icrisat.sbdm.ismu.ui.components;
+package com.icrisat.sbdm.ismu.ui.columnSelection;
 
 import com.icrisat.sbdm.ismu.util.Constants;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
-import com.icrisat.sbdm.ismu.util.UtilCSV;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -18,7 +17,6 @@ import java.util.List;
 public class ColumnSelectionPanel extends JPanel {
     private SharedInformation sharedInformation;
     private JList selectedColumns, allColumns;
-    private String fileName, outputFileName;
 
     public JList getSelectedColumns() {
         return selectedColumns;
@@ -26,22 +24,6 @@ public class ColumnSelectionPanel extends JPanel {
 
     JList getAllColumns() {
         return allColumns;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getOutputFileName() {
-        return outputFileName;
-    }
-
-    void setOutputFileName(String outputFileName) {
-        this.outputFileName = outputFileName;
     }
 
     @Autowired
@@ -143,35 +125,18 @@ public class ColumnSelectionPanel extends JPanel {
         buttonPanel.add(new JLabel("  "));
     }
 
-    public String populateAllColumns(String fileName, int noOfHeaders) {
-        this.fileName = fileName;
-        outputFileName = fileName;
-        List<String> headers = UtilCSV.getHeaders(fileName);
+    public String populateAllColumns(List<String> headers) {
         DefaultListModel allColumnsModel = (DefaultListModel) allColumns.getModel();
         allColumnsModel.clear();
         DefaultListModel selectedColumnsModel = (DefaultListModel) selectedColumns.getModel();
         selectedColumnsModel.clear();
-        if (noOfHeaders < headers.size()) {
-            List<String> dataHeaders = headers.subList(noOfHeaders, headers.size());
-            for (String field : dataHeaders) {
+        if (headers.size() != 0) {
+            for (String field : headers) {
                 allColumnsModel.addElement(field);
             }
             getAllColumns().setModel(allColumnsModel);
             getSelectedColumns().setModel(selectedColumnsModel);
             return Constants.SUCCESS;
         } else return "There are no triats in the selected file.";
-    }
-
-    public void clearColumns() {
-        this.fileName = null;
-        outputFileName = null;
-        DefaultListModel allColumnsModel = (DefaultListModel) allColumns.getModel();
-        allColumnsModel.clear();
-        DefaultListModel selectedColumnsModel = (DefaultListModel) selectedColumns.getModel();
-        selectedColumnsModel.clear();
-        DefaultListModel allColumnsModel1 = (DefaultListModel) allColumns.getModel();
-
-        allColumns.setModel(allColumnsModel);
-        selectedColumns.setModel(selectedColumnsModel);
     }
 }

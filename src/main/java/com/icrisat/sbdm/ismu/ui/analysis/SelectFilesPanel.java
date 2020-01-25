@@ -1,6 +1,6 @@
 package com.icrisat.sbdm.ismu.ui.analysis;
 
-import com.icrisat.sbdm.ismu.ui.components.ColumnSelectionPanel;
+import com.icrisat.sbdm.ismu.ui.columnSelection.ColumnSelectionPanel;
 import com.icrisat.sbdm.ismu.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -18,7 +18,6 @@ import java.util.List;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class SelectFilesPanel extends JPanel {
-    private final SharedInformation sharedInformation;
     private JComboBox<String> genoCombo, phenoCombo, covariateCombo;
     private ColumnSelectionPanel columnSelectionPanel;
 
@@ -36,7 +35,6 @@ public class SelectFilesPanel extends JPanel {
 
     @Autowired
     public SelectFilesPanel(SharedInformation sharedInformation) {
-        this.sharedInformation = sharedInformation;
         int width = 200, height = 20;
         setBorder(Util.getCompoundBorder("Select files", sharedInformation));
         setSize(600, 150);
@@ -76,10 +74,10 @@ public class SelectFilesPanel extends JPanel {
             if (!phenoCombo.getSelectedItem().toString().equalsIgnoreCase(Constants.SELECT)) {
                 List<String> headers = UtilCSV.getHeaders(PathConstants.resultDirectory + phenoCombo.getSelectedItem());
                 if (headers.size() > 0) {
-                    columnSelectionPanel.populateAllColumns(PathConstants.resultDirectory + phenoCombo.getSelectedItem(), 1);
+                    //First header is genotype header not a trait
+                    headers.remove(0);
+                    columnSelectionPanel.populateAllColumns(headers);
                 }
-            } else {
-                columnSelectionPanel.clearColumns();
             }
     }
 

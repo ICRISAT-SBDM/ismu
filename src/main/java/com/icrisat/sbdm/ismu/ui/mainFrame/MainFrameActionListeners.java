@@ -1,7 +1,6 @@
 package com.icrisat.sbdm.ismu.ui.mainFrame;
 
 import com.icrisat.sbdm.ismu.ui.analysis.Analysis;
-import com.icrisat.sbdm.ismu.ui.components.ColumnSelection;
 import com.icrisat.sbdm.ismu.ui.dataSummary.DataSummary;
 import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.GenoPhenoPanel;
 import com.icrisat.sbdm.ismu.util.*;
@@ -23,7 +22,6 @@ public class MainFrameActionListeners {
     private DynamicTree dynamicTree;
     private DataSummary dataSummary;
     private Analysis analysis;
-    private ColumnSelection columnSelection;
     private Project project;
     private PdfConverter pdfConverter;
 
@@ -35,11 +33,6 @@ public class MainFrameActionListeners {
     @Autowired
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    @Autowired
-    public void setColumnSelection(ColumnSelection columnSelection) {
-        this.columnSelection = columnSelection;
     }
 
     @Autowired
@@ -229,7 +222,5 @@ public class MainFrameActionListeners {
         }
         return null;
     }
-
-
 }
 
