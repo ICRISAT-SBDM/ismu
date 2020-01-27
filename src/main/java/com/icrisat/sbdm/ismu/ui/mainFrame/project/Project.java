@@ -50,16 +50,33 @@ public class Project {
     /**
      * Save the project
      */
-    public String saveProject() {
+    public void saveProject(ActionEvent e) {
         String status;
         // Result directory is not yet set. No need to save anything.
-        if (PathConstants.resultDirectory == null) return Constants.SUCCESS;
-        String filePath = PathConstants.resultDirectory + ISMU_PROJECT_FILE;
-        status = deleteIfFileExists(filePath);
-        if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
-            return status;
+        if (PathConstants.resultDirectory != null) {
+            int choice = JOptionPane.showConfirmDialog((java.awt.Component) e.getSource(), "\n" + "Do you want to save current project?",
+                    "Save project", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (choice == JOptionPane.YES_OPTION) {
+                String filePath = PathConstants.resultDirectory + ISMU_PROJECT_FILE;
+                status = deleteIfFileExists(filePath);
+                if (status.equalsIgnoreCase(Constants.SUCCESS))
+                    status = writeToProjectFile(filePath);
+                Util.showMessageDialog(status);
+            }
         }
-        return writeToProjectFile(filePath);
+    }
+
+    public String saveProjWithoutConfirmation() {
+        String status = Constants.SUCCESS;
+        // Result directory is not yet set. No need to save anything.
+        if (PathConstants.resultDirectory != null) {
+            String filePath = PathConstants.resultDirectory + ISMU_PROJECT_FILE;
+            status = deleteIfFileExists(filePath);
+            if (status.equalsIgnoreCase(Constants.SUCCESS))
+                status = writeToProjectFile(filePath);
+            Util.showMessageDialog(status);
+        }
+        return status;
     }
 
     /**
@@ -73,8 +90,9 @@ public class Project {
      */
     public String openProject(ActionEvent e) {
         String status = Constants.SUCCESS;
-        NativeJFileChooser fileChooser = Util.getFolderChooser("Select folder with saved project");
-        if (fileChooser.showOpenDialog((java.awt.Component) e.getSource()) == JFileChooser.APPROVE_OPTION) {
+        NativeJFileChooser fileChooser = Util.getFolderChooser("Select project to open");
+        int openOption = fileChooser.showOpenDialog((java.awt.Component) e.getSource());
+        if (openOption == JFileChooser.APPROVE_OPTION) {
             if (Files.isDirectory(Paths.get(fileChooser.getSelectedFile().toString()))) {
                 String projDir = fileChooser.getSelectedFile().toString();
                 String os = System.getProperty("os.name").toLowerCase();
@@ -96,6 +114,8 @@ public class Project {
                 status = "Selected folder does not exits.";
                 return status;
             }
+        } else if (openOption == JFileChooser.CANCEL_OPTION){
+            status = "Cancelled opening project..";
         }
         return status;
     }
@@ -152,10 +172,6 @@ public class Project {
         else sharedInformation.setOS(Constants.OTHEROS);
 
         PathConstants.resultDirectory = projDir;
-/*
-        sharedInformation.getOpenDialog().getTxtResultDir().setText(projDir);
-        sharedInformation.getOpenDialog().getResultBrowseBtn().setEnabled(false);
-*/
         PathConstants.lastChosenFilePath = projDir;
         PathConstants.genotypeFiles = genotypeFiles;
         PathConstants.phenotypeFiles = phenotypeFiles;

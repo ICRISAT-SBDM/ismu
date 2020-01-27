@@ -106,8 +106,7 @@ public class MainFrameActionListeners {
      * @param e Action Event
      */
     void saveProjectActionItem(ActionEvent e) {
-        String status = project.saveProject();
-        Util.showMessageDialog(status);
+        project.saveProject(e);
     }
 
     /**
@@ -117,16 +116,11 @@ public class MainFrameActionListeners {
      * @param e Action Event
      */
     void openProjectActionItem(ActionEvent e) {
-        String status;
-        status = project.saveProject();
-        if (status.equalsIgnoreCase(Constants.SUCCESS)) status = project.openProject(e);
-        else {
-            int choice = JOptionPane.showConfirmDialog((java.awt.Component) e.getSource(), status + "\n" + "Do you want to continue without saving current project?",
-                    "Open project", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (choice == JOptionPane.YES_OPTION) status = project.openProject(e);
-            else return;
-        }
-        if (!status.equalsIgnoreCase(Constants.SUCCESS))
+        project.saveProject(e);
+        String status = project.openProject(e);
+        if (status.equalsIgnoreCase(Constants.SUCCESS))
+            Util.showMessageDialog("Project opened successfully");
+        else
             Util.showMessageDialog(status);
     }
 
@@ -137,13 +131,8 @@ public class MainFrameActionListeners {
      * @param e Action event
      */
     void newProjectActionItem(ActionEvent e) {
-        String status = project.saveProject();
-        if (status.equalsIgnoreCase(Constants.SUCCESS)) project.newProject(e);
-        else {
-            int choice = JOptionPane.showConfirmDialog(sharedInformation.getMainFrame(), status + "\n" + "Do you want to continue without saving current project?",
-                    "New project", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (choice == JOptionPane.YES_OPTION) project.newProject(e);
-        }
+        project.saveProject(e);
+        project.newProject(e);
     }
 
     /**

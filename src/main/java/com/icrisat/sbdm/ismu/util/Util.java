@@ -320,7 +320,7 @@ public class Util {
         if (PathConstants.resultDirectory != null) {
             int exitStatus = JOptionPane.showConfirmDialog((java.awt.Component) e.getSource(), "Do you want to save project?");
             if (exitStatus == JOptionPane.YES_OPTION) {
-                String status = openSaveProject.saveProject();
+                String status = openSaveProject.saveProjWithoutConfirmation();
                 if (status.equalsIgnoreCase(Constants.SUCCESS))
                     return true;
                 else {
