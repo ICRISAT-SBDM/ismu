@@ -14,7 +14,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenoPhenoPanel extends JPanel {
+public class GenoPhenoPanel {
 
     private JDialog dialogBox;
     SharedInformation sharedInformation;
@@ -49,7 +49,7 @@ public class GenoPhenoPanel extends JPanel {
 
     private void createJPanel(SharedInformation sharedInformation, int type) {
         panel = new JPanel();
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        panel.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
         panel.setLayout(new FlowLayout());
         // -----------------------------Geno----------------------------------------
 
@@ -66,7 +66,7 @@ public class GenoPhenoPanel extends JPanel {
 
         if (type == Constants.PHENO) {
             dialogBox.setTitle("Phenotype file    ");
-            lbl.setText("Phenotype file    ");
+            lbl.setText("Phenotype file  ");
             lbl.setFont(sharedInformation.getFont());
             btnBrowse.addActionListener(this::phenoBrowseAction);
             btnConnect.addActionListener(this::phenoConnectAction);
@@ -104,16 +104,19 @@ public class GenoPhenoPanel extends JPanel {
      * @param ae action event
      */
     private void genoBrowseAction(ActionEvent ae) {
+        PathConstants.recentGenotypeFile = null;
         String status = Util.selectFile("Select a genotype file", Constants.GENO, ae);
         if (status.equalsIgnoreCase(Constants.SUCCESS)) {
-            for (FileLocation file : PathConstants.genotypeFiles) {
-                if (file.getFileLocationOnDisk().equalsIgnoreCase(PathConstants.recentPhenotypeFile)) {
-                    Util.showMessageDialog("Genotype file selected is already open.");
-                    return;
+            if (PathConstants.recentGenotypeFile != null) {
+                for (FileLocation file : PathConstants.genotypeFiles) {
+                    if (file.getFileLocationOnDisk().equalsIgnoreCase(PathConstants.recentPhenotypeFile)) {
+                        Util.showMessageDialog("Genotype file selected is already open.");
+                        return;
+                    }
                 }
+                copyFile(PathConstants.recentGenotypeFile, Constants.GENO);
+                setDialogBoxVisibility(false);
             }
-            copyFile(PathConstants.recentGenotypeFile, Constants.GENO);
-            setDialogBoxVisibility(false);
         } else {
             Util.showMessageDialog(status);
         }
@@ -144,19 +147,23 @@ public class GenoPhenoPanel extends JPanel {
      * @param ae action event
      */
     private void phenoBrowseAction(ActionEvent ae) {
+        PathConstants.recentPhenotypeFile = null;
         String status = Util.selectFile("Select a phenotype file", Constants.PHENO, ae);
         if (status.equalsIgnoreCase(Constants.SUCCESS)) {
-            for (FileLocation file : PathConstants.phenotypeFiles) {
-                if (file.getFileLocationOnDisk().equalsIgnoreCase(PathConstants.recentPhenotypeFile)) {
-                    Util.showMessageDialog("Phenotype file selected is already open.");
-                    return;
+            if (PathConstants.recentPhenotypeFile != null) {
+                for (FileLocation file : PathConstants.phenotypeFiles) {
+                    if (file.getFileLocationOnDisk().equalsIgnoreCase(PathConstants.recentPhenotypeFile)) {
+                        Util.showMessageDialog("Phenotype file selected is already open.");
+                        return;
+                    }
                 }
+                copyFile(PathConstants.recentPhenotypeFile, Constants.PHENO);
+                setDialogBoxVisibility(false);
             }
-            copyFile(PathConstants.recentPhenotypeFile, Constants.PHENO);
-            setDialogBoxVisibility(false);
         } else {
             Util.showMessageDialog(status);
         }
+
     }
 
     private void phenoConnectAction(ActionEvent ae) {
@@ -164,8 +171,7 @@ public class GenoPhenoPanel extends JPanel {
         new ConnectToDB(sharedInformation, Constants.BMS);
         if (PathConstants.recentPhenotypeFile != null) {
             String sourceFilePath = PathConstants.recentPhenotypeFile;
-            List<String> quantitativeHeaders = new ArrayList<>();
-            computeQualitativeTraits(sourceFilePath, quantitativeHeaders);
+            List<String> quantitativeHeaders = computeQualitativeTraits(sourceFilePath);
             List<String> selectTraits = selectTraits(quantitativeHeaders);
             if (selectTraits != null) {
                 String destFileName = Util.stripFileExtension(new File(sourceFilePath).getName()) + "_selected" + ".csv";
@@ -192,11 +198,10 @@ public class GenoPhenoPanel extends JPanel {
     /**
      * Find which traits are quantitative and store in path constants
      *
-     * @param sourceFilePath      source file
-     * @param quantitativeHeaders quantitative traits
+     * @param sourceFilePath source file
      */
-    private void computeQualitativeTraits(String sourceFilePath, List<String> quantitativeHeaders) {
-        quantitativeHeaders = new ArrayList<>();
+    private List<String> computeQualitativeTraits(String sourceFilePath) {
+        List<String> quantitativeHeaders = new ArrayList<>();
         ArrayList<String[]> fileMatrix = new ArrayList();
         try (BufferedReader reader = new BufferedReader(new FileReader(sourceFilePath))) {
             String line = reader.readLine();
@@ -238,6 +243,7 @@ public class GenoPhenoPanel extends JPanel {
         } catch (Exception e) {
             System.out.println("Could not open file" + sourceFilePath);
         }
+        return quantitativeHeaders;
     }
 
     /**
@@ -288,5 +294,10 @@ public class GenoPhenoPanel extends JPanel {
                 dynamicTree.addObject(dynamicTree.getPhenotypeNode(), fileLocation, Boolean.TRUE);
             }
         }
+    }
+
+    public void setEnabled(boolean value) {
+        btnBrowse.setEnabled(value);
+        btnConnect.setEnabled(value);
     }
 }

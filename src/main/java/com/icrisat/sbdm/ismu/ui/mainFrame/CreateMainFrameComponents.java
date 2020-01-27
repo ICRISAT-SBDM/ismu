@@ -308,7 +308,6 @@ public class CreateMainFrameComponents {
     }
 
     void createLogger(URL path) {
-
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         context.reset();
         String resultDir = sharedInformation.getWorkingDirectory() + "/";

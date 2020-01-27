@@ -1,5 +1,7 @@
 package com.icrisat.sbdm.ismu.util;
 
+import com.icrisat.sbdm.ismu.ui.mainFrame.DynamicTree;
+import com.icrisat.sbdm.ismu.ui.mainFrame.project.Project;
 import com.opencsv.CSVWriter;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -431,4 +433,15 @@ public class Util {
         return str.toLowerCase().contains(subString.toLowerCase());
     }
 
+    /**
+     * Cleans the current application state;
+     * 1. clear dynamic tree.
+     * 2. Shared information
+     * 3. Path constants
+     */
+    public static void clearCurrentApplicationState(SharedInformation sharedInformation, DynamicTree dynamicTree) {
+        dynamicTree.remove(dynamicTree.getRootNode(), false);
+        sharedInformation.setOS(null);
+        PathConstants.resetPathConstants();
+    }
 }

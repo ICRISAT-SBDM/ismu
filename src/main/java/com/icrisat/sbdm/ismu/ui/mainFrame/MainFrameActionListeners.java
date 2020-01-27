@@ -3,6 +3,7 @@ package com.icrisat.sbdm.ismu.ui.mainFrame;
 import com.icrisat.sbdm.ismu.ui.analysis.Analysis;
 import com.icrisat.sbdm.ismu.ui.dataSummary.DataSummary;
 import com.icrisat.sbdm.ismu.ui.mainFrame.GenoPhenoActionalListeners.GenoPhenoPanel;
+import com.icrisat.sbdm.ismu.ui.mainFrame.project.Project;
 import com.icrisat.sbdm.ismu.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -106,10 +107,7 @@ public class MainFrameActionListeners {
      */
     void saveProjectActionItem(ActionEvent e) {
         String status = project.saveProject();
-        if (status.equalsIgnoreCase(Constants.SUCCESS))
-            Util.showMessageDialog("Project saved successfully");
-        else
-            Util.showMessageDialog(status);
+        Util.showMessageDialog(status);
     }
 
     /**

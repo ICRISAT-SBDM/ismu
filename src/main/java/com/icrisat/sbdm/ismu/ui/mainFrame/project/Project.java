@@ -1,18 +1,21 @@
-package com.icrisat.sbdm.ismu.util;
+package com.icrisat.sbdm.ismu.ui.mainFrame.project;
 
 import com.icrisat.sbdm.ismu.ui.mainFrame.CreateMainFrameComponents;
 import com.icrisat.sbdm.ismu.ui.mainFrame.DynamicTree;
+import com.icrisat.sbdm.ismu.util.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +25,16 @@ import static java.util.stream.Collectors.toList;
 
 @Component
 public class Project {
+    static final String ISMU_PROJECT_FILE = "proj.ismu";
+    static final String GENOTYPE_FILES = "GENOTYPE_FILES";
+    static final String PHENOTYPE_FILES = "PHENOTYPE_FILES";
+    static final String OTHER_FILES = "OTHER_FILES";
+    static final String IMAGES = "IMAGES";
+    public static final String CSS = "ISMU.CSS";
+    static final String CSS_FILE = "CSS";
+    static final String PROJ_CORRUPTED = "CORRUPTED PROJECT. COULD NOT LOAD";
+    public static final String SUMMARY_RELATION = "GENO SUMMARY RELATION";
+    static final String END = "END";
 
     private SharedInformation sharedInformation;
     private List<FileLocation> genotypeFiles, phenotypeFiles, resultFiles, imageFiles;
@@ -39,12 +52,9 @@ public class Project {
      */
     public String saveProject() {
         String status;
-        // Result directory is not yet set. So no processing happened. No need to save anything.
-        if (PathConstants.resultDirectory == null) {
-            //"No need to save.";
-            return Constants.SUCCESS;
-        }
-        String filePath = PathConstants.resultDirectory + Constants.ISMU_PROJECT_FILE;
+        // Result directory is not yet set. No need to save anything.
+        if (PathConstants.resultDirectory == null) return Constants.SUCCESS;
+        String filePath = PathConstants.resultDirectory + ISMU_PROJECT_FILE;
         status = deleteIfFileExists(filePath);
         if (!status.equalsIgnoreCase(Constants.SUCCESS)) {
             return status;
@@ -77,7 +87,7 @@ public class Project {
                 if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
                 status = processProjFile(projDir);
                 if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
-                clearCurrentApplicationState();
+                Util.clearCurrentApplicationState(sharedInformation, dynamicTree);
                 status = populateApplicationState(projDir);
                 if (!status.equalsIgnoreCase(Constants.SUCCESS)) return status;
                 addToTree();
@@ -91,53 +101,21 @@ public class Project {
     }
 
     public void newProject(ActionEvent e) {
-        clearCurrentApplicationState();
-        NativeJFileChooser fileChooser = Util.getFolderChooser("Select a folder to create project");
-        if (fileChooser.showOpenDialog(sharedInformation.getMainFrame()) == JFileChooser.APPROVE_OPTION) {
-            if (Files.isDirectory(Paths.get(fileChooser.getSelectedFile().toString()))) {
-                setResultDir(fileChooser);
-            } else {
-                // folder not exits
-                int option = JOptionPane.showOptionDialog(sharedInformation.getMainFrame(),
-                        "Folder does not exits.\nDo you want to create folder for the path",
-                        "New Folder Creation", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
-                if (option == JOptionPane.YES_OPTION) {
-                    new File(fileChooser.getSelectedFile().toString()).mkdir();
-                    setResultDir(fileChooser);
-                }
-            }
+        Util.clearCurrentApplicationState(sharedInformation, dynamicTree);
+        new NewProjectDialog(sharedInformation, dynamicTree);
+        if (PathConstants.resultDirectory != null) {
+            CreateMainFrameComponents.setEnableComponenents(true);
+            copyCSSFile();
         }
-    }
-
-    /**
-     * Sets result dir.
-     * Enables buttons to select genotype and phenotype files.
-     *
-     * @param fileChooser fileChooser
-     */
-    private void setResultDir(NativeJFileChooser fileChooser) {
-        String resDir = fileChooser.getSelectedFile().toString();
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win")) {
-            resDir = resDir + "\\";
-            sharedInformation.setOS(Constants.WINDOWS);
-        } else {
-            resDir = resDir + "/";
-            sharedInformation.setOS(Constants.OTHEROS);
-        }
-        PathConstants.resultDirectory = resDir;
-        CreateMainFrameComponents.setEnableComponenents(true);
-        copyCSSFile();
-        Util.showMessageDialog("Project created, proceed to import Genotype and Phenotype files.");
     }
 
     void copyCSSFile() {
-        if (!new File(PathConstants.resultDirectory + Constants.CSS).exists()) {
+        if (!new File(PathConstants.resultDirectory + CSS).exists()) {
             String cssPath = Util.getJarDirectory(this.getClass());
-            cssPath = cssPath + "/doc/" + Constants.CSS;
+            cssPath = cssPath + "/doc/" + CSS;
             try {
                 FileChannel inputFileChannel = new FileInputStream(new File(cssPath)).getChannel();
-                FileChannel outputFileChannel = new FileOutputStream(new File(PathConstants.resultDirectory + Constants.CSS)).getChannel();
+                FileChannel outputFileChannel = new FileOutputStream(new File(PathConstants.resultDirectory + CSS)).getChannel();
                 outputFileChannel.transferFrom(inputFileChannel, 0, inputFileChannel.size());
                 inputFileChannel.close();
                 outputFileChannel.close();
@@ -239,8 +217,8 @@ public class Project {
             }
         }
 
-        if (!new File(projDir + Constants.CSS).exists()) {
-            return "File " + Constants.CSS + " does not exist.";
+        if (!new File(projDir + CSS).exists()) {
+            return "File " + CSS + " does not exist.";
         }
 
         return Constants.SUCCESS;
@@ -254,36 +232,36 @@ public class Project {
      */
     private String readProjFile(String projDir) {
         String status;
-        if (!Files.exists(Paths.get(projDir + Constants.ISMU_PROJECT_FILE))) {
+        if (!Files.exists(Paths.get(projDir + ISMU_PROJECT_FILE))) {
             status = "Selected folder " + projDir + " does not contain project file.";
             return status;
         }
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get(projDir + Constants.ISMU_PROJECT_FILE))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(projDir + ISMU_PROJECT_FILE))) {
             String line = reader.readLine();
-            if (line == null || !line.equals(Constants.GENOTYPE_FILES))
-                return Constants.PROJ_CORRUPTED;
-            if (!readGenoFiles(reader, projDir).equalsIgnoreCase(Constants.PHENOTYPE_FILES))
-                return Constants.PROJ_CORRUPTED;
-            if (!readPhenoFiles(reader, projDir).equalsIgnoreCase(Constants.OTHER_FILES))
-                return Constants.PROJ_CORRUPTED;
-            if (!readOtherFiles(reader, projDir).equalsIgnoreCase(Constants.IMAGES))
-                return Constants.PROJ_CORRUPTED;
+            if (line == null || !line.equals(GENOTYPE_FILES))
+                return PROJ_CORRUPTED;
+            if (!readGenoFiles(reader, projDir).equalsIgnoreCase(PHENOTYPE_FILES))
+                return PROJ_CORRUPTED;
+            if (!readPhenoFiles(reader, projDir).equalsIgnoreCase(OTHER_FILES))
+                return PROJ_CORRUPTED;
+            if (!readOtherFiles(reader, projDir).equalsIgnoreCase(IMAGES))
+                return PROJ_CORRUPTED;
 
-            if (!readImageFiles(reader, projDir).equalsIgnoreCase(Constants.SUMMARY_RELATION)) {
-                return Constants.PROJ_CORRUPTED;
+            if (!readImageFiles(reader, projDir).equalsIgnoreCase(SUMMARY_RELATION)) {
+                return PROJ_CORRUPTED;
             }
             // Map geno files and its summary.
-            if (!readRelations(reader, projDir).equalsIgnoreCase(Constants.CSS_FILE)) {
-                return Constants.PROJ_CORRUPTED;
+            if (!readRelations(reader, projDir).equalsIgnoreCase(CSS_FILE)) {
+                return PROJ_CORRUPTED;
             }
 
-            if (!reader.readLine().equals(Constants.CSS)) return Constants.PROJ_CORRUPTED;
-            if (!reader.readLine().equals(Constants.END)) return Constants.PROJ_CORRUPTED;
+            if (!reader.readLine().equals(CSS)) return PROJ_CORRUPTED;
+            if (!reader.readLine().equals(END)) return PROJ_CORRUPTED;
             return Constants.SUCCESS;
         } catch (Exception e) {
             status = e.toString();
             if (status.equalsIgnoreCase("java.lang.NullPointerException"))
-                status = Constants.PROJ_CORRUPTED;
+                status = PROJ_CORRUPTED;
             return status;
         }
     }
@@ -299,7 +277,7 @@ public class Project {
     private String readGenoFiles(BufferedReader reader, String projDir) throws IOException {
         String line = reader.readLine();
         genotypeFiles = new ArrayList<>();
-        while (line != null && !line.equals(Constants.PHENOTYPE_FILES)) {
+        while (line != null && !line.equals(PHENOTYPE_FILES)) {
             genotypeFiles.add(new FileLocation(line, projDir + line));
             line = reader.readLine();
         }
@@ -317,7 +295,7 @@ public class Project {
     private String readPhenoFiles(BufferedReader reader, String projDir) throws IOException {
         String line = reader.readLine();
         phenotypeFiles = new ArrayList<>();
-        while (line != null && !line.equals(Constants.OTHER_FILES)) {
+        while (line != null && !line.equals(OTHER_FILES)) {
             phenotypeFiles.add(new FileLocation(line, projDir + line));
             line = reader.readLine();
         }
@@ -333,7 +311,7 @@ public class Project {
     private String readOtherFiles(BufferedReader reader, String projDir) throws IOException {
         String line = reader.readLine();
         resultFiles = new ArrayList<>();
-        while (line != null && !line.equals(Constants.IMAGES)) {
+        while (line != null && !line.equals(IMAGES)) {
             resultFiles.add(new FileLocation(line, projDir + line));
             line = reader.readLine();
         }
@@ -349,7 +327,7 @@ public class Project {
     private String readImageFiles(BufferedReader reader, String projDir) throws IOException {
         String line = reader.readLine();
         imageFiles = new ArrayList<>();
-        while (line != null && !line.equals(Constants.SUMMARY_RELATION)) {
+        while (line != null && !line.equals(SUMMARY_RELATION)) {
             imageFiles.add(new FileLocation(line, projDir + line));
             line = reader.readLine();
         }
@@ -365,25 +343,12 @@ public class Project {
     private String readRelations(BufferedReader reader, String projDir) throws IOException {
         String line = reader.readLine();
         relations = new HashMap<>();
-        while (line != null && !line.equals(Constants.CSS_FILE)) {
+        while (line != null && !line.equals(CSS_FILE)) {
             String[] split = line.split("@@@");
             relations.put(split[0], split[1]);
             line = reader.readLine();
         }
         return line;
-    }
-
-
-    /**
-     * Cleans the current application state;
-     * 1. clear dynamic tree.
-     * 2. Shared information
-     * 3. Path constants
-     */
-    private void clearCurrentApplicationState() {
-        dynamicTree.remove(dynamicTree.getRootNode(), false);
-        sharedInformation.setOS(null);
-        PathConstants.resetPathConstants();
     }
 
     /**
@@ -392,40 +357,34 @@ public class Project {
      * @param filePath File path
      */
     private String writeToProjectFile(String filePath) {
-        //TODO: Copy log file also
-        /*
-        DefaultMutableTreeNode childAt = (DefaultMutableTreeNode) dynamicTree.getLogNode().getChildAt(0);
-        FileLocation selectedFileLocation = (FileLocation) childAt.getUserObject();
-        System.out.println("");
-        * */
         final String[] status = new String[1];
         genotypeFiles = PathConstants.genotypeFiles;
         phenotypeFiles = PathConstants.phenotypeFiles;
         resultFiles = PathConstants.resultFiles;
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))) {
-            writer.write(Constants.GENOTYPE_FILES);
+            writer.write(GENOTYPE_FILES);
             writer.newLine();
             for (FileLocation genotypeFile : genotypeFiles) {
                 writer.write(genotypeFile.getFileNameInApplication());
                 writer.newLine();
             }
-            writer.write(Constants.PHENOTYPE_FILES);
+            writer.write(PHENOTYPE_FILES);
             writer.newLine();
             for (FileLocation phenotypeFile : phenotypeFiles) {
                 writer.write(phenotypeFile.getFileNameInApplication());
                 writer.newLine();
             }
-            writer.write(Constants.OTHER_FILES);
+            writer.write(OTHER_FILES);
             writer.newLine();
             for (FileLocation otherFile : resultFiles) {
                 writer.write(otherFile.getFileNameInApplication());
                 writer.newLine();
             }
-            writer.write(Constants.IMAGES);
+            writer.write(IMAGES);
             writer.newLine();
             status[0] = writeRequiredImages(writer);
             if (!status[0].equalsIgnoreCase(Constants.SUCCESS)) return status[0];
-            writer.write(Constants.SUMMARY_RELATION);
+            writer.write(SUMMARY_RELATION);
             writer.newLine();
             final String[] sumStatus = {Constants.SUCCESS};
             PathConstants.summaryFilesMap.forEach((String k, String v) -> {
@@ -437,14 +396,19 @@ public class Project {
                 }
             });
             if (!sumStatus[0].equals(Constants.SUCCESS)) return sumStatus[0];
-            writer.write(Constants.CSS_FILE);
+
+            DefaultMutableTreeNode childAt = (DefaultMutableTreeNode) dynamicTree.getLogNode().getChildAt(0);
+            FileLocation logFileSource = (FileLocation) childAt.getUserObject();
+            Path source = Paths.get(logFileSource.getFileLocationOnDisk());
+            Path destination = Paths.get(PathConstants.resultDirectory + logFileSource.getFileNameInApplication());
+            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+            writer.write(CSS_FILE);
             writer.newLine();
-            writer.write(Constants.CSS);
+            writer.write(CSS);
             writer.newLine();
-            writer.write(Constants.END);
-            status[0] = Constants.SUCCESS;
-        } // the file will be automatically closed
-        catch (Exception e1) {
+            writer.write(END);
+            status[0] = "Project saved successfully";
+        } catch (Exception e1) {
             status[0] = e1.getMessage();
         }
         return status[0];

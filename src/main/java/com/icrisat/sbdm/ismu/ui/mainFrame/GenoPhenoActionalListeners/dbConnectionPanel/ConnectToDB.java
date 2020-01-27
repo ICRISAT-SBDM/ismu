@@ -199,9 +199,6 @@ public class ConnectToDB {
         userName = usernameField.getText().trim();
         password = String.valueOf(passwordField.getPassword());
         password = password.trim();
-        password = "abcd@1234";
-        userName = "arathore";
-        url = "bms.icrisat.ac.in:48080/bmsapi/";
         if (url.equalsIgnoreCase(""))
             return "Please enter a valid URL.";
         if (!(url.contains("http") || url.contains("HTTP") || url.contains("https") || url.contains("HTTPS")))

@@ -1,7 +1,7 @@
 package com.icrisat.sbdm.ismu;
 
 import com.icrisat.sbdm.ismu.ui.mainFrame.CreateMainFrameComponents;
-import com.icrisat.sbdm.ismu.util.Project;
+import com.icrisat.sbdm.ismu.ui.mainFrame.project.Project;
 import com.icrisat.sbdm.ismu.util.SharedInformation;
 import com.icrisat.sbdm.ismu.util.Util;
 import com.jtattoo.plaf.acryl.AcrylLookAndFeel;

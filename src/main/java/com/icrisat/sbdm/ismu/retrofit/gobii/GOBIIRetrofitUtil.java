@@ -50,7 +50,7 @@ class GOBIIRetrofitUtil {
             for (Calls.Data call : calls) {
                 if (variantName == null) {
                     variantName = call.getVariantName();
-                    callNames.add("");
+                    callNames.add("Marker");
                 }
                 if (variantName.equalsIgnoreCase(call.getVariantName())) {
                     // It is the same row

@@ -110,7 +110,6 @@ public class ColumnSelection {
 
     private void cancelAction(ActionEvent e) {
         dialogBox.setVisible(false);
-
         isCancelled = true;
     }
 }
