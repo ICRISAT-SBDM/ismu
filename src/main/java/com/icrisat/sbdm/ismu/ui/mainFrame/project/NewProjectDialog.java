@@ -73,7 +73,7 @@ public class NewProjectDialog {
         submitButton.setFont(sharedInformation.getFont());
         submitButton.addActionListener(this::actionSubmit);
         JPanel mainPanel = new JPanel();
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 30, 30, 20));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 25, 15, 25));
         mainPanel.add(folderSelectionPanel);
         mainPanel.add(genoPhenoSelectionPanel);
         mainPanel.add(submitButton);

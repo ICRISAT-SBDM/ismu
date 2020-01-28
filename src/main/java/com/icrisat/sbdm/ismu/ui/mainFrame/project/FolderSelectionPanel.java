@@ -20,44 +20,45 @@ public class FolderSelectionPanel extends JPanel {
         this.sharedInformation = sharedInformation;
         this.newProjectDialog = newProjectDialog;
         Font font = sharedInformation.getFont();
+        JPanel filePanel = new JPanel();
+        JPanel folderPanel = new JPanel();
         setLayout(new GridBagLayout());
+        filePanel.setLayout(new FlowLayout());
+        folderPanel.setLayout(new FlowLayout());
         setSize(new Dimension(400, 75));
         // -----------------------------Geno----------------------------------------
         JLabel fileNameLabel = new JLabel(" Project name ");
         fileNameLabel.setFont(font);
 
-        fileName = new JTextField(24);
+        fileName = new JTextField(20);
 
-        JLabel folderPathDirectory = new JLabel("Location ");
+        JLabel folderPathDirectory = new JLabel(" Location          ");
         folderPathDirectory.setFont(font);
 
-        folderPath = new JTextField(24);
+        folderPath = new JTextField(20);
         folderPath.setEditable(false);
 
-        browseBtn = new JButton("  Browse  ");
+        browseBtn = new JButton("          Browse           ");
         browseBtn.setFont(font);
         browseBtn.addActionListener(this::projectBrowseAction);
 
+        filePanel.add(fileNameLabel);
+        filePanel.add(fileName);
+        JLabel dummyLabel = new JLabel("  ");
+        dummyLabel.setPreferredSize(new Dimension(0, 2));
+        filePanel.add(dummyLabel);
+
+        folderPanel.add(folderPathDirectory);
+        folderPanel.add(folderPath);
+        folderPanel.add(browseBtn);
+
         Insets noInsets = new Insets(0, 0, 0, 0);
-        Insets bottomInsets = new Insets(0, 0, 10, 0);
-        Insets leftBottomInsets = new Insets(0, 10, 10, 0);
-        Insets leftInsets = new Insets(0, 10, 0, 0);
         int x = 0;
         int y = 0;
-        add(fileNameLabel, getGridBag(x, y, GridBagConstraints.FIRST_LINE_START, bottomInsets));
+        add(filePanel, getGridBag(x, y, GridBagConstraints.LINE_START, noInsets));
 
-        x = x + 1;
-        add(fileName, getGridBag(x, y, GridBagConstraints.LINE_END, leftBottomInsets));
-
-        x = 0;
         y = y + 1;
-        add(folderPathDirectory, getGridBag(x, y, GridBagConstraints.LINE_START, noInsets));
-
-        x = x + 1;
-        add(folderPath, getGridBag(x, y, GridBagConstraints.LINE_END, leftInsets));
-
-        x = x + 1;
-        add(browseBtn, getGridBag(x, y, GridBagConstraints.LINE_END, leftInsets));
+        add(folderPanel, getGridBag(x, y, GridBagConstraints.LINE_START, noInsets));
     }
 
     private void projectBrowseAction(ActionEvent actionEvent) {

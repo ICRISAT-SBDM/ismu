@@ -54,7 +54,7 @@ public class Project {
         String status;
         // Result directory is not yet set. No need to save anything.
         if (PathConstants.resultDirectory != null) {
-            int choice = JOptionPane.showConfirmDialog((java.awt.Component) e.getSource(), "\n" + "Do you want to save current project?",
+            int choice = JOptionPane.showConfirmDialog(null, "\n" + "Do you want to save current project?",
                     "Save project", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (choice == JOptionPane.YES_OPTION) {
                 String filePath = PathConstants.resultDirectory + ISMU_PROJECT_FILE;
@@ -114,7 +114,7 @@ public class Project {
                 status = "Selected folder does not exits.";
                 return status;
             }
-        } else if (openOption == JFileChooser.CANCEL_OPTION){
+        } else if (openOption == JFileChooser.CANCEL_OPTION) {
             status = "Cancelled opening project..";
         }
         return status;
