@@ -29,6 +29,11 @@ public class Variantsets {
         private String variantSetName;
         private String studyName;
         private Analyses[] analyses;
+        private AvailableFormats[] availableFormats;
+        private String callSetCount;
+        private String variantCount;
+        private String created;
+        private String updated;
 
         public String getVariantSetDbId() {
             return variantSetDbId;
@@ -54,11 +59,8 @@ public class Variantsets {
     class Analyses {
         private String analysisDbId;
         private String analysisName;
-        private String createdDate;
+        private String created;
         private String description;
-        //TODO: SOftware some issue b/w spec and implementation
-        private String type;
-        private String updated;
 
         public String getAnalysisDbId() {
             return analysisDbId;
@@ -68,20 +70,40 @@ public class Variantsets {
             return analysisName;
         }
 
-        public String getCreatedDate() {
-            return createdDate;
+        public String getCreated() {
+            return created;
         }
 
         public String getDescription() {
             return description;
         }
+    }
 
-        public String getType() {
-            return type;
+    class AvailableFormats {
+        private String dataFormat;
+        private String fileFormat;
+        private String fileURL;
+        private String sepUnphased;
+        private String unknownString;
+
+        public String getDataFormat() {
+            return dataFormat;
         }
 
-        public String getUpdated() {
-            return updated;
+        public String getFileFormat() {
+            return fileFormat;
+        }
+
+        public String getFileURL() {
+            return fileURL;
+        }
+
+        public String getSepUnphased() {
+            return sepUnphased;
+        }
+
+        public String getUnknownString() {
+            return unknownString;
         }
     }
 }

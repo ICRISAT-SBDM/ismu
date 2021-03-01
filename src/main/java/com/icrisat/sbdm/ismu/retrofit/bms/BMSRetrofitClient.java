@@ -118,7 +118,7 @@ public class BMSRetrofitClient {
             if (trialResponse.isSuccessful()) {
                 Trials trialJSON = trialResponse.body();
                 if (trialJSON != null) {
-                    //              status.setPageNo(trialJSON.getMetadata().getPagination().getTotalPages());
+                    status.setPageNo(trialJSON.getMetadata().getPagination().getTotalPages());
                     processTrialData(trialJSON, selectedCrop, trialList);
                 } else {
                     status.setStatus("Could not get the data from BMS. Please try after sometime");

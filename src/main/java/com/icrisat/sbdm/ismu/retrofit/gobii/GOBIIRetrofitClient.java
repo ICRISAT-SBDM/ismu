@@ -1,9 +1,7 @@
 package com.icrisat.sbdm.ismu.retrofit.gobii;
 
 import com.google.gson.Gson;
-import com.icrisat.sbdm.ismu.retrofit.ExtractResponse;
 import com.icrisat.sbdm.ismu.retrofit.RetrofitError;
-import com.icrisat.sbdm.ismu.retrofit.Status;
 import com.icrisat.sbdm.ismu.util.Constants;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Component;
 import retrofit2.Call;
 import retrofit2.Response;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +42,7 @@ public class GOBIIRetrofitClient {
         } catch (Exception e) {
             status = e.getMessage();
         }
-        Call<Token> authUser = client.authUser("", userName, password);
+        Call<Token> authUser = client.authUser(new User(userName, password));
         try {
             Response<Token> response = authUser.execute();
             if (response.isSuccessful()) {
@@ -68,16 +65,21 @@ public class GOBIIRetrofitClient {
     public String getVariantSets(List<String[]> variantSetList) {
         String status = Constants.SUCCESS;
         logger.info("Getting variant sets");
-        Call<Variantsets> getVariantSets = client.getVariantSets(token.getToken());
+        Call<Variantsets> getVariantSets = client.getVariantSets(token.getAccess_token());
         try {
             Response<Variantsets> dataSetsResponse = getVariantSets.execute();
             if (dataSetsResponse.isSuccessful()) {
+                logger.info("Data response successful");
                 Variantsets variantsetsJSON = dataSetsResponse.body();
-                if (variantsetsJSON != null)
-                    processVariantSets(variantsetsJSON, variantSetList);
-                else
+                if (variantsetsJSON != null) {
+                    logger.info("Data response processing varients");
+                    processVariantSets(variantsetsJSON, variantSetList, logger);
+                } else {
                     status = "Could not receive any datasets.";
+                    logger.info("Data response processing variants: null variant resonse");
+                }
             } else {
+                logger.info("Data response not successful");
                 String serverStatus = checkForServerError(dataSetsResponse.errorBody().byteStream());
                 if (!serverStatus.equalsIgnoreCase(Constants.SUCCESS))
                     return serverStatus;
@@ -106,7 +108,11 @@ public class GOBIIRetrofitClient {
         try {
             do {
                 logger.info("Submitting data download request for: " + variantSetName + " with id: " + variantSetId + " for page: " + pageToken);
-                Call<Calls> downloadVariantSetCall = client.downloadVariantSet(token.getToken(), variantSetId, 10000, pageToken);
+                Call<Calls> downloadVariantSetCall;
+                if(pageToken.equals(""))
+                    downloadVariantSetCall = client.downloadVariantSetWithoutPageToken(token.getAccess_token(), variantSetId, 100000);
+                else
+                    downloadVariantSetCall = client.downloadVariantSetWithPageToken(token.getAccess_token(), variantSetId, 100000,pageToken);
                 Response<Calls> downloadVariantSetResponse = downloadVariantSetCall.execute();
                 if (downloadVariantSetResponse.isSuccessful()) {
                     Calls callResponseJSON = downloadVariantSetResponse.body();
@@ -132,40 +138,5 @@ public class GOBIIRetrofitClient {
         }
         logger.info("Submitting data download request completed ");
         return status;
-    }
-
-    /**
-     * Issue an extract request to the selected matrixDbId
-     *
-     * @param markerProfileId markerprofile ID
-     * @return extract jobId with status message
-     */
-    public List<String> extractByExternalCodes(String markerProfileId) {
-        List<String> response = new ArrayList<>();
-        String status = Constants.SUCCESS;
-        logger.info("Submitting data extract request for: " + markerProfileId);
-        Call<ExtractResponse> extractByExternalCodes = client.extractByExternalCodes(token.getToken(), markerProfileId);
-        try {
-            Response<ExtractResponse> extractDataSetResponse = extractByExternalCodes.execute();
-            if (extractDataSetResponse.isSuccessful()) {
-                ExtractResponse extractResponse = extractDataSetResponse.body();
-                if (extractResponse != null && extractResponse.getMetadata() != null) {
-                    Status[] statusArray = extractResponse.getMetadata().getStatus();
-                    for (Status extractStatus : statusArray) {
-                        response.add(extractStatus.getMessage());
-                    }
-                } else {
-                    status = "Got null response.";
-                }
-            } else {
-                RetrofitError errorMessage = new Gson().fromJson(extractDataSetResponse.errorBody().charStream(), RetrofitError.class);
-                status = returnExitStatus(extractDataSetResponse.code(), errorMessage.toString());
-            }
-        } catch (IOException e) {
-            status = Constants.NO_INTERNET;
-            logger.error(status + "\t" + e.getMessage());
-        }
-        response.add(status);
-        return response;
     }
 }

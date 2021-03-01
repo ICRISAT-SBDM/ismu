@@ -27,6 +27,7 @@ public class Main extends SingleFrameApplication {
     private Project project;
 
     public Main() {
+    super();
     }
 
     @Override
